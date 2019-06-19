@@ -1,0 +1,149 @@
+\documentclass[11pt]{article}
+
+%\usepackage{url}
+%\usepackage{hyperref}
+%\urlstyle{rm} %roman style urls
+
+\usepackage{tikz}
+\usepackage{times}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage[export]{adjustbox}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+\usepackage{natbib}
+\usepackage{hyperref}
+
+\usepackage{geometry}
+\geometry{margin=1in}
+
+%\setlength{\parindent}{0cm}
+
+\newtheorem{thm}{Theorem}
+
+%\DeclareMathOperator{\var}{var}
+
+%\newcommand{\fatdot}{\,\cdot\,}
+
+\setlength{\oddsidemargin}{0.50truein}
+\setlength{\evensidemargin}{0.50truein}
+\setlength{\textwidth}{5.5truein}
+\setlength{\topmargin}{0.25truein}
+\setlength{\textheight}{8.5truein}
+\setlength{\headsep}{0.35truein}
+\setlength{\headheight}{0.0truein}
+\setlength{\topskip}{10.0pt}
+\pagestyle{empty}
+
+\begin{document}
+
+\footnotesize
+%\color{lightblue}
+\begin{tikzpicture}
+  \node at (0,0) {\includegraphics[height=0.5in, keepaspectratio=true]{yale_logo}};
+  \node at (8.3,-1.75cm) {\begin{tabular}{l}
+       \sc Daniel J. Eck, PhD \\
+       \it Postdoctoral Associate \\
+       \it Department of Biostatistics \\
+       Yale School of Public Health \\
+       60 College Street \\
+       New Haven, CT 06510 \\
+       %fax: 203-785-6912 \\ 
+       \url{daniel.eck@yale.edu} \\ 
+       \url{http://campuspress.yale.edu/danieleck/}
+       \end{tabular} };
+\end{tikzpicture}
+
+\color{black}
+\normalsize 
+
+\bigskip
+
+\begin{center}
+{\LARGE Reviewer 1 checklist}
+\end{center}
+
+
+\noindent{\bf Comment}:
+Summary: The manuscript approaches this from a different angle than I have 
+seen in the past.  The binomial application in Section 4 seems sound and is 
+easy to understand.  The part about weighting and sensitivity analysis and 
+generally why this might be the right thing to do, is less clear.  The 
+manuscript has several interesting observations.  The critiques are 
+interesting though opinionated.  I like the concept and it seems potentially 
+appropriate for Chance.  The manuscript needs minor revisions and 
+clarifications including possibly shortening or excluding some sections. \\
+
+\noindent{\bf Response}: Thank you for your interest in this work.  The 
+manuscript is shortened, Section 6.4 is removed, and clarity has been added 
+to the weighting and sensitivity analysis.  The critiques are still present, 
+though the tone is softened.  Additional justification for the weighting has 
+been added. \\
+
+
+
+Required revisions: \\
+
+\noindent{\bf Comment}:
+It should be clarified what demographic subgroups are included/excluded at 
+each point in time (from Table 1).  The first paragraph in the data section 
+does not discuss race/ethnicity at all, while later paragraphs seem to suggest 
+but are not crystal clear on whether and what adjustments are being made.  
+I found that discussion in general to be long-winded and not necessary. \\
+
+\noindent{\bf Response}: Thank you for your feedback.  The first paragraph is 
+now clearer on race/ethnicity.  The entire discussion has been shortened.  \\
+
+
+
+\noindent{\bf Comment}:
+The weighting and sensitivity analysis should likely have further 
+justification as to why this is a reasonable thing to do.  Having a 
+half-page appendix on the weighting regime seems inappropriate.  Probably 
+incorporate that into the section on this part of the analysis. \\
+
+\noindent{\bf Response}: The weighting material is now incorporated into the 
+text.  Further justification as to why the weighting and sensitivity 
+analysis is a reasonable thing to do has been added. \\
+
+
+
+\noindent{\bf Comment}: I don’t see what Section 6.4 really adds over 
+previous sections.  Also seems out of place. \\
+
+\noindent{\bf Response}: Thank you for pointing this out, Section 6.4 
+is now removed. \\
+
+
+
+Recommendations / questions: \\
+
+\noindent{\bf Comment}:
+Page 4, Table 1 -- not sure how the cumulative population proportions are 
+relevant.  I found myself more interested to know the noncumulative proportion 
+over the timeframe. \\
+
+\noindent{\bf Response}: We define baseball players from earlier eras to be 
+those that started their MLB careers in the 1950 season or before.  
+Therefore the cumulative proportion in row 8 of Table 1 is one of the most 
+important quantities in the paper. \\
+
+
+
+\noindent{\bf Comment}:
+Why did the authors stop at Top 25?  It might be interesting to add top 100.  
+Does the ``trend'' continue past the top 25? \\
+
+\noindent{\bf Response}: We included top 10 and top 25 lists because those 
+lists are easily digestible by fans and these lists are abundant online.  
+I am interested in this query as well.  The trend continues and is worse for 
+fWAR, bWAR, and Ranker.  The trend is still apparent for the ESPN rankings 
+of the top 100 players, but it is dampened.  The chance of extreme event in 
+the ESPN top 100 list is about 1 in 125, which is between chances 
+corresponding to ESPN's top 10 and top 25 lists.
+ 
+
+\end{document}
+
