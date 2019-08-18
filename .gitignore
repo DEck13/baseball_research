@@ -1,0 +1,12 @@
+*.aux 
+*.bbl 
+*.blg 
+*.log 
+*.out  
+*.toc
+*.gz
+cache
+conformal-exponential-families-draft.pdf
+supplement-conformal-exponential-families.pdf
+outline.pdf
+lettertoeditor.pdf
