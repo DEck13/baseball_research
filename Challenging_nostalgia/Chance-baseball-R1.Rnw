@@ -435,6 +435,8 @@ print(xtable(as.data.frame(data), digits = c(0,0,3,3),
 
 
 
+
+
 \section{The greats}
 
 %At a quick glance of this population dataset, one can see how small the 
@@ -796,9 +798,8 @@ on fan interest prior to 1940.  %These choices of weights
 %time periods favored, and played, baseball due to lack of competition from 
 %other sports. The second weighting regime (w2) places even stronger weights 
 %on pre-1940 fan interest.  
-The third weighting regime (w3), constructed from the Gallup polling data 
-(\url{https://news.gallup.com/poll/4735/sports.aspx}), 
-reflects the proportion of the US population who 
+The third weighting regime (w3), constructed from the Gallup polling data in 
+Figure~\ref{Gallup}, reflects the proportion of the US population who 
 listed baseball as their favorite sport.  
 The appropriateness of this regime is intuitively questionable because 
 some people play baseball even if it is not their favorite sport and the 
@@ -808,14 +809,14 @@ The fourth weighting regime (w4) is the average of w2 and w3.
 
 
 
-%\begin{figure}
-%\begin{center}
-%\includegraphics[width=0.75\textwidth]{Gallupfavoritesport.png}
-%\end{center}
-%\caption{Gallup polling data on the topic of the favorite sports 
-%  of Americans over time.}
-%\label{Gallup}
-%\end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.75\textwidth]{Gallupfavoritesport.png}
+\end{center}
+\caption{Gallup polling data on the topic of the favorite sports 
+  of Americans over time.}
+\label{Gallup}
+\end{figure}
 
 
 These weights are obtained from survey data from the US because similar data 
@@ -1539,61 +1540,42 @@ could represent top 10 and top 25 lists so abundantly.
 
 We close with a general discussion on greatness.  The conclusions of this 
 article have broader implications than just rankings of baseball players.  
-Who are the greatest all-time athletes in other sports, 
-artists, 
+Who are the greatest all-time athletes in other sports,
 musicians, 
 actors and actresses,
 scientists, or 
 leaders?  Do our perceptions change when we focus beyond nostalgia?  
 
-\section*{Acknowledgements}
-This work would not be what it is today without the many conversations that 
-the author had with family, friends, and peers.
-I am very grateful to 
-Jim Albert, 
-Peter M. Aronow, 
-James Burrell, 
-Xiaoxuan Cai, 
-R. Dennis Cook, 
-Forrest W. Crawford, 
-Steven A. Culpepper, 
-Andrew Depuy, 
-Evan Eck, 
-Fred Eck, 
-Joe Eck, 
-Kim Eck, 
-Marcus A. Eck, 
-Michael Eck, 
-Phil Eck, 
-Shirley Eck, 
-Wes Eck, 
-Margret Erlendsdottir, 
-Soheil Eshghi, 
-Charles J. Geyer, 
-Jon Hill,
-Ed Kaplan, 
-Zehong (Richard) Li, 
-Adam Maidman, 
-Aaron Molstad, 
-Olga Morozova, 
-Oliver Om, 
-Kerry Purcell, 
-Ken Ressel, 
-Erick Ruuttila, 
-Jesse Ruuttila, 
-Anne Schuh, 
-Bill Schuh, 
-Yushuf Sharker, 
-Ben Sherwood, 
-Stephanna Szotkowski,
-Dootika Vats,
-Brandon Whited,
-Jarret Zook,
-the editorial board at Chance, 
-and 
-two anonymous referees at Chance
-for helpful comments and discussions (some of which went very long).
-This work was partially supported by NIH grants NICHD DP2 HD091799-01.
+%\section*{Acknowledgements}
+%This work was partially supported by NIH grants NICHD DP2 HD091799-01.
+%I am grateful to
+%Jim Albert, 
+%Peter M. Aronow, 
+%James Burrell, 
+%R. Dennis Cook, 
+%Forrest W. Crawford, 
+%Andrew Depuy, 
+%Evan Eck, 
+%Kim Eck, 
+%Marcus A. Eck, 
+%Michael Eck, 
+%Phil Eck, 
+%Wes Eck, 
+%Charles J. Geyer, 
+%Adam Maidman, 
+%Oliver Om,
+%Ken Ressel, 
+%Erick Ruuttila, 
+%Jesse Ruuttila, 
+%Anne Schuh, 
+%Bill Schuh, 
+%Yushuf Sharker, 
+%Ben Sherwood, 
+%Stephanna Szotkowski,
+%Dootika Vats,
+%and
+%Brandon Whited 
+%for helpful comments and discussions.
 
 
 %\section*{Appendix A: Mathematical Details}

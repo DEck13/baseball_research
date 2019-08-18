@@ -1,4 +1,54 @@
-\documentclass[11pt]{article}
+\documentclass[11pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -13,9 +63,7 @@
 
 \usepackage{geometry}
 \geometry{margin=1in}
-
-
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 \begin{center}
@@ -175,141 +223,7 @@ have changed drastically over time.  %\citep{gould1996fullhouse}. \\
 
 \section{Data}
 
-<<pops, echo = FALSE, cache = TRUE, warnings = FALSE, errors = FALSE>>=
-# load in UN dataset and remove irrelevant variables
-options(warn=-1)
-WPP2010 <- 
-  read.csv("WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv", 
-  header = TRUE)
-colnames(WPP2010)[3] <- c("region")
-colnames(WPP2010)[6] <- c("year")
-colnames(WPP2010)[7:17] <- paste("age", 0:10 * 5, sep = "")
-WPP2010 <- WPP2010[, c(3, 6, 11, 12)]
 
-# restrict attention to countries of interest
-countries <- c("Mexico", "Aruba", "Panama", 
-  "Columbia", "Cuba", "Honduras", "Jamaica", 
-  "Bahamas", "Peru", "Dominican Republic", 
-  "Netherlands Antilles", "Puerto Rico", 
-  "Venezuela (Bolivarian Republic of)", "Nicaragua", 
-  "United States Virgin Islands", "Canada", 
-  "United States of America")
-
-# obtain population data for all countries for all years
-dataset <- WPP2010[WPP2010[, 1] %in% countries, ]
-dataset[, 3] <- as.numeric(levels(dataset[, 3]))[dataset[, 3]]
-dataset[, 4] <- as.numeric(levels(dataset[, 4]))[dataset[, 4]]
-dataset[, 3:4] <- dataset[, 3:4] / 1000
-
-# get population dataset for this analysis corresponding to the 
-# Census years 
-dataset.years <- dataset[dataset[, 2] %in% 
-  c("1960", "1970", "1980", "1990", "2000", "2010"), ]
-dataset.years[, 2] <- factor(dataset.years[, 2])
-dataset.years.list <- split(dataset.years, f = as.factor(dataset.years[, 2]))
-pops <- unlist(lapply(dataset.years.list, function(x) sum(x[, 3:4])))
-
-#approximation from CIA World Factbook at 
-#https://www.cia.gov/library/publications/the-world-factbook/geos/print_tw.html
-dataTaiwan2000 <- 1.50 
-dataTaiwan2010 <- 1.50 
-pops[5] <- pops[5] + dataTaiwan2000
-pops[6] <- pops[6] + dataTaiwan2010
-
-## Canadian population before 1960
-#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
-Can1881 <- 0.21 + 0.17
-#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
-Can1891 <- 0.24 + 0.19  
-#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
-Can1901 <- 0.26 + 0.22
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-CanM1881 <- 2.19  
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-CanM1891 <- 2.16  
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-CanM1901 <- 2.75
-propCan2030 <- (Can1881 + Can1891 + Can1901) / 
-  (CanM1881 + CanM1891 + CanM1901)
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1911 <- 3.82 * propCan2030  
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1921 <- 4.53 * propCan2030 
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1931 <- 5.37 * propCan2030 
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1941 <- 5.90 * propCan2030 
-#https://www65.statcan.gc.ca/acyb02/1967/acyb02_19670194010-eng.htm
-Can1951 <- 7.09 * propCan2030 
-  
-## US population before 1960
-#https://www2.census.gov/library/publications/decennial/1880/vol-01-population/1880_v1-15.pdf
-US1880 <- 2.22 + 1.84  
-#https://www2.census.gov/library/publications/decennial/1900/volume-2/volume-2-p5.pdf
-US1900 <- 2.73 + 2.37  
-US1890 <- mean(c(US1880,US1900))
-#https://www2.census.gov/library/publications/decennial/1910/volume-1/volume-1-p6.pdf
-US1910 <- 4.07 + 3.79  
-#https://www2.census.gov/library/publications/decennial/1920/volume-2/41084484v2ch03.pdf
-US1920 <- 4.02 + 4.09  
-#https://www2.census.gov/library/publications/decennial/1930/population-volume-2/16440598v2ch11.pdf
-US1930 <- 4.69 + 4.25  
-#https://www2.census.gov/library/publications/decennial/1940/population-volume-4/33973538v4p1ch1.pdf
-US1940 <- 1.08 + 1.06 + 1.01 + 1.00 + 1.01 + 
-  1.01 + 0.99 + 0.98 + 0.97 + 0.95 
-#https://www2.census.gov/library/publications/decennial/1950/population-volume-2/21983999v2p1ch2.pdf
-US1950 <- 5.00 + 5.30 
-
-# load in UN dataset and remove irrelevant variables
-options(warn=-1)
-WPP2010 <- 
-  read.csv("WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv", 
-  header = TRUE)
-colnames(WPP2010)[3] <- c("region")
-colnames(WPP2010)[6] <- c("year")
-colnames(WPP2010)[7:17] <- paste("age", 0:10 * 5, sep = "")
-WPP2010 <- WPP2010[, c(3, 6, 11, 12)]
-
-# get population data for relevant countries 
-countries <- c("Brazil", "Japan", "Philippines", "Republic of Korea")
-dataset <- WPP2010[WPP2010[, 1] %in% countries, ]
-dataset[, 3] <- as.numeric(levels(dataset[, 3]))[dataset[, 3]]
-dataset[, 4] <- as.numeric(levels(dataset[, 4]))[dataset[, 4]]
-dataset[, 3:4] <- dataset[, 3:4] / 1000
-
-# get population dataset for this analysis corresponding to the 
-# Census years 
-dataset.years <- dataset[dataset[, 2] %in% c("2000", "2010"), ]
-dataset.years[, 2] <- factor(dataset.years[, 2])
-# Brazil age 20-24, year 2010
-Brazil2010 <- round(dataset.years[8, 3], 2)
-dataset.years <- dataset.years[c(1:3,5:7), ]
-dataset.years.list <- split(dataset.years, f = as.factor(dataset.years[, 2]))
-aspop <- unlist(lapply(dataset.years.list, function(x) sum(x[, 3:4])))
-
-# refine the population dataset that is used in the analysis
-pops <- as.numeric(c(US1880 + Can1881, 
-  US1890 + Can1891, 
-  US1900 + Can1901, 
-  US1910 + Can1911, 
-  US1920 + Can1921, 
-  US1930 + Can1931, 
-  US1940 + Can1941, 
-  US1950 + Can1951, 
-  pops))
-pops[14] <- pops[14] + Brazil2010 
-pops[13:14] <- pops[13:14] + aspop
-pops <- c(pops, pops[14]/2)
-
-# proportion of total population in current year and previous years
-pop_prop <- cumsum(pops) / sum(pops)
-
-# build the dataset
-year <- c(1880 + 0:13 * 10, 2015)
-pop <- pops
-data <- cbind(year, pop, pop_prop)
-data[, 2] <- round(data[, 2], 2)
-@
 
 
 The MLB eligible population is not well-defined.  As a proxy, we can say 
@@ -386,9 +300,9 @@ population as time increases.
 The MLB eligible population is displayed in Table 1.
 The cumulative proportion means that at each era, the population of the 
 previous eras is also included. As an example of how to interpret this 
-dataset, consider the year 1950. There were \Sexpr{round(data[8, 2], 3)} 
+dataset, consider the year 1950. There were 11.59 
 million males aged 20-29. The proportion of the historical MLB eligible 
-population that existed at or before 1950 is \Sexpr{round(data[8, 3], 3)}. 
+population that existed at or before 1950 is 0.187. 
 
 
 %We now explain the specifics of MLB eligible population data recorded in 
@@ -420,18 +334,40 @@ population that existed at or before 1950 is \Sexpr{round(data[8, 3], 3)}.
 %  "United States Virgin Islands", "United States of America")
 
 
-<<echo = FALSE, results="asis">>=
-# the dataset
-library(xtable)
-colnames(data)[c(2:3)] <- c("population", "cumulative population proportion")
-print(xtable(as.data.frame(data), digits = c(0,0,3,3), 
-  align = c("l","c","c","c"), 
-  caption = "Eligible MLB population throughout the years. The first 
+% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Sun Aug 18 17:41:38 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{lccc}
+  \hline
+ & year & population & cumulative population proportion \\ 
+  \hline
+1 & 1880 & 4.440 & 0.013 \\ 
+  2 & 1890 & 5.010 & 0.027 \\ 
+  3 & 1900 & 5.580 & 0.043 \\ 
+  4 & 1910 & 8.550 & 0.068 \\ 
+  5 & 1920 & 8.930 & 0.093 \\ 
+  6 & 1930 & 9.920 & 0.122 \\ 
+  7 & 1940 & 11.130 & 0.154 \\ 
+  8 & 1950 & 11.590 & 0.187 \\ 
+  9 & 1960 & 18.420 & 0.240 \\ 
+  10 & 1970 & 24.490 & 0.310 \\ 
+  11 & 1980 & 33.930 & 0.408 \\ 
+  12 & 1990 & 37.460 & 0.515 \\ 
+  13 & 2000 & 60.600 & 0.689 \\ 
+  14 & 2010 & 72.210 & 0.896 \\ 
+  15 & 2015 & 36.100 & 1.000 \\ 
+   \hline
+\end{tabular}
+\caption{Eligible MLB population throughout the years. The first 
     column indicates the year, the second column indicates the 
     estimated MLB eligible population size (in millions), and the 
     third column indicates the proportion of the MLB eligible  
-    population in row x that was eligbile at or before row x."))
-@
+    population in row x that was eligbile at or before row x.} 
+\end{table}
+
+
+
 
 
 
@@ -542,10 +478,10 @@ career before 1950 using the proportion depicted in Table 1.  Consider the
 bWAR list for example.  According to bWAR, we see that 6 of the top 10 
 players started their careers before 1950.  From Table 1 we see that the 
 proportion of the MLB eligible population that played at or  
-before 1950 was approximately \Sexpr{round(data[8,3], 3)}.  
+before 1950 was approximately 0.187.  
 We then calculate the probability that one would expect to observe 6 or more 
 individuals in a top 10 list from that time period where the chance of 
-observing each individual is about \Sexpr{round(data[8,3], 3)}.  We calculate 
+observing each individual is about 0.187.  We calculate 
 this probability using the Binomial distribution.  
 %, details of this calculation are provided in Appendix A. 
 We perform the same type of extreme event 
@@ -553,29 +489,10 @@ calculation for each top 10 and top 25 list depicted in Table~\ref{top25}.
 The results are provided in Table~\ref{probvalues}.
 
 
-<<echo = FALSE>>=
-options(scipen=999)
-p <- data[8, 3]
-n10 <- 10
-n25 <- 25
-ranker10 <- 7; ranker25 <- 15
-bWAR10 <- 6;   bWAR25 <- 15
-fWAR10 <- 6;   fWAR25 <- 12
-ESPN10 <- 5;   ESPN25 <- 11
-@
 
 
-<<echo = FALSE>>=
-pranker10 <- pbinom(ranker10 - 1, p = p, size = n10, lower = FALSE)
-pbWAR10   <- pbinom(bWAR10 - 1, p = p, size = n10, lower = FALSE)
-pfWAR10   <- pbinom(fWAR10 - 1, p = p, size = n10, lower = FALSE)
-pESPN10   <- pbinom(ESPN10 - 1, p = p, size = n10, lower = FALSE)
 
-pranker25 <- pbinom(ranker25 - 1, p = p, size = n25, lower = FALSE)
-pbWAR25   <- pbinom(bWAR25 - 1, p = p, size = n25, lower = FALSE)
-pfWAR25   <- pbinom(fWAR25 - 1, p = p, size = n25, lower = FALSE)
-pESPN25   <- pbinom(ESPN25 - 1, p = p, size = n25, lower = FALSE)
-@
+
 
 
 \begin{table}[h!]
@@ -585,25 +502,25 @@ pESPN25   <- pbinom(ESPN25 - 1, p = p, size = n25, lower = FALSE)
   &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
   \hline
 probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10, 3)} 
-  & \Sexpr{signif(pbWAR10, 3)} 
-  & \Sexpr{signif(pfWAR10, 3)} 
-  & \Sexpr{signif(pESPN10, 3)} \\
+  & 0.000563 
+  & 0.00449 
+  & 0.00449 
+  & 0.025 \\
 probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25, 3)} 
-  & \Sexpr{signif(pbWAR25, 3)} 
-  & \Sexpr{signif(pfWAR25, 3)} 
-  & \Sexpr{signif(pESPN25, 3)} \\
+  & 0.0000058 
+  & 0.0000058 
+  & 0.000829 
+  & 0.00323 \\
 chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10)} 
-  & 1 in \Sexpr{round(1/pbWAR10)} 
-  & 1 in \Sexpr{round(1/pfWAR10)} 
-  & 1 in \Sexpr{round(1/pESPN10)} \\
+  & 1 in 1776 
+  & 1 in 223 
+  & 1 in 223 
+  & 1 in 40 \\
 chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25)} 
-  & 1 in \Sexpr{round(1/pbWAR25)} 
-  & 1 in \Sexpr{round(1/pfWAR25)} 
-  & 1 in \Sexpr{round(1/pESPN25)} \\
+  & 1 in 173989 
+  & 1 in 173989 
+  & 1 in 1206 
+  & 1 in 309 \\
   \hline
 \end{tabular}
 \end{center}
@@ -616,8 +533,8 @@ As an example of how to interpret the results of Table~\ref{probvalues},
 continue with bWAR's top 10 list.  Table~\ref{probvalues} shows that the 
 probability of observing 6 or more players that started their careers at 
 or before 1950 of the top 10 all time players, based on population 
-dynamics, is about \Sexpr{signif(pbWAR10, 3)} 
-(a chance of 1 in \Sexpr{round(1/pbWAR10)}).
+dynamics, is about 0.00449 
+(a chance of 1 in 223).
 The same interpretation applies to remainder of Table~\ref{probvalues}.  
 The results provided in Table~\ref{probvalues} present overwhelming evidence 
 that players who started their careers before 1950 are overrepresented in top 
@@ -698,42 +615,7 @@ players.  %This suggests that our second assumption may be conservative.
 
 
 
-<<cache = TRUE, echo = FALSE>>=
-# Information from Gallup on baseball fans (50% fans before 1940)
-Fan1880 <- Fan1890 <- Fan1900 <- Fan1910 <- Fan1920 <- Fan1930 <-  0.50
-Fan1940 <- Fan1950 <- Fan1960 <- Fan1970 <- Fan1980 <- Fan1990 <- 
-  Fan2000 <- Fan2010 <- Fan2015 <- 0.40
-w1 <- c(Fan1880, Fan1890, Fan1900, Fan1910, Fan1920, Fan1930, Fan1940, 
-  Fan1950, Fan1960, Fan1970, Fan1980, Fan1990, Fan2000, Fan2010, Fan2015)
 
-data.w1 <- data
-data.w1[, 2] <- data.w1[, 2] * w1
-data.w1[, 3] <- cumsum(data.w1[, 2]) / sum(data.w1[, 2])
-
-
-# Information from Gallup on baseball fans (60% fans before 1940)
-Fan1880 <- Fan1890 <- Fan1900 <- Fan1910 <- Fan1920 <- Fan1930 <- 0.60
-w2 <- c(Fan1880, Fan1890, Fan1900, Fan1910, Fan1920, Fan1930, Fan1940, 
-	Fan1950, Fan1960, Fan1970, Fan1980, Fan1990, Fan2000, Fan2010, Fan2015) 
-
-data.w2 <- data
-data.w2[, 2] <- data.w2[, 2] * w2
-data.w2[, 3] <- cumsum(data.w2[, 2]) / sum(data.w2[, 2])
-
-
-# Information from Gallup on favorite sport
-Fan1880 <- Fan1890 <- Fan1900 <- Fan1910 <- Fan1920 <- 0.40
-Fan1930 <- 0.40
-Fan1940 <- 0.35; Fan1950 <- 0.38; Fan1960 <- 0.34; Fan1970 <- 0.28
-Fan1980 <- 0.16; Fan1990 <- 0.16; Fan2000 <- 0.13; Fan2010 <- 0.12
-Fan2015 <- 0.10
-w3 <- c(Fan1880, Fan1890, Fan1900, Fan1910, Fan1920, Fan1930, Fan1940, 
-  Fan1950, Fan1960, Fan1970, Fan1980, Fan1990, Fan2000, Fan2010, Fan2015)
-
-data.w3 <- data
-data.w3[, 2] <- data.w3[, 2] * w3
-data.w3[, 3] <- cumsum(data.w3[, 2]) / sum(data.w3[, 2])
-@
 
 
 Though we cannot confirm this theory with absolute certainty, at worst, our 
@@ -796,9 +678,8 @@ on fan interest prior to 1940.  %These choices of weights
 %time periods favored, and played, baseball due to lack of competition from 
 %other sports. The second weighting regime (w2) places even stronger weights 
 %on pre-1940 fan interest.  
-The third weighting regime (w3), constructed from the Gallup polling data 
-(\url{https://news.gallup.com/poll/4735/sports.aspx}), 
-reflects the proportion of the US population who 
+The third weighting regime (w3), constructed from the Gallup polling data in 
+Figure~\ref{Gallup}, reflects the proportion of the US population who 
 listed baseball as their favorite sport.  
 The appropriateness of this regime is intuitively questionable because 
 some people play baseball even if it is not their favorite sport and the 
@@ -808,14 +689,14 @@ The fourth weighting regime (w4) is the average of w2 and w3.
 
 
 
-%\begin{figure}
-%\begin{center}
-%\includegraphics[width=0.75\textwidth]{Gallupfavoritesport.png}
-%\end{center}
-%\caption{Gallup polling data on the topic of the favorite sports 
-%  of Americans over time.}
-%\label{Gallup}
-%\end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.75\textwidth]{Gallupfavoritesport.png}
+\end{center}
+\caption{Gallup polling data on the topic of the favorite sports 
+  of Americans over time.}
+\label{Gallup}
+\end{figure}
 
 
 These weights are obtained from survey data from the US because similar data 
@@ -831,110 +712,33 @@ overcompensate for any potential shortcomings of no weighting.
 
 
 
-<<echo = FALSE>>=
-## Recompute probabilities consistent with w1
-p.w1 <- data.w1[8, 3]
-
-pranker10.w1 <- pbinom(ranker10 - 1, p = p.w1, size = n10, lower = FALSE)
-pbWAR10.w1   <- pbinom(bWAR10 - 1, p = p.w1, size = n10, lower = FALSE)
-pfWAR10.w1   <- pbinom(fWAR10 - 1, p = p.w1, size = n10, lower = FALSE)
-pESPN10.w1   <- pbinom(ESPN10 - 1, p = p.w1, size = n10, lower = FALSE)
-
-pranker25.w1 <- pbinom(ranker25 - 1, p = p.w1, size = n25, lower = FALSE)
-pbWAR25.w1   <- pbinom(bWAR25 - 1, p = p.w1, size = n25, lower = FALSE)
-pfWAR25.w1   <- pbinom(fWAR25 - 1, p = p.w1, size = n25, lower = FALSE)
-pESPN25.w1   <- pbinom(ESPN25 - 1, p = p.w1, size = n25, lower = FALSE)
-
-## Recompute probabilities consistent with w2
-p.w2 <- data.w2[8, 3]
-
-pranker10.w2 <- pbinom(ranker10 - 1, p = p.w2, size = n10, lower = FALSE)
-pbWAR10.w2   <- pbinom(bWAR10 - 1, p = p.w2, size = n10, lower = FALSE)
-pfWAR10.w2   <- pbinom(fWAR10 - 1, p = p.w2, size = n10, lower = FALSE)
-pESPN10.w2   <- pbinom(ESPN10 - 1, p = p.w2, size = n10, lower = FALSE)
-
-pranker25.w2 <- pbinom(ranker25 - 1, p = p.w2, size = n25, lower = FALSE)
-pbWAR25.w2   <- pbinom(bWAR25 - 1, p = p.w2, size = n25, lower = FALSE)
-pfWAR25.w2   <- pbinom(fWAR25 - 1, p = p.w2, size = n25, lower = FALSE)
-pESPN25.w2   <- pbinom(ESPN25 - 1, p = p.w2, size = n25, lower = FALSE)
-
-## Recompute probabilities consistent with w3
-p.w3 <- data.w3[8, 3]
-
-pranker10.w3 <- pbinom(ranker10 - 1, p = p.w3, size = n10, lower = FALSE)
-pbWAR10.w3   <- pbinom(bWAR10 - 1, p = p.w3, size = n10, lower = FALSE)
-pfWAR10.w3   <- pbinom(fWAR10 - 1, p = p.w3, size = n10, lower = FALSE)
-pESPN10.w3   <- pbinom(ESPN10 - 1, p = p.w3, size = n10, lower = FALSE)
-
-pranker25.w3 <- pbinom(ranker25 - 1, p = p.w3, size = n25, lower = FALSE)
-pbWAR25.w3   <- pbinom(bWAR25 - 1, p = p.w3, size = n25, lower = FALSE)
-pfWAR25.w3   <- pbinom(fWAR25 - 1, p = p.w3, size = n25, lower = FALSE)
-pESPN25.w3   <- pbinom(ESPN25 - 1, p = p.w3, size = n25, lower = FALSE)
-
-## Recompute probabilities consistent with w4
-w4 <- (w2 + w3) / 2
-data.w4 <- data
-data.w4[, 2] <- data.w4[, 2] * w4
-data.w4[, 3] <- cumsum(data.w4[, 2]) / sum(data.w4[, 2])
-p.w4 <- data.w4[8, 3]
-
-pranker10.w4 <- pbinom(ranker10 - 1, p = p.w4, size = n10, lower = FALSE)
-pbWAR10.w4   <- pbinom(bWAR10 - 1, p = p.w4, size = n10, lower = FALSE)
-pfWAR10.w4   <- pbinom(fWAR10 - 1, p = p.w4, size = n10, lower = FALSE)
-pESPN10.w4   <- pbinom(ESPN10 - 1, p = p.w4, size = n10, lower = FALSE)
-
-pranker25.w4 <- pbinom(ranker25 - 1, p = p.w4, size = n25, lower = FALSE)
-pbWAR25.w4   <- pbinom(bWAR25 - 1, p = p.w4, size = n25, lower = FALSE)
-pfWAR25.w4   <- pbinom(fWAR25 - 1, p = p.w4, size = n25, lower = FALSE)
-pESPN25.w4   <- pbinom(ESPN25 - 1, p = p.w4, size = n25, lower = FALSE)
-@
 
 
-<<echo = FALSE, results = "asis">>=
-tab <- cbind(w1,w2,w3,w4)
-rownames(tab) <- year
-#colnames(tab)[1] <- c("year")
-#tab <- as.data.frame(tab)
-#rownames(tab) <- NULL
-print(xtable(t(tab), #digits = c(0,0,2,2,2,2), 
-  digits = cbind(rep(0, 4), matrix(2, ncol = 15, nrow = 4)),
-  caption = "Weighting regimes."), size = "footnotesize",
-  #hline.after = c(-1,0,nrow(data)))
-  hline.after = c(-1,0,4))
-@
+
+% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Sun Aug 18 17:41:38 2019
+\begin{table}[ht]
+\centering
+\begingroup\footnotesize
+\begin{tabular}{rrrrrrrrrrrrrrrr}
+  \hline
+ & 1880 & 1890 & 1900 & 1910 & 1920 & 1930 & 1940 & 1950 & 1960 & 1970 & 1980 & 1990 & 2000 & 2010 & 2015 \\ 
+  \hline
+w1 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 \\ 
+  w2 & 0.60 & 0.60 & 0.60 & 0.60 & 0.60 & 0.60 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 \\ 
+  w3 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.35 & 0.38 & 0.34 & 0.28 & 0.16 & 0.16 & 0.13 & 0.12 & 0.10 \\ 
+  w4 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.38 & 0.39 & 0.37 & 0.34 & 0.28 & 0.28 & 0.27 & 0.26 & 0.25 \\ 
+   \hline
+\end{tabular}
+\endgroup
+\caption{Weighting regimes.} 
+\end{table}
 
 
 
 
-<<echo = FALSE, eval = FALSE>>=
-w5 <- c(0.20, 0.20, 0.20, 0.20, 0.25, 0.40, 0.40, 0.35, 0.38, 
-  0.34, 0.28, 0.16, 0.13, 0.12, 0.20)
-data.w5 <- data
-data.w5[, 2] <- data.w5[, 2] * w5
-data.w5[, 3] <- cumsum(data.w5[, 2]) / sum(data.w5[, 2])
-p.w5 <- data.w5[8, 3]
 
-ranker10 <- 7; ranker25 <- 15
-bWAR10 <- 6;   bWAR25 <- 15
-fWAR10 <- 6;   fWAR25 <- 12
-ESPN10 <- 5;   ESPN25 <- 11
-n10 <- 10; n25 <- 25
 
-pranker10.w5 <- pbinom(ranker10 - 1, p = p.w5, size = n10, lower = FALSE)
-pbWAR10.w5   <- pbinom(bWAR10 - 1, p = p.w5, size = n10, lower = FALSE)
-pfWAR10.w5   <- pbinom(fWAR10 - 1, p = p.w5, size = n10, lower = FALSE)
-pESPN10.w5   <- pbinom(ESPN10 - 1, p = p.w5, size = n10, lower = FALSE)
-
-pranker25.w5 <- pbinom(ranker25 - 1, p = p.w5, size = n25, lower = FALSE)
-pbWAR25.w5   <- pbinom(bWAR25 - 1, p = p.w5, size = n25, lower = FALSE)
-pfWAR25.w5   <- pbinom(fWAR25 - 1, p = p.w5, size = n25, lower = FALSE)
-pESPN25.w5   <- pbinom(ESPN25 - 1, p = p.w5, size = n25, lower = FALSE)
-
-c(pranker10.w5, pbWAR10.w5, pfWAR10.w5, pESPN10.w5)
-1 / c(pranker10.w5, pbWAR10.w5, pfWAR10.w5, pESPN10.w5)
-c(pranker25.w5, pbWAR25.w5, pfWAR25.w5, pESPN25.w5)
-1 / c(pranker25.w5, pbWAR25.w5, pfWAR25.w5, pESPN25.w5)
-@
 
 
 
@@ -945,88 +749,88 @@ c(pranker25.w5, pbWAR25.w5, pfWAR25.w5, pESPN25.w5)
  weight & &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
  \hline
 w1 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w1, 3)} 
-  & \Sexpr{signif(pbWAR10.w1, 3)} 
-  & \Sexpr{signif(pfWAR10.w1, 3)} 
-  & \Sexpr{signif(pESPN10.w1, 3)} \\
+  & 0.00122 
+  & 0.0084 
+  & 0.0084 
+  & 0.0407 \\
 & probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w1, 3)} 
-  & \Sexpr{signif(pbWAR25.w1, 3)} 
-  & \Sexpr{signif(pfWAR25.w1, 3)} 
-  & \Sexpr{signif(pESPN25.w1, 3)} \\
+  & 0.0000268 
+  & 0.0000268 
+  & 0.0025 
+  & 0.00847 \\
 & chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w1)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w1)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w1)} 
-  & 1 in \Sexpr{round(1/pESPN10.w1)} \\
+  & 1 in 823 
+  & 1 in 119 
+  & 1 in 119 
+  & 1 in 25 \\
 & chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w1)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w1)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w1)} 
-  & 1 in \Sexpr{round(1/pESPN25.w1)} \\
+  & 1 in 37371 
+  & 1 in 37371 
+  & 1 in 400 
+  & 1 in 118 \\
   & & & & & \\
 w2 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w2, 3)} 
-  & \Sexpr{signif(pbWAR10.w2, 3)} 
-  & \Sexpr{signif(pfWAR10.w2, 3)} 
-  & \Sexpr{signif(pESPN10.w2, 3)} \\
+  & 0.00231 
+  & 0.0141 
+  & 0.0141 
+  & 0.0605 \\
 & probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w2, 3)} 
-  & \Sexpr{signif(pbWAR25.w2, 3)} 
-  & \Sexpr{signif(pfWAR25.w2, 3)} 
-  & \Sexpr{signif(pESPN25.w2, 3)} \\
+  & 0.0000947 
+  & 0.0000947 
+  & 0.0061 
+  & 0.0183 \\
 & chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w2)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w2)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w2)} 
-  & 1 in \Sexpr{round(1/pESPN10.w2)} \\
+  & 1 in 434 
+  & 1 in 71 
+  & 1 in 71 
+  & 1 in 17 \\
 & chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w2)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w2)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w2)} 
-  & 1 in \Sexpr{round(1/pESPN25.w2)} \\
+  & 1 in 10557 
+  & 1 in 10557 
+  & 1 in 164 
+  & 1 in 55 \\
   & & & & & \\
 w3 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w3, 3)} 
-  & \Sexpr{signif(pbWAR10.w3, 3)} 
-  & \Sexpr{signif(pfWAR10.w3, 3)} 
-  & \Sexpr{signif(pESPN10.w3, 3)} \\
+  & 0.0311 
+  & 0.109 
+  & 0.109 
+  & 0.274 \\
 & probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w3, 3)} 
-  & \Sexpr{signif(pbWAR25.w3, 3)} 
-  & \Sexpr{signif(pfWAR25.w3, 3)} 
-  & \Sexpr{signif(pESPN25.w3, 3)} \\
+  & 0.0128 
+  & 0.0128 
+  & 0.152 
+  & 0.267 \\
 & chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w3)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w3)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w3)} 
-  & 1 in \Sexpr{round(1/pESPN10.w3, 1)} \\
+  & 1 in 32 
+  & 1 in 9 
+  & 1 in 9 
+  & 1 in 3.7 \\
 & chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w3)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w3)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w3, 1)} 
-  & 1 in \Sexpr{round(1/pESPN25.w3, 1)} \\
+  & 1 in 78 
+  & 1 in 78 
+  & 1 in 6.6 
+  & 1 in 3.8 \\
   & & & & & \\  
 w4 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w4, 3)} 
-  & \Sexpr{signif(pbWAR10.w4, 3)} 
-  & \Sexpr{signif(pfWAR10.w4, 3)} 
-  & \Sexpr{signif(pESPN10.w4, 3)} \\
+  & 0.00623 
+  & 0.0312 
+  & 0.0312 
+  & 0.11 \\
 & probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w4, 3)} 
-  & \Sexpr{signif(pbWAR25.w4, 3)} 
-  & \Sexpr{signif(pfWAR25.w4, 3)} 
-  & \Sexpr{signif(pESPN25.w4, 3)} \\
+  & 0.00065 
+  & 0.00065 
+  & 0.0228 
+  & 0.0561 \\
 & chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w4)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w4)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w4)} 
-  & 1 in \Sexpr{round(1/pESPN10.w4, 1)} \\
+  & 1 in 160 
+  & 1 in 32 
+  & 1 in 32 
+  & 1 in 9.1 \\
 & chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w4)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w4)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w4)} 
-  & 1 in \Sexpr{round(1/pESPN25.w4)} \\
+  & 1 in 1537 
+  & 1 in 1537 
+  & 1 in 44 
+  & 1 in 18 \\
   \hline
 \end{tabular}
 \end{center}
@@ -1178,22 +982,22 @@ segregation prior to 1947.
 \hline
 year & eligible pop. & number of teams & roster size & eligible pop. per roster spot \\
 \hline
-%\Sexpr{data[1,1]} & \Sexpr{data[1,2]}  & 8  & 15 & \Sexpr{round(data[1,2] / (8*15) * 1e3, 1)}   \\
-\Sexpr{data[2,1]} & \Sexpr{data[2,2]}  & 8  & 15 & \Sexpr{round(data[2,2] / (8*15) * 1e3, 1)}   \\
-%\Sexpr{data[3,1]} & \Sexpr{data[3,2]}  & 8  & 15 & \Sexpr{round(data[3,2] / (8*15) * 1e3, 1)}   \\
-\Sexpr{data[4,1]} & \Sexpr{data[4,2]}  & 16 & 25 & \Sexpr{round(data[4,2] / (16*25) * 1e3, 1)}  \\
-%\Sexpr{data[5,1]} & \Sexpr{data[5,2]}  & 16 & 25 & \Sexpr{round(data[5,2] / (16*25) * 1e3, 1)}  \\
+%data[1,1] & data[1,2]  & 8  & 15 & round(data[1,2] / (8*15) * 1e3, 1)   \\
+1890 & 5.01  & 8  & 15 & 41.7   \\
+%data[3,1] & data[3,2]  & 8  & 15 & round(data[3,2] / (8*15) * 1e3, 1)   \\
+1910 & 8.55  & 16 & 25 & 21.4  \\
+%data[5,1] & data[5,2]  & 16 & 25 & round(data[5,2] / (16*25) * 1e3, 1)  \\
   %& & & &  \\
-\Sexpr{data[6,1]} & \Sexpr{data[6,2]}  & 16 & 25 & \Sexpr{round(data[6,2] / (16*25) * 1e3, 1)}  \\
-%\Sexpr{data[7,1]} & \Sexpr{data[7,2]}  & 16 & 25 & \Sexpr{round(data[7,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[8,1]} & \Sexpr{data[8,2]}  & 16 & 25 & \Sexpr{round(data[8,2] / (16*25) * 1e3, 1)}  \\
-%\Sexpr{data[9,1]} & \Sexpr{data[9,2]}  & 16 & 25 & \Sexpr{round(data[9,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[10,1]} & \Sexpr{data[10,2]}  & 24 & 25 & \Sexpr{round(data[10,2] / (24*25) * 1e3, 1)}  \\
+1930 & 9.92  & 16 & 25 & 24.8  \\
+%data[7,1] & data[7,2]  & 16 & 25 & round(data[7,2] / (16*25) * 1e3, 1)  \\
+1950 & 11.59  & 16 & 25 & 29  \\
+%data[9,1] & data[9,2]  & 16 & 25 & round(data[9,2] / (16*25) * 1e3, 1)  \\
+1970 & 24.49  & 24 & 25 & 40.8  \\
   %& & & &  \\
-%\Sexpr{data[11,1]} & \Sexpr{data[11,2]} & 26 & 25 & \Sexpr{round(data[11,2] / (26*25) * 1e3, 1)} \\
-\Sexpr{data[12,1]} & \Sexpr{data[12,2]} & 26 & 25 & \Sexpr{round(data[12,2] / (26*25) * 1e3, 1)} \\
-%\Sexpr{data[13,1]} & \Sexpr{data[13,2]} & 30 & 25 & \Sexpr{round(data[13,2] / (30*25) * 1e3, 1)} \\
-\Sexpr{data[14,1]} & \Sexpr{data[14,2]} & 30 & 25 & \Sexpr{round(data[14,2] / (30*25) * 1e3, 1)} \\
+%data[11,1] & data[11,2] & 26 & 25 & round(data[11,2] / (26*25) * 1e3, 1) \\
+1990 & 37.46 & 26 & 25 & 57.6 \\
+%data[13,1] & data[13,2] & 30 & 25 & round(data[13,2] / (30*25) * 1e3, 1) \\
+2010 & 72.21 & 30 & 25 & 96.3 \\
 \hline
 \end{tabular}
 \end{center}
@@ -1329,18 +1133,7 @@ peers from fundamentally different eras.
 
 \subsection{Era bridging}
 
-<<echo = FALSE>>=
-# 6 of the 10 best hitters for average started their career before 1950 
-# 10 of the 25 best hitters for average started their career before 1950 
-data2 <- data[1:13, ]
-data2[13, 2] <- 0.9 * data[13, 2]
-data2[, 3] <- cumsum(data2[, 2]) / sum(data2[, 2])
-p2 <- data2[8, 3]
 
-bridge10 <- 6; bridge25 <- 10
-pbridge10 <- pbinom(bridge10 - 1, p = p2, size = n10, lower = FALSE)
-pbridge25 <- pbinom(bridge25 - 1, p = p2, size = n25, lower = FALSE)
-@
 
 \citet{berry1999eras} claim that their era bridging technique accounts for 
 talent discrepancies across eras.  However, they do not explicitly 
@@ -1377,10 +1170,10 @@ eligible population ends at 1999. % (we approximate this by taking the populatio
 %count in 2000 by 0.9).  
 We calculate the chance that one would expect to 
 observe 6 or more individuals in a top 10 list who started their careers 
-before 1950 as 1 in \Sexpr{round(1 / pbridge10)}. 
+before 1950 as 1 in 30. 
 We calculate the chance that one would expect to observe 10 or more 
 individuals in a top 25 list who started their careers before 1950 as 
-1 in \Sexpr{round(1 / pbridge25, 2)}.  These chances are not as extreme 
+1 in 7.7.  These chances are not as extreme 
 as those in Table~\ref{probvalues}, but they still correspond to events 
 that are unlikely.  
 
@@ -1417,78 +1210,78 @@ that are unlikely.
 %\hline
 %year & original data & w1 & w2 & w3 & w4 \\
 %\hline
-%\Sexpr{data[1,1]} & \Sexpr{round(data[1,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[1,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[1,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[1,2] / (15*8) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[1,2] / (15*8) * 1e3, 1)}   \\
-%\Sexpr{data[2,1]} & \Sexpr{round(data[2,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[2,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[2,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[2,2] / (15*8) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[2,2] / (15*8) * 1e3, 1)}   \\
-%\Sexpr{data[3,1]} & \Sexpr{round(data[3,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[3,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[3,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[3,2] / (15*8) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[3,2] / (15*8) * 1e3, 1)}   \\
-%\Sexpr{data[4,1]} & \Sexpr{round(data[4,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[4,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[4,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[4,2] / (25*16) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[4,2] / (25*16) * 1e3, 1)}   \\
-%\Sexpr{data[5,1]} & \Sexpr{round(data[5,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[5,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[5,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[5,2] / (25*16) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[5,2] / (25*16) * 1e3, 1)}   \\ 
+%data[1,1] & round(data[1,2] / (15*8) * 1e3, 1)   
+%  & round(data.w1[1,2] / (15*8) * 1e3, 1)   
+%  & round(data.w2[1,2] / (15*8) * 1e3, 1)   
+%  & round(data.w3[1,2] / (15*8) * 1e3, 1) 
+%  & round(data.w4[1,2] / (15*8) * 1e3, 1)   \\
+%data[2,1] & round(data[2,2] / (15*8) * 1e3, 1)   
+%  & round(data.w1[2,2] / (15*8) * 1e3, 1)   
+%  & round(data.w2[2,2] / (15*8) * 1e3, 1)   
+%  & round(data.w3[2,2] / (15*8) * 1e3, 1) 
+%  & round(data.w4[2,2] / (15*8) * 1e3, 1)   \\
+%data[3,1] & round(data[3,2] / (15*8) * 1e3, 1)   
+%  & round(data.w1[3,2] / (15*8) * 1e3, 1)   
+%  & round(data.w2[3,2] / (15*8) * 1e3, 1)   
+%  & round(data.w3[3,2] / (15*8) * 1e3, 1) 
+%  & round(data.w4[3,2] / (15*8) * 1e3, 1)   \\
+%data[4,1] & round(data[4,2] / (25*16) * 1e3, 1)   
+%  & round(data.w1[4,2] / (25*16) * 1e3, 1)   
+%  & round(data.w2[4,2] / (25*16) * 1e3, 1)   
+%  & round(data.w3[4,2] / (25*16) * 1e3, 1) 
+%  & round(data.w4[4,2] / (25*16) * 1e3, 1)   \\
+%data[5,1] & round(data[5,2] / (25*16) * 1e3, 1)   
+%  & round(data.w1[5,2] / (25*16) * 1e3, 1)   
+%  & round(data.w2[5,2] / (25*16) * 1e3, 1)   
+%  & round(data.w3[5,2] / (25*16) * 1e3, 1) 
+%  & round(data.w4[5,2] / (25*16) * 1e3, 1)   \\ 
 %  %& & & & & \\   
-%\Sexpr{data[6,1]} & \Sexpr{round(data[6,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[6,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[6,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[6,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[6,2] / (25*16) * 1e3, 1)}  \\
-%\Sexpr{data[7,1]} & \Sexpr{round(data[7,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[7,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[7,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[7,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[7,2] / (25*16) * 1e3, 1)}  \\
-%\Sexpr{data[8,1]} & \Sexpr{round(data[8,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[8,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[8,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[8,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[8,2] / (25*16) * 1e3, 1)}  \\
-%\Sexpr{data[9,1]} & \Sexpr{round(data[9,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[9,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[9,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[9,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[9,2] / (25*16) * 1e3, 1)}  \\  
-%\Sexpr{data[10,1]} & \Sexpr{round(data[10,2] / (25*24) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[10,2] / (25*24) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[10,2] / (25*24) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[10,2] / (25*24) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[10,2] / (25*24) * 1e3, 1)}  \\   
+%data[6,1] & round(data[6,2] / (25*16) * 1e3, 1)  
+%  & round(data.w1[6,2] / (25*16) * 1e3, 1)  
+%  & round(data.w2[6,2] / (25*16) * 1e3, 1)  
+%  & round(data.w3[6,2] / (25*16) * 1e3, 1)
+%  & round(data.w4[6,2] / (25*16) * 1e3, 1)  \\
+%data[7,1] & round(data[7,2] / (25*16) * 1e3, 1)  
+%  & round(data.w1[7,2] / (25*16) * 1e3, 1)  
+%  & round(data.w2[7,2] / (25*16) * 1e3, 1)  
+%  & round(data.w3[7,2] / (25*16) * 1e3, 1)
+%  & round(data.w4[7,2] / (25*16) * 1e3, 1)  \\
+%data[8,1] & round(data[8,2] / (25*16) * 1e3, 1)  
+%  & round(data.w1[8,2] / (25*16) * 1e3, 1)  
+%  & round(data.w2[8,2] / (25*16) * 1e3, 1)  
+%  & round(data.w3[8,2] / (25*16) * 1e3, 1)
+%  & round(data.w4[8,2] / (25*16) * 1e3, 1)  \\
+%data[9,1] & round(data[9,2] / (25*16) * 1e3, 1)  
+%  & round(data.w1[9,2] / (25*16) * 1e3, 1)  
+%  & round(data.w2[9,2] / (25*16) * 1e3, 1)  
+%  & round(data.w3[9,2] / (25*16) * 1e3, 1)
+%  & round(data.w4[9,2] / (25*16) * 1e3, 1)  \\  
+%data[10,1] & round(data[10,2] / (25*24) * 1e3, 1)  
+%  & round(data.w1[10,2] / (25*24) * 1e3, 1)  
+%  & round(data.w2[10,2] / (25*24) * 1e3, 1)  
+%  & round(data.w3[10,2] / (25*24) * 1e3, 1)
+%  & round(data.w4[10,2] / (25*24) * 1e3, 1)  \\   
 %  %& & & & & \\ 
-%\Sexpr{data[11,1]} & \Sexpr{round(data[11,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[11,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[11,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[11,2] / (25*26) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[11,2] / (25*26) * 1e3, 1)} \\
-%\Sexpr{data[12,1]} & \Sexpr{round(data[12,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[12,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[12,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[12,2] / (25*26) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[12,2] / (25*26) * 1e3, 1)} \\  
-%\Sexpr{data[13,1]} & \Sexpr{round(data[13,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[13,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[13,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[13,2] / (25*30) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[13,2] / (25*30) * 1e3, 1)} \\
-%\Sexpr{data[14,1]} & \Sexpr{round(data[14,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[14,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[14,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[14,2] / (25*30) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[14,2] / (25*30) * 1e3, 1)} \\
+%data[11,1] & round(data[11,2] / (25*26) * 1e3, 1) 
+%  & round(data.w1[11,2] / (25*26) * 1e3, 1) 
+%  & round(data.w2[11,2] / (25*26) * 1e3, 1) 
+%  & round(data.w3[11,2] / (25*26) * 1e3, 1)
+%  & round(data.w4[11,2] / (25*26) * 1e3, 1) \\
+%data[12,1] & round(data[12,2] / (25*26) * 1e3, 1) 
+%  & round(data.w1[12,2] / (25*26) * 1e3, 1) 
+%  & round(data.w2[12,2] / (25*26) * 1e3, 1) 
+%  & round(data.w3[12,2] / (25*26) * 1e3, 1)
+%  & round(data.w4[12,2] / (25*26) * 1e3, 1) \\  
+%data[13,1] & round(data[13,2] / (25*30) * 1e3, 1) 
+%  & round(data.w1[13,2] / (25*30) * 1e3, 1) 
+%  & round(data.w2[13,2] / (25*30) * 1e3, 1) 
+%  & round(data.w3[13,2] / (25*30) * 1e3, 1)
+%  & round(data.w4[13,2] / (25*30) * 1e3, 1) \\
+%data[14,1] & round(data[14,2] / (25*30) * 1e3, 1) 
+%  & round(data.w1[14,2] / (25*30) * 1e3, 1) 
+%  & round(data.w2[14,2] / (25*30) * 1e3, 1) 
+%  & round(data.w3[14,2] / (25*30) * 1e3, 1)
+%  & round(data.w4[14,2] / (25*30) * 1e3, 1) \\
 %\hline
 %\end{tabular}
 %\end{center}
@@ -1539,67 +1332,48 @@ could represent top 10 and top 25 lists so abundantly.
 
 We close with a general discussion on greatness.  The conclusions of this 
 article have broader implications than just rankings of baseball players.  
-Who are the greatest all-time athletes in other sports, 
-artists, 
+Who are the greatest all-time athletes in other sports,
 musicians, 
 actors and actresses,
 scientists, or 
 leaders?  Do our perceptions change when we focus beyond nostalgia?  
 
-\section*{Acknowledgements}
-This work would not be what it is today without the many conversations that 
-the author had with family, friends, and peers.
-I am very grateful to 
-Jim Albert, 
-Peter M. Aronow, 
-James Burrell, 
-Xiaoxuan Cai, 
-R. Dennis Cook, 
-Forrest W. Crawford, 
-Steven A. Culpepper, 
-Andrew Depuy, 
-Evan Eck, 
-Fred Eck, 
-Joe Eck, 
-Kim Eck, 
-Marcus A. Eck, 
-Michael Eck, 
-Phil Eck, 
-Shirley Eck, 
-Wes Eck, 
-Margret Erlendsdottir, 
-Soheil Eshghi, 
-Charles J. Geyer, 
-Jon Hill,
-Ed Kaplan, 
-Zehong (Richard) Li, 
-Adam Maidman, 
-Aaron Molstad, 
-Olga Morozova, 
-Oliver Om, 
-Kerry Purcell, 
-Ken Ressel, 
-Erick Ruuttila, 
-Jesse Ruuttila, 
-Anne Schuh, 
-Bill Schuh, 
-Yushuf Sharker, 
-Ben Sherwood, 
-Stephanna Szotkowski,
-Dootika Vats,
-Brandon Whited,
-Jarret Zook,
-the editorial board at Chance, 
-and 
-two anonymous referees at Chance
-for helpful comments and discussions (some of which went very long).
-This work was partially supported by NIH grants NICHD DP2 HD091799-01.
+%\section*{Acknowledgements}
+%This work was partially supported by NIH grants NICHD DP2 HD091799-01.
+%I am grateful to
+%Jim Albert, 
+%Peter M. Aronow, 
+%James Burrell, 
+%R. Dennis Cook, 
+%Forrest W. Crawford, 
+%Andrew Depuy, 
+%Evan Eck, 
+%Kim Eck, 
+%Marcus A. Eck, 
+%Michael Eck, 
+%Phil Eck, 
+%Wes Eck, 
+%Charles J. Geyer, 
+%Adam Maidman, 
+%Oliver Om,
+%Ken Ressel, 
+%Erick Ruuttila, 
+%Jesse Ruuttila, 
+%Anne Schuh, 
+%Bill Schuh, 
+%Yushuf Sharker, 
+%Ben Sherwood, 
+%Stephanna Szotkowski,
+%Dootika Vats,
+%and
+%Brandon Whited 
+%for helpful comments and discussions.
 
 
 %\section*{Appendix A: Mathematical Details}
 %We revisit the calculation discussed in the Statistical Evidence section. The chance that 
 %an eligible MLB player whose career was largely before 1950 appears in the top 
-%10 occurs with probability $p = \Sexpr{signif(data[8,3], 3)}$ 
+%10 occurs with probability $p = signif(data[8,3], 3)$ 
 %(up to three significant figures).  We use the binomial distribution to 
 %calculate the probability of at least 6 eligible MLB players whose career 
 %started before 1950 appear in the top 10.  More formally, we are interested in 
@@ -1630,8 +1404,8 @@ This work was partially supported by NIH grants NICHD DP2 HD091799-01.
 %before 1950 appear in the top 10 is given by
 %$$  
 %  P(X = 6) = {10 \choose 6}p^6(1-p)^{4} 
-%    = \Sexpr{choose(10, 6)} \times \Sexpr{p}^6 \times (1 - \Sexpr{p})^4
-%    = \Sexpr{dbinom(6, size = 10, p = p)} . 
+%    = choose(10, 6) \times p^6 \times (1 - p)^4
+%    = dbinom(6, size = 10, p = p) . 
 %$$
 %R statistical software was used as a calculator throughout the Statistical 
 %Evidence section.  Similar calculations to this one are made to calculate 

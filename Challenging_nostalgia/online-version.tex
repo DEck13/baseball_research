@@ -133,7 +133,7 @@ and is close to 1947, the year in which baseball became integrated.
 In this paper we do not compare baseball players via their statistical 
 accomplishments.  Such measures exhibit era biases that are confounded with 
 actual performance.  Consider the single season homerun record as an example. 
-Before Babe Ruth, the single season homerun record was 27 by Ned Williams in 
+Before Babe Ruth, the single season homerun record was 27 by Ned Williamson in 
 1884. %\citep{reichler1985encyclopedia}.  
 Babe Ruth broke this record in 1919 
 when he hit 29 homeruns.  He subsequently destroyed his own record in 
@@ -222,14 +222,6 @@ have changed drastically over time.  %\citep{gould1996fullhouse}. \\
 
 
 \section{Data}
-
-
-
-
-
-
-
-
 
 
 
@@ -343,7 +335,7 @@ population that existed at or before 1950 is 0.187.
 
 
 % latex table generated in R 3.4.4 by xtable 1.8-3 package
-% Fri Jun 21 07:31:25 2019
+% Sun Aug 18 17:40:40 2019
 \begin{table}[ht]
 \centering
 \begin{tabular}{lccc}
@@ -353,27 +345,26 @@ population that existed at or before 1950 is 0.187.
 1 & 1880 & 4.440 & 0.013 \\ 
   2 & 1890 & 5.010 & 0.027 \\ 
   3 & 1900 & 5.580 & 0.043 \\ 
-  4 & 1910 & 8.560 & 0.068 \\ 
+  4 & 1910 & 8.550 & 0.068 \\ 
   5 & 1920 & 8.930 & 0.093 \\ 
   6 & 1930 & 9.920 & 0.122 \\ 
   7 & 1940 & 11.130 & 0.154 \\ 
   8 & 1950 & 11.590 & 0.187 \\ 
   9 & 1960 & 18.420 & 0.240 \\ 
   10 & 1970 & 24.490 & 0.310 \\ 
-  11 & 1980 & 33.930 & 0.407 \\ 
+  11 & 1980 & 33.930 & 0.408 \\ 
   12 & 1990 & 37.460 & 0.515 \\ 
-  13 & 2000 & 60.660 & 0.689 \\ 
-  14 & 2010 & 72.270 & 0.896 \\ 
-  15 & 2015 & 36.140 & 1.000 \\ 
+  13 & 2000 & 60.600 & 0.689 \\ 
+  14 & 2010 & 72.210 & 0.896 \\ 
+  15 & 2015 & 36.100 & 1.000 \\ 
    \hline
 \end{tabular}
-\caption{Eligible MLB population throughout the years. The first column 
-    indicates the year, the second column indicates the estimated MLB eligible 
-    population size (in millions), and the third column indicates the proportion 
-    of the MLB eligible population in row x that was eligbile at or before row x.} 
+\caption{Eligible MLB population throughout the years. The first 
+    column indicates the year, the second column indicates the 
+    estimated MLB eligible population size (in millions), and the 
+    third column indicates the proportion of the MLB eligible  
+    population in row x that was eligbile at or before row x.} 
 \end{table}
-
-
 
 
 
@@ -509,25 +500,25 @@ The results are provided in Table~\ref{probvalues}.
   &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
   \hline
 probability of extreme event in top 10 list 
-  & 0.000562 
-  & 0.00448 
-  & 0.00448 
-  & 0.0249 \\
+  & 0.000563 
+  & 0.00449 
+  & 0.00449 
+  & 0.025 \\
 probability of extreme event in top 25 list 
-  & 0.0000057 
-  & 0.0000057 
-  & 0.000826 
-  & 0.00322 \\
+  & 0.0000058 
+  & 0.0000058 
+  & 0.000829 
+  & 0.00323 \\
 chance of extreme event in top 10 list 
-  & 1 in 1780 
+  & 1 in 1776 
   & 1 in 223 
   & 1 in 223 
   & 1 in 40 \\
 chance of extreme event in top 25 list 
-  & 1 in 174816 
-  & 1 in 174816 
-  & 1 in 1210 
-  & 1 in 310 \\
+  & 1 in 173989 
+  & 1 in 173989 
+  & 1 in 1206 
+  & 1 in 309 \\
   \hline
 \end{tabular}
 \end{center}
@@ -540,7 +531,7 @@ As an example of how to interpret the results of Table~\ref{probvalues},
 continue with bWAR's top 10 list.  Table~\ref{probvalues} shows that the 
 probability of observing 6 or more players that started their careers at 
 or before 1950 of the top 10 all time players, based on population 
-dynamics, is about 0.00448 
+dynamics, is about 0.00449 
 (a chance of 1 in 223).
 The same interpretation applies to remainder of Table~\ref{probvalues}.  
 The results provided in Table~\ref{probvalues} present overwhelming evidence 
@@ -724,7 +715,7 @@ overcompensate for any potential shortcomings of no weighting.
 
 
 % latex table generated in R 3.4.4 by xtable 1.8-3 package
-% Fri Jun 21 07:31:26 2019
+% Sun Aug 18 17:40:40 2019
 \begin{table}[ht]
 \centering
 \begingroup\footnotesize
@@ -757,44 +748,44 @@ w1 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 
  weight & &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
  \hline
 w1 & probability of extreme event in top 10 list 
-  & 0.00121 
-  & 0.00839 
-  & 0.00839 
-  & 0.0406 \\
+  & 0.00122 
+  & 0.0084 
+  & 0.0084 
+  & 0.0407 \\
 & probability of extreme event in top 25 list 
-  & 0.0000267 
-  & 0.0000267 
+  & 0.0000268 
+  & 0.0000268 
   & 0.0025 
-  & 0.00845 \\
+  & 0.00847 \\
 & chance of extreme event in top 10 list 
-  & 1 in 824 
+  & 1 in 823 
   & 1 in 119 
   & 1 in 119 
   & 1 in 25 \\
 & chance of extreme event in top 25 list 
-  & 1 in 37519 
-  & 1 in 37519 
-  & 1 in 401 
+  & 1 in 37371 
+  & 1 in 37371 
+  & 1 in 400 
   & 1 in 118 \\
   & & & & & \\
 w2 & probability of extreme event in top 10 list 
-  & 0.0023 
+  & 0.00231 
   & 0.0141 
   & 0.0141 
-  & 0.0604 \\
+  & 0.0605 \\
 & probability of extreme event in top 25 list 
-  & 0.0000944 
-  & 0.0000944 
-  & 0.00608 
-  & 0.0182 \\
+  & 0.0000947 
+  & 0.0000947 
+  & 0.0061 
+  & 0.0183 \\
 & chance of extreme event in top 10 list 
   & 1 in 434 
   & 1 in 71 
   & 1 in 71 
   & 1 in 17 \\
 & chance of extreme event in top 25 list 
-  & 1 in 10595 
-  & 1 in 10595 
+  & 1 in 10557 
+  & 1 in 10557 
   & 1 in 164 
   & 1 in 55 \\
   & & & & & \\
@@ -802,12 +793,12 @@ w3 & probability of extreme event in top 10 list
   & 0.0311 
   & 0.109 
   & 0.109 
-  & 0.273 \\
+  & 0.274 \\
 & probability of extreme event in top 25 list 
   & 0.0128 
   & 0.0128 
   & 0.152 
-  & 0.266 \\
+  & 0.267 \\
 & chance of extreme event in top 10 list 
   & 1 in 32 
   & 1 in 9 
@@ -820,23 +811,23 @@ w3 & probability of extreme event in top 10 list
   & 1 in 3.8 \\
   & & & & & \\  
 w4 & probability of extreme event in top 10 list 
-  & 0.00622 
-  & 0.0311 
-  & 0.0311 
+  & 0.00623 
+  & 0.0312 
+  & 0.0312 
   & 0.11 \\
 & probability of extreme event in top 25 list 
-  & 0.000649 
-  & 0.000649 
-  & 0.0227 
+  & 0.00065 
+  & 0.00065 
+  & 0.0228 
   & 0.0561 \\
 & chance of extreme event in top 10 list 
-  & 1 in 161 
+  & 1 in 160 
   & 1 in 32 
   & 1 in 32 
   & 1 in 9.1 \\
 & chance of extreme event in top 25 list 
-  & 1 in 1542 
-  & 1 in 1542 
+  & 1 in 1537 
+  & 1 in 1537 
   & 1 in 44 
   & 1 in 18 \\
   \hline
@@ -993,7 +984,7 @@ year & eligible pop. & number of teams & roster size & eligible pop. per roster 
 %data[1,1] & data[1,2]  & 8  & 15 & round(data[1,2] / (8*15) * 1e3, 1)   \\
 1890 & 5.01  & 8  & 15 & 41.7   \\
 %data[3,1] & data[3,2]  & 8  & 15 & round(data[3,2] / (8*15) * 1e3, 1)   \\
-1910 & 8.56  & 16 & 25 & 21.4  \\
+1910 & 8.55  & 16 & 25 & 21.4  \\
 %data[5,1] & data[5,2]  & 16 & 25 & round(data[5,2] / (16*25) * 1e3, 1)  \\
   %& & & &  \\
 1930 & 9.92  & 16 & 25 & 24.8  \\
@@ -1005,7 +996,7 @@ year & eligible pop. & number of teams & roster size & eligible pop. per roster 
 %data[11,1] & data[11,2] & 26 & 25 & round(data[11,2] / (26*25) * 1e3, 1) \\
 1990 & 37.46 & 26 & 25 & 57.6 \\
 %data[13,1] & data[13,2] & 30 & 25 & round(data[13,2] / (30*25) * 1e3, 1) \\
-2010 & 72.27 & 30 & 25 & 96.4 \\
+2010 & 72.21 & 30 & 25 & 96.3 \\
 \hline
 \end{tabular}
 \end{center}
@@ -1361,6 +1352,7 @@ Steven A. Culpepper,
 Andrew Depuy, 
 Evan Eck, 
 Fred Eck, 
+Joe Eck, 
 Kim Eck, 
 Marcus A. Eck, 
 Michael Eck, 
@@ -1370,6 +1362,7 @@ Wes Eck,
 Margret Erlendsdottir, 
 Soheil Eshghi, 
 Charles J. Geyer, 
+Jon Hill,
 Ed Kaplan, 
 Zehong (Richard) Li, 
 Adam Maidman, 
@@ -1387,6 +1380,7 @@ Ben Sherwood,
 Stephanna Szotkowski,
 Dootika Vats,
 Brandon Whited,
+Jarret Zook,
 the editorial board at Chance, 
 and 
 two anonymous referees at Chance

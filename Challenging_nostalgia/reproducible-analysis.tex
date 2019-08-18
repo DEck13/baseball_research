@@ -1,4 +1,54 @@
-\documentclass[11pt]{article}
+\documentclass[11pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -13,14 +63,13 @@
 
 \usepackage{geometry}
 \geometry{margin=1in}
-
-
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 \begin{center}
 
-\noindent {\huge \bf Challenging nostalgia and performance metrics in baseball} \\
+\noindent {\huge \bf Supporting data analysis for 
+  ``Challenging nostalgia and performance metrics in baseball''} \\
 
 \vspace{.2in}
 
@@ -28,35 +77,56 @@ Daniel J. Eck
 
 \vspace{.01in}
 
-\textit{Department of Biostatistics, Yale University, New Haven, CT, 06510. \\ \url{daniel.eck@yale.edu}}
+\textit{Department of Statistics, University of Illinois Urbana-Champaign \\ 
+email: \url{dje13@illinois.edu}}
 
 \vspace{.1in}
 
 \end{center}
 
-%\begin{abstract}
-%We show that the great baseball players that started their 
-%careers before 1950 are overrepresented among rankings of baseball's all time 
-%greatest players.  The year 1950 coincides with the decennial US Census that 
-%is closest to when Major League Baseball (MLB) was integrated in 1947. 
-%We also show that performance metrics used to compare players have substantial 
-%era biases that favor players who started their careers before 1950. 
-%In showing that the these players are overrepresented, no individual 
-%statistics or era adjusted metrics are used.  Instead, we argue that the eras 
-%in which players played are fundamentally different and are not comparable.  
-%In particular, there were significantly fewer eligible MLB players available 
-%at and before 1950.  As a consequence of this and other differences across 
-%eras, we argue that popular opinion, performance metrics, and expert opinion 
-%over include players that started their careers before 1950 in their rankings 
-%of baseball's all time greatest players. 
-%\end{abstract}
+\begin{abstract}
+We show that the great baseball players that started their 
+careers before 1950 are overrepresented among rankings of baseball's all time 
+greatest players.  The year 1950 coincides with the decennial US Census that 
+is closest to when Major League Baseball (MLB) was integrated in 1947. 
+We also show that performance metrics used to compare players have substantial 
+era biases that favor players who started their careers before 1950. 
+In showing that the these players are overrepresented, no individual 
+statistics or era adjusted metrics are used.  Instead, we argue that the eras 
+in which players played are fundamentally different and are not comparable.  
+In particular, there were significantly fewer MLB eligible players available 
+at and before 1950.  As a consequence of this and other differences across 
+eras, we argue that popular opinion, performance metrics, and expert opinion 
+over include players that started their careers before 1950 in their rankings 
+of baseball's all time greatest players. 
+\end{abstract}
 
 %\noindent{\bf Keywords}: Sabermetrics, binomial distribution, 
 %population dynamics, baseball ranking, era confounding \\
 
+\section*{Creating this document}
+
+The purpose of this document is to make transparent the analysis in 
+\citet{eck2019challenging}.  All calculations and tables that appear in 
+\citet{eck2019challenging} are displayed in this document.  
+This document is a technical report that can be compiled by anyone with a 
+computer who has the UN Census data file,
+\begin{center}
+\begin{verbatim}
+  WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv
+\end{verbatim}
+\end{center}
+This file is located at \url{https://population.un.org/wpp/Download/Standard/Population/}. 
+The relevant file is the population by age groups - male .xls file under the 
+age composition sub group.  The corresponding .csv file is included on the 
+author's GitHub page along with this technical report.  
+
+
+
+
 
 \section{Introduction}
-\doublespacing
+%\doublespacing
 It is easy to be blown away by the accomplishments of great old time 
 baseball players when you look at their raw or advanced baseball statistics.  
 %% Consider making a chart for the mind-boggling seasons and careers.
@@ -144,7 +214,7 @@ gotten better as time has progressed.
 %\citep{gould1996fullhouse, schmidt2005concentration}.  
 Specifically, it is widely acknowledged that 
 fastball velocity, pitch repertoire, training methods, and management 
-strategies have all improved over time.  
+strategies have all improved over time   
 %\citep{lewis2004moneyball, keh2013offseason, thorn2014pitching, 
 %doran2015velocity, arthur2016bullpen, castrovince2016velocity}.  
 We do not find the teleportation perspective to be of 
@@ -158,178 +228,18 @@ players from earlier eras are overrepresented among baseball's all time greats.
 We justify our findings through the consideration of population dynamics which 
 have changed drastically over time.  %\citep{gould1996fullhouse}. \\
 
-%The only statistics that are necessary for this analysis are the year when a 
-%player began his career and the eligible MLB population at that time. 
-%The population data (in Section 2) is constructed and 
-%used to formally test (in Section 4) whether or not too many old time players 
-%are represented in ESPN's top 25 list \citep*{ESPN}. We do discover that there 
-%are far too many old time players included in ESPN's top 25 list. The extent 
-%of our conclusions conflicts with many conventional baseball evaluation 
-%metrics as well as a sophisticated era-adjustment detrending metric 
-%\citep*{petersen}. The reference \citet*{petersen} will henceforth be called 
-%PPS due to repeated use. A detailed comparison and critique of the 
-%methodologies underlying the evaluation metrics and our initial analysis is 
-%then given. 
-%kahrl2016wagner
 
 
 \section{Data}
 
-<<pops, echo = FALSE, cache = TRUE, warnings = FALSE, errors = FALSE>>=
-# load in UN dataset and remove irrelevant variables
-options(warn=-1)
-WPP2010 <- 
-  read.csv("WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv", 
-  header = TRUE)
-colnames(WPP2010)[3] <- c("region")
-colnames(WPP2010)[6] <- c("year")
-colnames(WPP2010)[7:17] <- paste("age", 0:10 * 5, sep = "")
-WPP2010 <- WPP2010[, c(3, 6, 11, 12)]
-
-# restrict attention to countries of interest
-countries <- c("Mexico", "Aruba", "Panama", 
-  "Columbia", "Cuba", "Honduras", "Jamaica", 
-  "Bahamas", "Peru", "Dominican Republic", 
-  "Netherlands Antilles", "Puerto Rico", 
-  "Venezuela (Bolivarian Republic of)", "Nicaragua", 
-  "United States Virgin Islands", "Canada", 
-  "United States of America")
-
-# obtain population data for all countries for all years
-dataset <- WPP2010[WPP2010[, 1] %in% countries, ]
-dataset[, 3] <- as.numeric(levels(dataset[, 3]))[dataset[, 3]]
-dataset[, 4] <- as.numeric(levels(dataset[, 4]))[dataset[, 4]]
-dataset[, 3:4] <- dataset[, 3:4] / 1000
-
-# get population dataset for this analysis corresponding to the 
-# Census years 
-dataset.years <- dataset[dataset[, 2] %in% 
-  c("1960", "1970", "1980", "1990", "2000", "2010"), ]
-dataset.years[, 2] <- factor(dataset.years[, 2])
-dataset.years.list <- split(dataset.years, f = as.factor(dataset.years[, 2]))
-pops <- unlist(lapply(dataset.years.list, function(x) sum(x[, 3:4])))
-
-#approximation from CIA World Factbook at 
-#https://www.cia.gov/library/publications/the-world-factbook/geos/print_tw.html
-dataTaiwan2000 <- 1.50 
-dataTaiwan2010 <- 1.50 
-pops[5] <- pops[5] + dataTaiwan2000
-pops[6] <- pops[6] + dataTaiwan2010
-
-## Canadian population before 1960
-#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
-Can1881 <- 0.21 + 0.17
-#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
-Can1891 <- 0.24 + 0.19  
-#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
-Can1901 <- 0.26 + 0.22
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-CanM1881 <- 2.19  
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-CanM1891 <- 2.16  
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-CanM1901 <- 2.75
-propCan2030 <- (Can1881 + Can1891 + Can1901) / 
-  (CanM1881 + CanM1891 + CanM1901)
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1911 <- 3.82 * propCan2030  
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1921 <- 4.53 * propCan2030 
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1931 <- 5.37 * propCan2030 
-#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm
-Can1941 <- 5.90 * propCan2030 
-#https://www65.statcan.gc.ca/acyb02/1967/acyb02_19670194010-eng.htm
-Can1951 <- 7.09 * propCan2030 
-  
-## US population before 1960
-#https://www2.census.gov/library/publications/decennial/1880/vol-01-population/1880_v1-15.pdf
-US1880 <- 2.22 + 1.84  
-#https://www2.census.gov/library/publications/decennial/1900/volume-2/volume-2-p5.pdf
-US1900 <- 2.73 + 2.37  
-US1890 <- mean(c(US1880,US1900))
-#https://www2.census.gov/library/publications/decennial/1910/volume-1/volume-1-p6.pdf
-US1910 <- 4.07 + 3.79  
-#https://www2.census.gov/library/publications/decennial/1920/volume-2/41084484v2ch03.pdf
-US1920 <- 4.02 + 4.09  
-#https://www2.census.gov/library/publications/decennial/1930/population-volume-2/16440598v2ch11.pdf
-US1930 <- 4.69 + 4.25  
-#https://www2.census.gov/library/publications/decennial/1940/population-volume-4/33973538v4p1ch1.pdf
-US1940 <- 1.08 + 1.06 + 1.01 + 1.00 + 1.01 + 
-  1.01 + 0.99 + 0.98 + 0.97 + 0.95 
-#https://www2.census.gov/library/publications/decennial/1950/population-volume-2/21983999v2p1ch2.pdf
-US1950 <- 5.00 + 5.30 
-
-# load in UN dataset and remove irrelevant variables
-options(warn=-1)
-WPP2010 <- 
-  read.csv("WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv", 
-  header = TRUE)
-colnames(WPP2010)[3] <- c("region")
-colnames(WPP2010)[6] <- c("year")
-colnames(WPP2010)[7:17] <- paste("age", 0:10 * 5, sep = "")
-WPP2010 <- WPP2010[, c(3, 6, 11, 12)]
-
-# get population data for relevant countries 
-countries <- c("Brazil", "Japan", "Philippines", "Republic of Korea")
-dataset <- WPP2010[WPP2010[, 1] %in% countries, ]
-dataset[, 3] <- as.numeric(levels(dataset[, 3]))[dataset[, 3]]
-dataset[, 4] <- as.numeric(levels(dataset[, 4]))[dataset[, 4]]
-dataset[, 3:4] <- dataset[, 3:4] / 1000
-
-# get population dataset for this analysis corresponding to the 
-# Census years 
-dataset.years <- dataset[dataset[, 2] %in% c("2000", "2010"), ]
-dataset.years[, 2] <- factor(dataset.years[, 2])
-# Brazil age 20-24, year 2010
-Brazil2010 <- round(dataset.years[8, 3], 2)
-dataset.years <- dataset.years[c(1:3,5:7), ]
-dataset.years.list <- split(dataset.years, f = as.factor(dataset.years[, 2]))
-aspop <- unlist(lapply(dataset.years.list, function(x) sum(x[, 3:4])))
-
-# refine the population dataset that is used in the analysis
-pops <- as.numeric(c(US1880 + Can1881, 
-  US1890 + Can1891, 
-  US1900 + Can1901, 
-  US1910 + Can1911, 
-  US1920 + Can1921, 
-  US1930 + Can1931, 
-  US1940 + Can1941, 
-  US1950 + Can1951, 
-  pops))
-pops[14] <- pops[14] + Brazil2010 
-pops[13:14] <- pops[13:14] + aspop
-pops <- c(pops, pops[14]/2)
-
-# proportion of total population in current year and previous years
-pop_prop <- cumsum(pops) / sum(pops)
-
-# build the dataset
-year <- c(1880 + 0:13 * 10, 2015)
-pop <- pops
-data <- cbind(year, pop, pop_prop)
-data[, 2] <- round(data[, 2], 2)
-@
-
-
 The MLB eligible population is not well-defined.  As a proxy, we can say 
 that the MLB eligible population is the decennial count of males aged 
-20-29 that are living in the United States (US) 
-%(collected on years 1880, 1890,...) 
-and Canada. 
-%(collected on years 1881, 1891,...).
+20-29 that are living in the United States (US) and Canada. 
 Baseball was segregated on racial grounds until 1947.  As a result, 
 African American and Hispanic American population counts in the US  
 and Canada are added to our dataset starting in 1960.  The year 1960 is chosen 
 because the integration of the MLB was slow as noted in Armour's work on the 
 integration of baseball in the Society for American Baseball Research.
-
-%African American and Hispanic US citizens were not the only groups 
-%discriminated against by pre- (and post-) integration baseball.  Players from 
-%Central and South American countries and the Caribbean islands were also 
-%discriminated against.  %Citizens from those countries are added to the 
-%eligible MLB player pool in 1960.  The population data for these countries 
-%are obtained from the UN.
 
 Players from Central and South American countries and the Caribbean islands 
 were also targets of discrimination.
@@ -354,101 +264,270 @@ and the United States Virgin Islands.
 In the mid to late 1990s, the MLB and minors saw an influx of Asian baseball 
 players from Japan, South Korea, Taiwan, and the Philippines.  
 We have added the populations of these countries to the MLB eligible population 
-starting in 2000.  %We obtain the Japanese, South Korean, and Philippines 
-%census data from the UN %\citet*{UN}.  
-%The census data from Taiwan is estimated from the CIA World Factbook, %\citep{CIA}, 
-%the same age stratification was not obtainable so we use the population of 
-%males ages 0-14 for the 2010 Taiwanese MLB eligible population and males ages 
-%15-24 for the 2000 Taiwanese MLB eligible population.  
-In 2010, the MLB established a national training center in Brazil %\citep{Brazil}, 
-as noted in Lor{\'e}'s work on the popularity of baseball in Brazil in the 
-Culture Trip.
-%\bibitem[Lor{\'e}(2017)Lor{\'e}]{Brazil}
-%Lor{\'e}, Michael (2017),
-%\newblock ``Baseball is Gaining Popularity in Brazil,''
-%\newblock Culture Trip. 
-%\url{https://theculturetrip.com/south-america/brazil/articles/baseball-is-gaining-popularity-in-brazil/}
-Therefore, we have included the Brazilian population of 20-24 year old 
-men  
-%population obtained from the UN %\citet{UN} 
-into our MLB eligible population starting in 2010.  
-%The United Nations Census does not have 
-%information after 2010.  
+starting in 2000.  In 2010, the MLB established a national training center in 
+Brazil as noted in Lor{\'e}'s work on the popularity of baseball in Brazil in 
+the Culture Trip.  Therefore, we have included the Brazilian population of 
+20-24 year old men into our MLB eligible population starting in 2010.  
 We estimate that the 2011-2015 MLB eligible population is half of the 
 MLB eligible population counted in the 2010 decennial Censuses.  We expect 
 that this underestimates the actual 2011-2015 MLB eligible population 
 since we have observed a constant increase in the overall MLB eligible 
 population as time increases. 
 
+We now load in the UN population dataset and begin constructing the population 
+dataset used in our analysis.
 
-%This information is readily obtainable and does not explicitly double count 
-%individuals over the course of its collection.  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# load in UN dataset and remove irrelevant variables}
+\hlkwd{options}\hlstd{(}\hlkwc{warn}\hlstd{=}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlstd{WPP2010} \hlkwb{<-}
+  \hlkwd{read.csv}\hlstd{(}\hlstr{"WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv"}\hlstd{,}
+  \hlkwc{header} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlkwd{colnames}\hlstd{(WPP2010)[}\hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"region"}\hlstd{)}
+\hlkwd{colnames}\hlstd{(WPP2010)[}\hlnum{6}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"year"}\hlstd{)}
+\hlkwd{colnames}\hlstd{(WPP2010)[}\hlnum{7}\hlopt{:}\hlnum{17}\hlstd{]} \hlkwb{<-} \hlkwd{paste}\hlstd{(}\hlstr{"age"}\hlstd{,} \hlnum{0}\hlopt{:}\hlnum{10} \hlopt{*} \hlnum{5}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{""}\hlstd{)}
+\hlstd{WPP2010} \hlkwb{<-} \hlstd{WPP2010[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{6}\hlstd{,} \hlnum{11}\hlstd{,} \hlnum{12}\hlstd{)]}
+
+\hlcom{# restrict attention to countries of interest}
+\hlstd{countries} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Mexico"}\hlstd{,} \hlstr{"Aruba"}\hlstd{,} \hlstr{"Panama"}\hlstd{,}
+  \hlstr{"Columbia"}\hlstd{,} \hlstr{"Cuba"}\hlstd{,} \hlstr{"Honduras"}\hlstd{,} \hlstr{"Jamaica"}\hlstd{,}
+  \hlstr{"Bahamas"}\hlstd{,} \hlstr{"Peru"}\hlstd{,} \hlstr{"Dominican Republic"}\hlstd{,}
+  \hlstr{"Netherlands Antilles"}\hlstd{,} \hlstr{"Puerto Rico"}\hlstd{,}
+  \hlstr{"Venezuela (Bolivarian Republic of)"}\hlstd{,} \hlstr{"Nicaragua"}\hlstd{,}
+  \hlstr{"United States Virgin Islands"}\hlstd{,} \hlstr{"Canada"}\hlstd{,}
+  \hlstr{"United States of America"}\hlstd{)}
+
+\hlcom{# obtain population data for all countries for all years}
+\hlstd{dataset} \hlkwb{<-} \hlstd{WPP2010[WPP2010[,} \hlnum{1}\hlstd{]} \hlopt{%in%} \hlstd{countries, ]}
+\hlstd{dataset[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{levels}\hlstd{(dataset[,} \hlnum{3}\hlstd{]))[dataset[,} \hlnum{3}\hlstd{]]}
+\hlstd{dataset[,} \hlnum{4}\hlstd{]} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{levels}\hlstd{(dataset[,} \hlnum{4}\hlstd{]))[dataset[,} \hlnum{4}\hlstd{]]}
+\hlstd{dataset[,} \hlnum{3}\hlopt{:}\hlnum{4}\hlstd{]} \hlkwb{<-} \hlstd{dataset[,} \hlnum{3}\hlopt{:}\hlnum{4}\hlstd{]} \hlopt{/} \hlnum{1000}
+
+\hlcom{# get population dataset for this analysis corresponding to the }
+\hlcom{# Census years }
+\hlstd{dataset.years} \hlkwb{<-} \hlstd{dataset[dataset[,} \hlnum{2}\hlstd{]} \hlopt{%in%}
+  \hlkwd{c}\hlstd{(}\hlstr{"1960"}\hlstd{,} \hlstr{"1970"}\hlstd{,} \hlstr{"1980"}\hlstd{,} \hlstr{"1990"}\hlstd{,} \hlstr{"2000"}\hlstd{,} \hlstr{"2010"}\hlstd{), ]}
+\hlstd{dataset.years[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlkwd{factor}\hlstd{(dataset.years[,} \hlnum{2}\hlstd{])}
+\hlstd{dataset.years.list} \hlkwb{<-} \hlkwd{split}\hlstd{(dataset.years,} \hlkwc{f} \hlstd{=} \hlkwd{as.factor}\hlstd{(dataset.years[,} \hlnum{2}\hlstd{]))}
+\hlstd{pops} \hlkwb{<-} \hlkwd{unlist}\hlstd{(}\hlkwd{lapply}\hlstd{(dataset.years.list,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{sum}\hlstd{(x[,} \hlnum{3}\hlopt{:}\hlnum{4}\hlstd{])))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+We now add in the Taiwan population figures from the CIA World Factbook.  
+The CIA World Factbook does not provide population data for men aged 
+20-29 for 2000 or 2010.  It does provide estimated population data for 
+men aged 15-24 for 2018.  We will use this estimate as the estimate of 
+the Taiwan male population aged 20-29 for 2000 or 2010.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#approximation from CIA World Factbook at }
+\hlcom{#https://www.cia.gov/library/publications/the-world-factbook/geos/print_tw.html}
+\hlstd{dataTaiwan2000} \hlkwb{<-} \hlnum{1.50}
+\hlstd{dataTaiwan2010} \hlkwb{<-} \hlnum{1.50}
+\hlstd{pops[}\hlnum{5}\hlstd{]} \hlkwb{<-} \hlstd{pops[}\hlnum{5}\hlstd{]} \hlopt{+} \hlstd{dataTaiwan2000}
+\hlstd{pops[}\hlnum{6}\hlstd{]} \hlkwb{<-} \hlstd{pops[}\hlnum{6}\hlstd{]} \hlopt{+} \hlstd{dataTaiwan2010}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+We now add in the US and Canadian population data for the Census years from 
+1880-1950.  Note that the Canadian Census is recorded one year after the 
+US Census.  A precise Canadian Census exists for males aged 20-30 for the 
+years 1881, 1891, and 1901.  We use this information to estimate the 
+proportion of Canadian males aged 20-30 from 1911-1951 for which 
+an accurate count of Canadian males aged 20-30 was not easy to find.  
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Canadian population before 1960}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm}
+\hlstd{Can1881} \hlkwb{<-} \hlnum{0.21} \hlopt{+} \hlnum{0.17}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm}
+\hlstd{Can1891} \hlkwb{<-} \hlnum{0.24} \hlopt{+} \hlnum{0.19}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm}
+\hlstd{Can1901} \hlkwb{<-} \hlnum{0.26} \hlopt{+} \hlnum{0.22}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm}
+\hlstd{CanM1881} \hlkwb{<-} \hlnum{2.19}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm}
+\hlstd{CanM1891} \hlkwb{<-} \hlnum{2.16}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm}
+\hlstd{CanM1901} \hlkwb{<-} \hlnum{2.75}
+\hlstd{propCan2030} \hlkwb{<-} \hlstd{(Can1881} \hlopt{+} \hlstd{Can1891} \hlopt{+} \hlstd{Can1901)} \hlopt{/}
+  \hlstd{(CanM1881} \hlopt{+} \hlstd{CanM1891} \hlopt{+} \hlstd{CanM1901)}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm}
+\hlstd{Can1911} \hlkwb{<-} \hlnum{3.82} \hlopt{*} \hlstd{propCan2030}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm}
+\hlstd{Can1921} \hlkwb{<-} \hlnum{4.53} \hlopt{*} \hlstd{propCan2030}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm}
+\hlstd{Can1931} \hlkwb{<-} \hlnum{5.37} \hlopt{*} \hlstd{propCan2030}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1947/acyb02_19470113009-eng.htm}
+\hlstd{Can1941} \hlkwb{<-} \hlnum{5.90} \hlopt{*} \hlstd{propCan2030}
+\hlcom{#https://www65.statcan.gc.ca/acyb02/1967/acyb02_19670194010-eng.htm}
+\hlstd{Can1951} \hlkwb{<-} \hlnum{7.09} \hlopt{*} \hlstd{propCan2030}
+
+\hlcom{## US population before 1960}
+\hlcom{#https://www2.census.gov/library/publications/decennial/1880/vol-01-population/1880_v1-15.pdf}
+\hlstd{US1880} \hlkwb{<-} \hlnum{2.22} \hlopt{+} \hlnum{1.84}
+\hlcom{#https://www2.census.gov/library/publications/decennial/1900/volume-2/volume-2-p5.pdf}
+\hlstd{US1900} \hlkwb{<-} \hlnum{2.73} \hlopt{+} \hlnum{2.37}
+\hlstd{US1890} \hlkwb{<-} \hlkwd{mean}\hlstd{(}\hlkwd{c}\hlstd{(US1880,US1900))}
+\hlcom{#https://www2.census.gov/library/publications/decennial/1910/volume-1/volume-1-p6.pdf}
+\hlstd{US1910} \hlkwb{<-} \hlnum{4.07} \hlopt{+} \hlnum{3.79}
+\hlcom{#https://www2.census.gov/library/publications/decennial/1920/volume-2/41084484v2ch03.pdf}
+\hlstd{US1920} \hlkwb{<-} \hlnum{4.02} \hlopt{+} \hlnum{4.09}
+\hlcom{#https://www2.census.gov/library/publications/decennial/1930/population-volume-2/16440598v2ch11.pdf}
+\hlstd{US1930} \hlkwb{<-} \hlnum{4.69} \hlopt{+} \hlnum{4.25}
+\hlcom{#https://www2.census.gov/library/publications/decennial/1940/population-volume-4/33973538v4p1ch1.pdf}
+\hlstd{US1940} \hlkwb{<-} \hlnum{1.08} \hlopt{+} \hlnum{1.06} \hlopt{+} \hlnum{1.01} \hlopt{+} \hlnum{1.00} \hlopt{+} \hlnum{1.01} \hlopt{+}
+  \hlnum{1.01} \hlopt{+} \hlnum{0.99} \hlopt{+} \hlnum{0.98} \hlopt{+} \hlnum{0.97} \hlopt{+} \hlnum{0.95}
+\hlcom{#https://www2.census.gov/library/publications/decennial/1950/population-volume-2/21983999v2p1ch2.pdf}
+\hlstd{US1950} \hlkwb{<-} \hlnum{5.00} \hlopt{+} \hlnum{5.30}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+We now add the Japan, South Korea, and Philippines population for men aged 
+20-29 for 2000 or 2010 and the 2010 Brazil population for men aged 20-24 to 
+the population dataset.   
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# load in UN dataset and remove irrelevant variables}
+\hlkwd{options}\hlstd{(}\hlkwc{warn}\hlstd{=}\hlopt{-}\hlnum{1}\hlstd{)}
+\hlstd{WPP2010} \hlkwb{<-}
+  \hlkwd{read.csv}\hlstd{(}\hlstr{"WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv"}\hlstd{,}
+  \hlkwc{header} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+\hlkwd{colnames}\hlstd{(WPP2010)[}\hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"region"}\hlstd{)}
+\hlkwd{colnames}\hlstd{(WPP2010)[}\hlnum{6}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"year"}\hlstd{)}
+\hlkwd{colnames}\hlstd{(WPP2010)[}\hlnum{7}\hlopt{:}\hlnum{17}\hlstd{]} \hlkwb{<-} \hlkwd{paste}\hlstd{(}\hlstr{"age"}\hlstd{,} \hlnum{0}\hlopt{:}\hlnum{10} \hlopt{*} \hlnum{5}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{""}\hlstd{)}
+\hlstd{WPP2010} \hlkwb{<-} \hlstd{WPP2010[,} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{6}\hlstd{,} \hlnum{11}\hlstd{,} \hlnum{12}\hlstd{)]}
+
+\hlcom{# get population data for relevant countries }
+\hlstd{countries} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Brazil"}\hlstd{,} \hlstr{"Japan"}\hlstd{,} \hlstr{"Philippines"}\hlstd{,} \hlstr{"Republic of Korea"}\hlstd{)}
+\hlstd{dataset} \hlkwb{<-} \hlstd{WPP2010[WPP2010[,} \hlnum{1}\hlstd{]} \hlopt{%in%} \hlstd{countries, ]}
+\hlstd{dataset[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{levels}\hlstd{(dataset[,} \hlnum{3}\hlstd{]))[dataset[,} \hlnum{3}\hlstd{]]}
+\hlstd{dataset[,} \hlnum{4}\hlstd{]} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{levels}\hlstd{(dataset[,} \hlnum{4}\hlstd{]))[dataset[,} \hlnum{4}\hlstd{]]}
+\hlstd{dataset[,} \hlnum{3}\hlopt{:}\hlnum{4}\hlstd{]} \hlkwb{<-} \hlstd{dataset[,} \hlnum{3}\hlopt{:}\hlnum{4}\hlstd{]} \hlopt{/} \hlnum{1000}
+
+\hlcom{# get population dataset for this analysis corresponding to the }
+\hlcom{# Census years }
+\hlstd{dataset.years} \hlkwb{<-} \hlstd{dataset[dataset[,} \hlnum{2}\hlstd{]} \hlopt{%in%} \hlkwd{c}\hlstd{(}\hlstr{"2000"}\hlstd{,} \hlstr{"2010"}\hlstd{), ]}
+\hlstd{dataset.years[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlkwd{factor}\hlstd{(dataset.years[,} \hlnum{2}\hlstd{])}
+\hlcom{# Brazil age 20-24, year 2010}
+\hlstd{Brazil2010} \hlkwb{<-} \hlkwd{round}\hlstd{(dataset.years[}\hlnum{8}\hlstd{,} \hlnum{3}\hlstd{],} \hlnum{2}\hlstd{)}
+\hlstd{dataset.years} \hlkwb{<-} \hlstd{dataset.years[}\hlkwd{c}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{3}\hlstd{,}\hlnum{5}\hlopt{:}\hlnum{7}\hlstd{), ]}
+\hlstd{dataset.years.list} \hlkwb{<-} \hlkwd{split}\hlstd{(dataset.years,} \hlkwc{f} \hlstd{=} \hlkwd{as.factor}\hlstd{(dataset.years[,} \hlnum{2}\hlstd{]))}
+\hlstd{aspop} \hlkwb{<-} \hlkwd{unlist}\hlstd{(}\hlkwd{lapply}\hlstd{(dataset.years.list,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{sum}\hlstd{(x[,} \hlnum{3}\hlopt{:}\hlnum{4}\hlstd{])))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+The final dataset with all countries' populations is created. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# refine the population dataset that is used in the analysis}
+\hlstd{pops} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(}\hlkwd{c}\hlstd{(US1880} \hlopt{+} \hlstd{Can1881,}
+  \hlstd{US1890} \hlopt{+} \hlstd{Can1891,}
+  \hlstd{US1900} \hlopt{+} \hlstd{Can1901,}
+  \hlstd{US1910} \hlopt{+} \hlstd{Can1911,}
+  \hlstd{US1920} \hlopt{+} \hlstd{Can1921,}
+  \hlstd{US1930} \hlopt{+} \hlstd{Can1931,}
+  \hlstd{US1940} \hlopt{+} \hlstd{Can1941,}
+  \hlstd{US1950} \hlopt{+} \hlstd{Can1951,}
+  \hlstd{pops))}
+\hlstd{pops[}\hlnum{14}\hlstd{]} \hlkwb{<-} \hlstd{pops[}\hlnum{14}\hlstd{]} \hlopt{+} \hlstd{Brazil2010}
+\hlstd{pops[}\hlnum{13}\hlopt{:}\hlnum{14}\hlstd{]} \hlkwb{<-} \hlstd{pops[}\hlnum{13}\hlopt{:}\hlnum{14}\hlstd{]} \hlopt{+} \hlstd{aspop}
+\hlstd{pops} \hlkwb{<-} \hlkwd{c}\hlstd{(pops, pops[}\hlnum{14}\hlstd{]}\hlopt{/}\hlnum{2}\hlstd{)}
+
+\hlcom{# proportion of total population in current year and previous years}
+\hlstd{pop_prop} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(pops)} \hlopt{/} \hlkwd{sum}\hlstd{(pops)}
+
+\hlcom{# build the dataset}
+\hlstd{year} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{1880} \hlopt{+} \hlnum{0}\hlopt{:}\hlnum{13} \hlopt{*} \hlnum{10}\hlstd{,} \hlnum{2015}\hlstd{)}
+\hlstd{pop} \hlkwb{<-} \hlstd{pops}
+\hlstd{data} \hlkwb{<-} \hlkwd{cbind}\hlstd{(year, pop, pop_prop)}
+\hlstd{data[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlkwd{round}\hlstd{(data[,} \hlnum{2}\hlstd{],} \hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 The MLB eligible population is displayed in Table 1.
 The cumulative proportion means that at each era, the population of the 
 previous eras is also included. As an example of how to interpret this 
-dataset, consider the year 1950. There were \Sexpr{round(data[8, 2], 3)} 
+dataset, consider the year 1950. There were 11.59 
 million males aged 20-29. The proportion of the historical MLB eligible 
-population that existed at or before 1950 is \Sexpr{round(data[8, 3], 3)}. 
+population that existed at or before 1950 is 0.187. 
 
-
-%We now explain the specifics of MLB eligible population data recorded in 
-%Table 1. 
-%The MLB started in 1876 so our data collection begins with the 
-%1880 Census.  %\citep{armour2016integration}. 
-%We obtain this demographic data for the United States 
-%eligible MLB population from the US Census for years 1880-1950 %\citep{census} 
-%and from Statistics Canada for years 1881-1951. %\citep{statcan}.
-%From 1960-2010, we use the United Nations Census %\citep{UN} 
-%for the United States eligible MLB population.  The latter census is also used 
-%to estimate the population in the global talent pool from which the MLB draws.  
-%We note that the black population in Canada is relatively negligible for time 
-%periods before 1960 as noted in Milan and Tran's work in Canadian Social 
-%Trends Spring. %\citep{milan2004blacks} 
-%Therefore these tallies are not included in the eligible MLB population 
-%before 1960.  The same is done for the Latin American population in Canada.  
-%\bibitem[Milan and Tran(2004)Milan and Tran]{milan2004blacks}
-%Milan, A. and Tran, K. (2004),
-%\newblock ``Blacks in Canada: a long history,'' 
-%\newblock {\em Canadian Social Trends Spring}, 2--7
-
-
-
-% countries <- c("Mexico", "Aruba", "Panama", "Columbia", "Cuba", "Honduras", 
-%  "Jamaica", 
-%  "Bahamas", "Peru", "Dominican Republic", "Netherlands Antilles", 
-%  "Puerto Rico", "Venezuela (Bolivarian Republic of)", "Nicaragua", #"Italy", 
-%  "United States Virgin Islands", "United States of America")
-
-
-<<echo = FALSE, results="asis">>=
-# the dataset
-library(xtable)
-colnames(data)[c(2:3)] <- c("population", "cumulative population proportion")
-print(xtable(as.data.frame(data), digits = c(0,0,3,3), 
-  align = c("l","c","c","c"), 
-  caption = "Eligible MLB population throughout the years. The first 
+\begin{kframe}
+\begin{alltt}
+\hlcom{# the dataset}
+\hlkwd{library}\hlstd{(xtable)}
+\hlkwd{colnames}\hlstd{(data)[}\hlkwd{c}\hlstd{(}\hlnum{2}\hlopt{:}\hlnum{3}\hlstd{)]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"population"}\hlstd{,} \hlstr{"cumulative population proportion"}\hlstd{)}
+\hlkwd{print}\hlstd{(}\hlkwd{xtable}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(data),} \hlkwc{digits} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{3}\hlstd{,}\hlnum{3}\hlstd{),}
+  \hlkwc{align} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"l"}\hlstd{,}\hlstr{"c"}\hlstd{,}\hlstr{"c"}\hlstd{,}\hlstr{"c"}\hlstd{),}
+  \hlkwc{caption} \hlstd{=} \hlstr{"Eligible MLB population throughout the years. The first 
     column indicates the year, the second column indicates the 
     estimated MLB eligible population size (in millions), and the 
     third column indicates the proportion of the MLB eligible  
-    population in row x that was eligbile at or before row x."))
-@
+    population in row x that was eligbile at or before row x."}\hlstd{))}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Sun Aug 18 17:10:29 2019
+\begin{table}[ht]
+\centering
+\begin{tabular}{lccc}
+  \hline
+ & year & population & cumulative population proportion \\ 
+  \hline
+1 & 1880 & 4.440 & 0.013 \\ 
+  2 & 1890 & 5.010 & 0.027 \\ 
+  3 & 1900 & 5.580 & 0.043 \\ 
+  4 & 1910 & 8.550 & 0.068 \\ 
+  5 & 1920 & 8.930 & 0.093 \\ 
+  6 & 1930 & 9.920 & 0.122 \\ 
+  7 & 1940 & 11.130 & 0.154 \\ 
+  8 & 1950 & 11.590 & 0.187 \\ 
+  9 & 1960 & 18.420 & 0.240 \\ 
+  10 & 1970 & 24.490 & 0.310 \\ 
+  11 & 1980 & 33.930 & 0.408 \\ 
+  12 & 1990 & 37.460 & 0.515 \\ 
+  13 & 2000 & 60.600 & 0.689 \\ 
+  14 & 2010 & 72.210 & 0.896 \\ 
+  15 & 2015 & 36.100 & 1.000 \\ 
+   \hline
+\end{tabular}
+\caption{Eligible MLB population throughout the years. The first 
+    column indicates the year, the second column indicates the 
+    estimated MLB eligible population size (in millions), and the 
+    third column indicates the proportion of the MLB eligible  
+    population in row x that was eligbile at or before row x.} 
+\end{table}
+
 
 
 
 \section{The greats}
 
-%At a quick glance of this population dataset, one can see how small the 
-%proportion of the pre-1950 eligible MLB population actually was. 
 To determine which players are the all-time greatest players, we consult four 
 lists which reflect popular opinion, performance metrics, and expert opinion 
 that purport to determine the greatest players.  The first 
-list is compiled by Ranker, %\citet{ranker2018greatest}
+list is compiled by Ranker,  
 which is constructed entirely from popular opinion as determined by up and 
 down votes.  
 The second and third lists rank players by highest career WAR as calculated 
 by baseball reference and fangraphs, respectively. 
 %(technically speaking, these lists are rankings according to a statistic which 
 %has no voice in saying who is definitively the best player).  
+These three lists were compiled in 2018.  
 The fourth list is a ranking from ESPN %\citep{ESPN} 
 and is based on expert opinion and statistics. %\citep{ESPN2015methodology}.
 %szymborski
@@ -461,11 +540,6 @@ We see that 5 players that started their careers before 1950 are in the top 10
 all time and 11 players that started their careers before 1950 are in the top 
 25 all time.  When the MLB eligible population is considered, it appears that 
 the players from the earlier eras are overrepresented in this particular list.  
-%All of the lists that we consider exhibit this same bias towards the older 
-%players.  In the next Section we provide statistical evidence supporting this 
-%position.  
-
-
 
 
 \begin{table}[h!]
@@ -516,18 +590,13 @@ pre-1950 in top 25 &  15 \,/\, 25  &  15 \,/\, 25  &  12 \,/\, 25  &  11 \,/\, 2
 
 
 
-
-
 \section{Statistical evidence}
 \label{sec:Stats}
 
 We now provide evidence that the top 10 and top 25 lists displayed in 
 Table~\ref{top25} overrepresent players who started their careers 
-before 1950.  
-%In order to conduct these statistical tests, 
-We require two assumptions for the validity of our calculations which we will 
-explore in detail in the next Section. 
-These assumptions are: 
+before 1950.  We require two assumptions for the validity of our calculations 
+which we will explore in detail in the next Section.  These assumptions are: 
 \begin{itemize}
 \item First, we assume that innate talent is uniformly distributed over the 
   MLB eligible population over the different eras.
@@ -542,40 +611,42 @@ career before 1950 using the proportion depicted in Table 1.  Consider the
 bWAR list for example.  According to bWAR, we see that 6 of the top 10 
 players started their careers before 1950.  From Table 1 we see that the 
 proportion of the MLB eligible population that played at or  
-before 1950 was approximately \Sexpr{round(data[8,3], 3)}.  
+before 1950 was approximately 0.187.  
 We then calculate the probability that one would expect to observe 6 or more 
 individuals in a top 10 list from that time period where the chance of 
-observing each individual is about \Sexpr{round(data[8,3], 3)}.  We calculate 
-this probability using the Binomial distribution.  
-%, details of this calculation are provided in Appendix A. 
-We perform the same type of extreme event 
-calculation for each top 10 and top 25 list depicted in Table~\ref{top25}.  
-The results are provided in Table~\ref{probvalues}.
+observing each individual is about 0.187.  We calculate 
+this probability using the Binomial distribution, details are included in the 
+Appendix.  This calculation and all other calculations for each top 10 and 
+top 25 list depicted in Table~\ref{top25} are conducted using R statistical 
+software below.  The results are provided in Table~\ref{probvalues}. 
 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{options}\hlstd{(}\hlkwc{scipen}\hlstd{=}\hlnum{999}\hlstd{)}
+\hlcom{# proportion of MLB eligible population before who lived before 1950}
+\hlstd{p} \hlkwb{<-} \hlstd{data[}\hlnum{8}\hlstd{,} \hlnum{3}\hlstd{]}
 
-<<echo = FALSE>>=
-options(scipen=999)
-p <- data[8, 3]
-n10 <- 10
-n25 <- 25
-ranker10 <- 7; ranker25 <- 15
-bWAR10 <- 6;   bWAR25 <- 15
-fWAR10 <- 6;   fWAR25 <- 12
-ESPN10 <- 5;   ESPN25 <- 11
-@
+\hlcom{# count of great players who started their careers before 1950}
+\hlstd{ranker10} \hlkwb{<-} \hlnum{7}\hlstd{; ranker25} \hlkwb{<-} \hlnum{15}
+\hlstd{bWAR10} \hlkwb{<-} \hlnum{6}\hlstd{;   bWAR25} \hlkwb{<-} \hlnum{15}
+\hlstd{fWAR10} \hlkwb{<-} \hlnum{6}\hlstd{;   fWAR25} \hlkwb{<-} \hlnum{12}
+\hlstd{ESPN10} \hlkwb{<-} \hlnum{5}\hlstd{;   ESPN25} \hlkwb{<-} \hlnum{11}
 
+\hlcom{# binomial calculations for top 10 lists}
+\hlstd{pranker10} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR10}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR10}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN10}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
 
-<<echo = FALSE>>=
-pranker10 <- pbinom(ranker10 - 1, p = p, size = n10, lower = FALSE)
-pbWAR10   <- pbinom(bWAR10 - 1, p = p, size = n10, lower = FALSE)
-pfWAR10   <- pbinom(fWAR10 - 1, p = p, size = n10, lower = FALSE)
-pESPN10   <- pbinom(ESPN10 - 1, p = p, size = n10, lower = FALSE)
-
-pranker25 <- pbinom(ranker25 - 1, p = p, size = n25, lower = FALSE)
-pbWAR25   <- pbinom(bWAR25 - 1, p = p, size = n25, lower = FALSE)
-pfWAR25   <- pbinom(fWAR25 - 1, p = p, size = n25, lower = FALSE)
-pESPN25   <- pbinom(ESPN25 - 1, p = p, size = n25, lower = FALSE)
-@
+\hlcom{# binomial calculations for top 25 lists}
+\hlstd{pranker25} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR25}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR25}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN25}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 
 \begin{table}[h!]
@@ -585,25 +656,25 @@ pESPN25   <- pbinom(ESPN25 - 1, p = p, size = n25, lower = FALSE)
   &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
   \hline
 probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10, 3)} 
-  & \Sexpr{signif(pbWAR10, 3)} 
-  & \Sexpr{signif(pfWAR10, 3)} 
-  & \Sexpr{signif(pESPN10, 3)} \\
+  & \ensuremath{5.63\times 10^{-4}} 
+  & 0.00449 
+  & 0.00449 
+  & 0.025 \\
 probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25, 3)} 
-  & \Sexpr{signif(pbWAR25, 3)} 
-  & \Sexpr{signif(pfWAR25, 3)} 
-  & \Sexpr{signif(pESPN25, 3)} \\
+  & \ensuremath{5.75\times 10^{-6}} 
+  & \ensuremath{5.75\times 10^{-6}} 
+  & \ensuremath{8.29\times 10^{-4}} 
+  & 0.00323 \\
 chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10)} 
-  & 1 in \Sexpr{round(1/pbWAR10)} 
-  & 1 in \Sexpr{round(1/pfWAR10)} 
-  & 1 in \Sexpr{round(1/pESPN10)} \\
+  & 1 in 1776 
+  & 1 in 223 
+  & 1 in 223 
+  & 1 in 40 \\
 chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25)} 
-  & 1 in \Sexpr{round(1/pbWAR25)} 
-  & 1 in \Sexpr{round(1/pfWAR25)} 
-  & 1 in \Sexpr{round(1/pESPN25)} \\
+  & 1 in \ensuremath{1.73989\times 10^{5}} 
+  & 1 in \ensuremath{1.73989\times 10^{5}} 
+  & 1 in 1206 
+  & 1 in 309 \\
   \hline
 \end{tabular}
 \end{center}
@@ -616,17 +687,13 @@ As an example of how to interpret the results of Table~\ref{probvalues},
 continue with bWAR's top 10 list.  Table~\ref{probvalues} shows that the 
 probability of observing 6 or more players that started their careers at 
 or before 1950 of the top 10 all time players, based on population 
-dynamics, is about \Sexpr{signif(pbWAR10, 3)} 
-(a chance of 1 in \Sexpr{round(1/pbWAR10)}).
+dynamics, is about 0.00449 
+(a chance of 1 in 223).
 The same interpretation applies to remainder of Table~\ref{probvalues}.  
 The results provided in Table~\ref{probvalues} present overwhelming evidence 
 that players who started their careers before 1950 are overrepresented in top 
 10 and top 25 lists from the perspectives of fans, analytic assessment of 
-performance, and experts' rankings.  %These findings are a testament to 1) how 
-%sparse the MLB eligible population was at and before 1950 relative to the MLB 
-%eligible population after 1950 and 2) how incorporating relevant population 
-%dynamics leads to completely different conclusions.
-
+performance, and experts' rankings.  
 
 
 
@@ -691,50 +758,8 @@ These figures offer evidence that while other
 professional leagues may have drawn from the MLB eligible talent pool, 
 salary incentives have led to an increase in the overall quality of MLB 
 players.  %This suggests that our second assumption may be conservative.  
-%again, if we had refined data on the eligible MLB population then the 
+%again, if we had refined data on the MLB eligible population then the 
 %calculations in Table~\ref{probvalues} would be even more extreme.  
-
-
-
-
-
-<<cache = TRUE, echo = FALSE>>=
-# Information from Gallup on baseball fans (50% fans before 1940)
-Fan1880 <- Fan1890 <- Fan1900 <- Fan1910 <- Fan1920 <- Fan1930 <-  0.50
-Fan1940 <- Fan1950 <- Fan1960 <- Fan1970 <- Fan1980 <- Fan1990 <- 
-  Fan2000 <- Fan2010 <- Fan2015 <- 0.40
-w1 <- c(Fan1880, Fan1890, Fan1900, Fan1910, Fan1920, Fan1930, Fan1940, 
-  Fan1950, Fan1960, Fan1970, Fan1980, Fan1990, Fan2000, Fan2010, Fan2015)
-
-data.w1 <- data
-data.w1[, 2] <- data.w1[, 2] * w1
-data.w1[, 3] <- cumsum(data.w1[, 2]) / sum(data.w1[, 2])
-
-
-# Information from Gallup on baseball fans (60% fans before 1940)
-Fan1880 <- Fan1890 <- Fan1900 <- Fan1910 <- Fan1920 <- Fan1930 <- 0.60
-w2 <- c(Fan1880, Fan1890, Fan1900, Fan1910, Fan1920, Fan1930, Fan1940, 
-	Fan1950, Fan1960, Fan1970, Fan1980, Fan1990, Fan2000, Fan2010, Fan2015) 
-
-data.w2 <- data
-data.w2[, 2] <- data.w2[, 2] * w2
-data.w2[, 3] <- cumsum(data.w2[, 2]) / sum(data.w2[, 2])
-
-
-# Information from Gallup on favorite sport
-Fan1880 <- Fan1890 <- Fan1900 <- Fan1910 <- Fan1920 <- 0.40
-Fan1930 <- 0.40
-Fan1940 <- 0.35; Fan1950 <- 0.38; Fan1960 <- 0.34; Fan1970 <- 0.28
-Fan1980 <- 0.16; Fan1990 <- 0.16; Fan2000 <- 0.13; Fan2010 <- 0.12
-Fan2015 <- 0.10
-w3 <- c(Fan1880, Fan1890, Fan1900, Fan1910, Fan1920, Fan1930, Fan1940, 
-  Fan1950, Fan1960, Fan1970, Fan1980, Fan1990, Fan2000, Fan2010, Fan2015)
-
-data.w3 <- data
-data.w3[, 2] <- data.w3[, 2] * w3
-data.w3[, 3] <- cumsum(data.w3[, 2]) / sum(data.w3[, 2])
-@
-
 
 Though we cannot confirm this theory with absolute certainty, at worst, our 
 our second assumption suffers some modest violations.  
@@ -778,7 +803,7 @@ and low compensation.
 %information.  No information is given for pre-1940 baseball.  As a result of 
 %this we give the highest weight observed at or after 1940 for all 
 %pre-1940 years.  The fourth weighting regime is an average of w2 and w3.  
-%All of these weighting regimes suggest that the eligible MLB population was 
+%All of these weighting regimes suggest that the MLB eligible population was 
 %more interested in reaching the MLB in earlier eras than in modern eras.  
 
 David W. Moore and Joseph Carroll's Gallup article entitled 
@@ -796,9 +821,8 @@ on fan interest prior to 1940.  %These choices of weights
 %time periods favored, and played, baseball due to lack of competition from 
 %other sports. The second weighting regime (w2) places even stronger weights 
 %on pre-1940 fan interest.  
-The third weighting regime (w3), constructed from the Gallup polling data 
-(\url{https://news.gallup.com/poll/4735/sports.aspx}), 
-reflects the proportion of the US population who 
+The third weighting regime (w3), constructed from the Gallup polling data in 
+Figure~\ref{Gallup}, reflects the proportion of the US population who 
 listed baseball as their favorite sport.  
 The appropriateness of this regime is intuitively questionable because 
 some people play baseball even if it is not their favorite sport and the 
@@ -808,14 +832,14 @@ The fourth weighting regime (w4) is the average of w2 and w3.
 
 
 
-%\begin{figure}
-%\begin{center}
-%\includegraphics[width=0.75\textwidth]{Gallupfavoritesport.png}
-%\end{center}
-%\caption{Gallup polling data on the topic of the favorite sports 
-%  of Americans over time.}
-%\label{Gallup}
-%\end{figure}
+\begin{figure}
+\begin{center}
+\includegraphics[width=0.75\textwidth]{Gallupfavoritesport.png}
+\end{center}
+\caption{Gallup polling data on the topic of the favorite sports 
+  of Americans over time.}
+\label{Gallup}
+\end{figure}
 
 
 These weights are obtained from survey data from the US because similar data 
@@ -828,213 +852,80 @@ these other countries is thought to either be on par with or much greater
 than the US.  Therefore our weighting regimes address, and in fact, 
 overcompensate for any potential shortcomings of no weighting.
 
+The weights are now added to our analysis, and we construct four new datasets 
+with reweighted populations corresponding to each of the four weighting 
+schemes outlined in Table 4.
 
 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# compute w1 based on information from }
+\hlcom{# Gallup on baseball fans (50% fans before 1940)}
+\hlstd{w1} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0.5}\hlstd{,} \hlnum{6}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{0.4}\hlstd{,} \hlnum{9}\hlstd{))}
 
-<<echo = FALSE>>=
-## Recompute probabilities consistent with w1
-p.w1 <- data.w1[8, 3]
+\hlcom{# construct rewighted dataset with respect to w1}
+\hlstd{data.w1} \hlkwb{<-} \hlstd{data}
+\hlstd{data.w1[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{data.w1[,} \hlnum{2}\hlstd{]} \hlopt{*} \hlstd{w1}
+\hlstd{data.w1[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(data.w1[,} \hlnum{2}\hlstd{])} \hlopt{/} \hlkwd{sum}\hlstd{(data.w1[,} \hlnum{2}\hlstd{])}
 
-pranker10.w1 <- pbinom(ranker10 - 1, p = p.w1, size = n10, lower = FALSE)
-pbWAR10.w1   <- pbinom(bWAR10 - 1, p = p.w1, size = n10, lower = FALSE)
-pfWAR10.w1   <- pbinom(fWAR10 - 1, p = p.w1, size = n10, lower = FALSE)
-pESPN10.w1   <- pbinom(ESPN10 - 1, p = p.w1, size = n10, lower = FALSE)
+\hlcom{# compute w2 based on information from }
+\hlcom{# Gallup on baseball fans (60% fans before 1940)}
+\hlstd{w2} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0.6}\hlstd{,} \hlnum{6}\hlstd{),} \hlkwd{rep}\hlstd{(}\hlnum{0.4}\hlstd{,} \hlnum{9}\hlstd{))}
 
-pranker25.w1 <- pbinom(ranker25 - 1, p = p.w1, size = n25, lower = FALSE)
-pbWAR25.w1   <- pbinom(bWAR25 - 1, p = p.w1, size = n25, lower = FALSE)
-pfWAR25.w1   <- pbinom(fWAR25 - 1, p = p.w1, size = n25, lower = FALSE)
-pESPN25.w1   <- pbinom(ESPN25 - 1, p = p.w1, size = n25, lower = FALSE)
+\hlcom{# construct rewighted dataset with respect to w2}
+\hlstd{data.w2} \hlkwb{<-} \hlstd{data}
+\hlstd{data.w2[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{data.w2[,} \hlnum{2}\hlstd{]} \hlopt{*} \hlstd{w2}
+\hlstd{data.w2[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(data.w2[,} \hlnum{2}\hlstd{])} \hlopt{/} \hlkwd{sum}\hlstd{(data.w2[,} \hlnum{2}\hlstd{])}
 
-## Recompute probabilities consistent with w2
-p.w2 <- data.w2[8, 3]
+\hlcom{# compute w3 based on information from }
+\hlcom{# Gallup on favorite sport}
+\hlstd{w3} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0.4}\hlstd{,} \hlnum{6}\hlstd{),} \hlnum{0.35}\hlstd{,} \hlnum{0.38}\hlstd{,} \hlnum{0.34}\hlstd{,} \hlnum{0.28}\hlstd{,} \hlnum{0.16}\hlstd{,} \hlnum{0.16}\hlstd{,} \hlnum{0.13}\hlstd{,} \hlnum{0.12}\hlstd{,} \hlnum{0.10}\hlstd{)}
 
-pranker10.w2 <- pbinom(ranker10 - 1, p = p.w2, size = n10, lower = FALSE)
-pbWAR10.w2   <- pbinom(bWAR10 - 1, p = p.w2, size = n10, lower = FALSE)
-pfWAR10.w2   <- pbinom(fWAR10 - 1, p = p.w2, size = n10, lower = FALSE)
-pESPN10.w2   <- pbinom(ESPN10 - 1, p = p.w2, size = n10, lower = FALSE)
+\hlcom{# construct rewighted dataset with respect to w3}
+\hlstd{data.w3} \hlkwb{<-} \hlstd{data}
+\hlstd{data.w3[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{data.w3[,} \hlnum{2}\hlstd{]} \hlopt{*} \hlstd{w3}
+\hlstd{data.w3[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(data.w3[,} \hlnum{2}\hlstd{])} \hlopt{/} \hlkwd{sum}\hlstd{(data.w3[,} \hlnum{2}\hlstd{])}
 
-pranker25.w2 <- pbinom(ranker25 - 1, p = p.w2, size = n25, lower = FALSE)
-pbWAR25.w2   <- pbinom(bWAR25 - 1, p = p.w2, size = n25, lower = FALSE)
-pfWAR25.w2   <- pbinom(fWAR25 - 1, p = p.w2, size = n25, lower = FALSE)
-pESPN25.w2   <- pbinom(ESPN25 - 1, p = p.w2, size = n25, lower = FALSE)
+\hlcom{# construct rewighted dataset with respect to w4}
+\hlstd{w4} \hlkwb{<-} \hlstd{(w2} \hlopt{+} \hlstd{w3)} \hlopt{/} \hlnum{2}
+\hlstd{data.w4} \hlkwb{<-} \hlstd{data}
+\hlstd{data.w4[,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlstd{data.w4[,} \hlnum{2}\hlstd{]} \hlopt{*} \hlstd{w4}
+\hlstd{data.w4[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(data.w4[,} \hlnum{2}\hlstd{])} \hlopt{/} \hlkwd{sum}\hlstd{(data.w4[,} \hlnum{2}\hlstd{])}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
-## Recompute probabilities consistent with w3
-p.w3 <- data.w3[8, 3]
+Table 4 displays the weighting regimes used in our analysis, and it is 
+constructed with the code below.
 
-pranker10.w3 <- pbinom(ranker10 - 1, p = p.w3, size = n10, lower = FALSE)
-pbWAR10.w3   <- pbinom(bWAR10 - 1, p = p.w3, size = n10, lower = FALSE)
-pfWAR10.w3   <- pbinom(fWAR10 - 1, p = p.w3, size = n10, lower = FALSE)
-pESPN10.w3   <- pbinom(ESPN10 - 1, p = p.w3, size = n10, lower = FALSE)
-
-pranker25.w3 <- pbinom(ranker25 - 1, p = p.w3, size = n25, lower = FALSE)
-pbWAR25.w3   <- pbinom(bWAR25 - 1, p = p.w3, size = n25, lower = FALSE)
-pfWAR25.w3   <- pbinom(fWAR25 - 1, p = p.w3, size = n25, lower = FALSE)
-pESPN25.w3   <- pbinom(ESPN25 - 1, p = p.w3, size = n25, lower = FALSE)
-
-## Recompute probabilities consistent with w4
-w4 <- (w2 + w3) / 2
-data.w4 <- data
-data.w4[, 2] <- data.w4[, 2] * w4
-data.w4[, 3] <- cumsum(data.w4[, 2]) / sum(data.w4[, 2])
-p.w4 <- data.w4[8, 3]
-
-pranker10.w4 <- pbinom(ranker10 - 1, p = p.w4, size = n10, lower = FALSE)
-pbWAR10.w4   <- pbinom(bWAR10 - 1, p = p.w4, size = n10, lower = FALSE)
-pfWAR10.w4   <- pbinom(fWAR10 - 1, p = p.w4, size = n10, lower = FALSE)
-pESPN10.w4   <- pbinom(ESPN10 - 1, p = p.w4, size = n10, lower = FALSE)
-
-pranker25.w4 <- pbinom(ranker25 - 1, p = p.w4, size = n25, lower = FALSE)
-pbWAR25.w4   <- pbinom(bWAR25 - 1, p = p.w4, size = n25, lower = FALSE)
-pfWAR25.w4   <- pbinom(fWAR25 - 1, p = p.w4, size = n25, lower = FALSE)
-pESPN25.w4   <- pbinom(ESPN25 - 1, p = p.w4, size = n25, lower = FALSE)
-@
-
-
-<<echo = FALSE, results = "asis">>=
-tab <- cbind(w1,w2,w3,w4)
-rownames(tab) <- year
-#colnames(tab)[1] <- c("year")
-#tab <- as.data.frame(tab)
-#rownames(tab) <- NULL
-print(xtable(t(tab), #digits = c(0,0,2,2,2,2), 
-  digits = cbind(rep(0, 4), matrix(2, ncol = 15, nrow = 4)),
-  caption = "Weighting regimes."), size = "footnotesize",
-  #hline.after = c(-1,0,nrow(data)))
-  hline.after = c(-1,0,4))
-@
-
-
-
-
-<<echo = FALSE, eval = FALSE>>=
-w5 <- c(0.20, 0.20, 0.20, 0.20, 0.25, 0.40, 0.40, 0.35, 0.38, 
-  0.34, 0.28, 0.16, 0.13, 0.12, 0.20)
-data.w5 <- data
-data.w5[, 2] <- data.w5[, 2] * w5
-data.w5[, 3] <- cumsum(data.w5[, 2]) / sum(data.w5[, 2])
-p.w5 <- data.w5[8, 3]
-
-ranker10 <- 7; ranker25 <- 15
-bWAR10 <- 6;   bWAR25 <- 15
-fWAR10 <- 6;   fWAR25 <- 12
-ESPN10 <- 5;   ESPN25 <- 11
-n10 <- 10; n25 <- 25
-
-pranker10.w5 <- pbinom(ranker10 - 1, p = p.w5, size = n10, lower = FALSE)
-pbWAR10.w5   <- pbinom(bWAR10 - 1, p = p.w5, size = n10, lower = FALSE)
-pfWAR10.w5   <- pbinom(fWAR10 - 1, p = p.w5, size = n10, lower = FALSE)
-pESPN10.w5   <- pbinom(ESPN10 - 1, p = p.w5, size = n10, lower = FALSE)
-
-pranker25.w5 <- pbinom(ranker25 - 1, p = p.w5, size = n25, lower = FALSE)
-pbWAR25.w5   <- pbinom(bWAR25 - 1, p = p.w5, size = n25, lower = FALSE)
-pfWAR25.w5   <- pbinom(fWAR25 - 1, p = p.w5, size = n25, lower = FALSE)
-pESPN25.w5   <- pbinom(ESPN25 - 1, p = p.w5, size = n25, lower = FALSE)
-
-c(pranker10.w5, pbWAR10.w5, pfWAR10.w5, pESPN10.w5)
-1 / c(pranker10.w5, pbWAR10.w5, pfWAR10.w5, pESPN10.w5)
-c(pranker25.w5, pbWAR25.w5, pfWAR25.w5, pESPN25.w5)
-1 / c(pranker25.w5, pbWAR25.w5, pfWAR25.w5, pESPN25.w5)
-@
-
-
-
-\begin{table}[h!]
-\begin{center}
-\begin{tabular}{llllll}
-\hline
- weight & &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
- \hline
-w1 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w1, 3)} 
-  & \Sexpr{signif(pbWAR10.w1, 3)} 
-  & \Sexpr{signif(pfWAR10.w1, 3)} 
-  & \Sexpr{signif(pESPN10.w1, 3)} \\
-& probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w1, 3)} 
-  & \Sexpr{signif(pbWAR25.w1, 3)} 
-  & \Sexpr{signif(pfWAR25.w1, 3)} 
-  & \Sexpr{signif(pESPN25.w1, 3)} \\
-& chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w1)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w1)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w1)} 
-  & 1 in \Sexpr{round(1/pESPN10.w1)} \\
-& chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w1)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w1)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w1)} 
-  & 1 in \Sexpr{round(1/pESPN25.w1)} \\
-  & & & & & \\
-w2 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w2, 3)} 
-  & \Sexpr{signif(pbWAR10.w2, 3)} 
-  & \Sexpr{signif(pfWAR10.w2, 3)} 
-  & \Sexpr{signif(pESPN10.w2, 3)} \\
-& probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w2, 3)} 
-  & \Sexpr{signif(pbWAR25.w2, 3)} 
-  & \Sexpr{signif(pfWAR25.w2, 3)} 
-  & \Sexpr{signif(pESPN25.w2, 3)} \\
-& chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w2)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w2)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w2)} 
-  & 1 in \Sexpr{round(1/pESPN10.w2)} \\
-& chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w2)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w2)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w2)} 
-  & 1 in \Sexpr{round(1/pESPN25.w2)} \\
-  & & & & & \\
-w3 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w3, 3)} 
-  & \Sexpr{signif(pbWAR10.w3, 3)} 
-  & \Sexpr{signif(pfWAR10.w3, 3)} 
-  & \Sexpr{signif(pESPN10.w3, 3)} \\
-& probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w3, 3)} 
-  & \Sexpr{signif(pbWAR25.w3, 3)} 
-  & \Sexpr{signif(pfWAR25.w3, 3)} 
-  & \Sexpr{signif(pESPN25.w3, 3)} \\
-& chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w3)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w3)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w3)} 
-  & 1 in \Sexpr{round(1/pESPN10.w3, 1)} \\
-& chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w3)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w3)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w3, 1)} 
-  & 1 in \Sexpr{round(1/pESPN25.w3, 1)} \\
-  & & & & & \\  
-w4 & probability of extreme event in top 10 list 
-  & \Sexpr{signif(pranker10.w4, 3)} 
-  & \Sexpr{signif(pbWAR10.w4, 3)} 
-  & \Sexpr{signif(pfWAR10.w4, 3)} 
-  & \Sexpr{signif(pESPN10.w4, 3)} \\
-& probability of extreme event in top 25 list 
-  & \Sexpr{signif(pranker25.w4, 3)} 
-  & \Sexpr{signif(pbWAR25.w4, 3)} 
-  & \Sexpr{signif(pfWAR25.w4, 3)} 
-  & \Sexpr{signif(pESPN25.w4, 3)} \\
-& chance of extreme event in top 10 list 
-  & 1 in \Sexpr{round(1/pranker10.w4)} 
-  & 1 in \Sexpr{round(1/pbWAR10.w4)} 
-  & 1 in \Sexpr{round(1/pfWAR10.w4)} 
-  & 1 in \Sexpr{round(1/pESPN10.w4, 1)} \\
-& chance of extreme event in top 25 list 
-  & 1 in \Sexpr{round(1/pranker25.w4)} 
-  & 1 in \Sexpr{round(1/pbWAR25.w4)} 
-  & 1 in \Sexpr{round(1/pfWAR25.w4)} 
-  & 1 in \Sexpr{round(1/pESPN25.w4)} \\
+\begin{kframe}
+\begin{alltt}
+\hlstd{tab} \hlkwb{<-} \hlkwd{cbind}\hlstd{(w1,w2,w3,w4)}
+\hlkwd{rownames}\hlstd{(tab)} \hlkwb{<-} \hlstd{year}
+\hlkwd{print}\hlstd{(}\hlkwd{xtable}\hlstd{(}\hlkwd{t}\hlstd{(tab),} \hlcom{#digits = c(0,0,2,2,2,2), }
+  \hlkwc{digits} \hlstd{=} \hlkwd{cbind}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{4}\hlstd{),} \hlkwd{matrix}\hlstd{(}\hlnum{2}\hlstd{,} \hlkwc{ncol} \hlstd{=} \hlnum{15}\hlstd{,} \hlkwc{nrow} \hlstd{=} \hlnum{4}\hlstd{)),}
+  \hlkwc{caption} \hlstd{=} \hlstr{"Weighting regimes"}\hlstd{),} \hlkwc{size} \hlstd{=} \hlstr{"footnotesize"}\hlstd{,}
+  \hlcom{#hline.after = c(-1,0,nrow(data)))}
+  \hlkwc{hline.after} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{4}\hlstd{))}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Sun Aug 18 17:10:30 2019
+\begin{table}[ht]
+\centering
+\begingroup\footnotesize
+\begin{tabular}{rrrrrrrrrrrrrrrr}
   \hline
+ & 1880 & 1890 & 1900 & 1910 & 1920 & 1930 & 1940 & 1950 & 1960 & 1970 & 1980 & 1990 & 2000 & 2010 & 2015 \\ 
+  \hline
+w1 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 \\ 
+  w2 & 0.60 & 0.60 & 0.60 & 0.60 & 0.60 & 0.60 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 \\ 
+  w3 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.40 & 0.35 & 0.38 & 0.34 & 0.28 & 0.16 & 0.16 & 0.13 & 0.12 & 0.10 \\ 
+  w4 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.50 & 0.38 & 0.39 & 0.37 & 0.34 & 0.28 & 0.28 & 0.27 & 0.26 & 0.25 \\ 
+   \hline
 \end{tabular}
-\end{center}
-\caption{The probability and chance (1 in 1/probability, rounded) 
-  of each extreme event calculation corresponding to the four lists in 
-  Table~\ref{top25} after the MLB eligible population in Table 1 is 
-  weighted according to the four conservative weighting regimes.}
-\label{probvalues.weights}
+\endgroup
+\caption{Weighting regimes} 
 \end{table}
 
 
@@ -1052,23 +943,171 @@ The third weighting regime presents some conflicting conclusions.  When
 weighting populations with respect to w3 we see that popular opinion and 
 bWAR overrepresent players who started their careers before 1950.  
 However, the same is not so for fWAR and ESPN. 
-%the probabilities depicted are low but are not that extreme.  
-%This gives skeptics to our approach some evidence in their favor.  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% We will return to this finding later. %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-%The conclusions from weighting 
-%populations with respect to w4 is largely in alignment with those of the 
-%original data, with a possible exception being the conclusion drawn from 
-%ESPN's top 10 list.  
-%However, this weighting regime is deliberately antagonistic.
 The overall finding of this sensitivity analysis is that conservatively 
 weighting populations with respect to fan interest in baseball yields the 
 conclusion as the analysis in Section 4:
 it is very unlikely that the pre-1950s time period could 
 have produced so many historically great baseball players.  
 
+We now perform the same Binomial distribution calculations in the previous 
+Section with respect to the reweighted populations and each top 10 and top 25 
+list depicted in Table~\ref{top25}. %are conducted using R statistical 
+%software below.  The results are provided in Table~\ref{probvalues}. 
 
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Recompute extreme probabilities consistent with w1}
+\hlstd{p.w1} \hlkwb{<-} \hlstd{data.w1[}\hlnum{8}\hlstd{,} \hlnum{3}\hlstd{]}
+\hlstd{pranker10.w1} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR10.w1}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR10.w1}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN10.w1}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pranker25.w1} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR25.w1}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR25.w1}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN25.w1}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w1,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlcom{## Recompute extreme probabilities consistent with w2}
+\hlstd{p.w2} \hlkwb{<-} \hlstd{data.w2[}\hlnum{8}\hlstd{,} \hlnum{3}\hlstd{]}
+\hlstd{pranker10.w2} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR10.w2}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR10.w2}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN10.w2}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pranker25.w2} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR25.w2}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR25.w2}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN25.w2}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w2,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlcom{## Recompute extreme probabilities consistent with w3}
+\hlstd{p.w3} \hlkwb{<-} \hlstd{data.w3[}\hlnum{8}\hlstd{,} \hlnum{3}\hlstd{]}
+\hlstd{pranker10.w3} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR10.w3}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR10.w3}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN10.w3}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pranker25.w3} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR25.w3}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR25.w3}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN25.w3}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w3,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+
+\hlcom{## Recompute extreme probabilities consistent with w4}
+\hlstd{p.w4} \hlkwb{<-} \hlstd{data.w4[}\hlnum{8}\hlstd{,} \hlnum{3}\hlstd{]}
+\hlstd{pranker10.w4} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR10.w4}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR10.w4}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN10.w4}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pranker25.w4} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ranker25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbWAR25.w4}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pfWAR25.w4}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(fWAR25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pESPN25.w4}   \hlkwb{<-} \hlkwd{pbinom}\hlstd{(ESPN25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p.w4,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+
+\begin{table}[h!]
+\begin{center}
+\begin{tabular}{llllll}
+\hline
+ weight & &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
+ \hline
+w1 & probability of extreme event in top 10 list 
+  & 0.00122 
+  & 0.0084 
+  & 0.0084 
+  & 0.0407 \\
+& probability of extreme event in top 25 list 
+  & \ensuremath{2.68\times 10^{-5}} 
+  & \ensuremath{2.68\times 10^{-5}} 
+  & 0.0025 
+  & 0.00847 \\
+& chance of extreme event in top 10 list 
+  & 1 in 823 
+  & 1 in 119 
+  & 1 in 119 
+  & 1 in 25 \\
+& chance of extreme event in top 25 list 
+  & 1 in \ensuremath{3.7371\times 10^{4}} 
+  & 1 in \ensuremath{3.7371\times 10^{4}} 
+  & 1 in 400 
+  & 1 in 118 \\
+  & & & & & \\
+w2 & probability of extreme event in top 10 list 
+  & 0.00231 
+  & 0.0141 
+  & 0.0141 
+  & 0.0605 \\
+& probability of extreme event in top 25 list 
+  & \ensuremath{9.47\times 10^{-5}} 
+  & \ensuremath{9.47\times 10^{-5}} 
+  & 0.0061 
+  & 0.0183 \\
+& chance of extreme event in top 10 list 
+  & 1 in 434 
+  & 1 in 71 
+  & 1 in 71 
+  & 1 in 17 \\
+& chance of extreme event in top 25 list 
+  & 1 in \ensuremath{1.0557\times 10^{4}} 
+  & 1 in \ensuremath{1.0557\times 10^{4}} 
+  & 1 in 164 
+  & 1 in 55 \\
+  & & & & & \\
+w3 & probability of extreme event in top 10 list 
+  & 0.0311 
+  & 0.109 
+  & 0.109 
+  & 0.274 \\
+& probability of extreme event in top 25 list 
+  & 0.0128 
+  & 0.0128 
+  & 0.152 
+  & 0.267 \\
+& chance of extreme event in top 10 list 
+  & 1 in 32 
+  & 1 in 9 
+  & 1 in 9 
+  & 1 in 3.7 \\
+& chance of extreme event in top 25 list 
+  & 1 in 78 
+  & 1 in 78 
+  & 1 in 6.6 
+  & 1 in 3.8 \\
+  & & & & & \\  
+w4 & probability of extreme event in top 10 list 
+  & 0.00623 
+  & 0.0312 
+  & 0.0312 
+  & 0.11 \\
+& probability of extreme event in top 25 list 
+  & \ensuremath{6.5\times 10^{-4}} 
+  & \ensuremath{6.5\times 10^{-4}} 
+  & 0.0228 
+  & 0.0561 \\
+& chance of extreme event in top 10 list 
+  & 1 in 160 
+  & 1 in 32 
+  & 1 in 32 
+  & 1 in 9.1 \\
+& chance of extreme event in top 25 list 
+  & 1 in 1537 
+  & 1 in 1537 
+  & 1 in 44 
+  & 1 in 18 \\
+  \hline
+\end{tabular}
+\end{center}
+\caption{The probability and chance (1 in 1/probability, rounded) 
+  of each extreme event calculation corresponding to the four lists in 
+  Table~\ref{top25} after the MLB eligible population in Table 1 is 
+  weighted according to the four conservative weighting regimes.}
+\label{probvalues.weights}
+\end{table}
 
 
 
@@ -1178,22 +1217,22 @@ segregation prior to 1947.
 \hline
 year & eligible pop. & number of teams & roster size & eligible pop. per roster spot \\
 \hline
-%\Sexpr{data[1,1]} & \Sexpr{data[1,2]}  & 8  & 15 & \Sexpr{round(data[1,2] / (8*15) * 1e3, 1)}   \\
-\Sexpr{data[2,1]} & \Sexpr{data[2,2]}  & 8  & 15 & \Sexpr{round(data[2,2] / (8*15) * 1e3, 1)}   \\
-%\Sexpr{data[3,1]} & \Sexpr{data[3,2]}  & 8  & 15 & \Sexpr{round(data[3,2] / (8*15) * 1e3, 1)}   \\
-\Sexpr{data[4,1]} & \Sexpr{data[4,2]}  & 16 & 25 & \Sexpr{round(data[4,2] / (16*25) * 1e3, 1)}  \\
-%\Sexpr{data[5,1]} & \Sexpr{data[5,2]}  & 16 & 25 & \Sexpr{round(data[5,2] / (16*25) * 1e3, 1)}  \\
-  %& & & &  \\
-\Sexpr{data[6,1]} & \Sexpr{data[6,2]}  & 16 & 25 & \Sexpr{round(data[6,2] / (16*25) * 1e3, 1)}  \\
-%\Sexpr{data[7,1]} & \Sexpr{data[7,2]}  & 16 & 25 & \Sexpr{round(data[7,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[8,1]} & \Sexpr{data[8,2]}  & 16 & 25 & \Sexpr{round(data[8,2] / (16*25) * 1e3, 1)}  \\
-%\Sexpr{data[9,1]} & \Sexpr{data[9,2]}  & 16 & 25 & \Sexpr{round(data[9,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[10,1]} & \Sexpr{data[10,2]}  & 24 & 25 & \Sexpr{round(data[10,2] / (24*25) * 1e3, 1)}  \\
-  %& & & &  \\
-%\Sexpr{data[11,1]} & \Sexpr{data[11,2]} & 26 & 25 & \Sexpr{round(data[11,2] / (26*25) * 1e3, 1)} \\
-\Sexpr{data[12,1]} & \Sexpr{data[12,2]} & 26 & 25 & \Sexpr{round(data[12,2] / (26*25) * 1e3, 1)} \\
-%\Sexpr{data[13,1]} & \Sexpr{data[13,2]} & 30 & 25 & \Sexpr{round(data[13,2] / (30*25) * 1e3, 1)} \\
-\Sexpr{data[14,1]} & \Sexpr{data[14,2]} & 30 & 25 & \Sexpr{round(data[14,2] / (30*25) * 1e3, 1)} \\
+1880 & 4.44  & 8  & 15 & 37   \\
+1890 & 5.01  & 8  & 15 & 41.7   \\
+1900 & 5.58  & 8  & 15 & 46.5   \\
+1910 & 8.55  & 16 & 25 & 21.4  \\
+1920 & 8.93  & 16 & 25 & 22.3  \\
+  & & & &  \\
+1930 & 9.92  & 16 & 25 & 24.8  \\
+1940 & 11.13  & 16 & 25 & 27.8  \\
+1950 & 11.59  & 16 & 25 & 29  \\
+1960 & 18.42  & 16 & 25 & 46.1  \\
+1970 & 24.49  & 24 & 25 & 40.8  \\
+  & & & &  \\
+1980 & 33.93 & 26 & 25 & 52.2 \\
+1990 & 37.46 & 26 & 25 & 57.6 \\
+2000 & 60.6 & 30 & 25 & 80.8 \\
+2010 & 72.21 & 30 & 25 & 96.3 \\
 \hline
 \end{tabular}
 \end{center}
@@ -1211,25 +1250,25 @@ PPS notes that the evolutionary nature of competition results in a
 non-stationary rate of success.  They then detrend player 
 statistics by normalizing achievements to seasonal averages.  
 The normalization goes as follows: 
-	Suppose a player hits 40 homeruns in a given season and that the league 
-	average prowess for homerun hitting in that season is 10 homeruns. If the 
-	historical average prowess for homerun hitting is 5 homeruns then our 
-	player's detrended homerun count in that particular season is 
-	$40\times(5/10) = 20$.  In general, the detrending formula is 
-	$Y \times (\text{historic prowess} / \text{league prowess})$ where $Y$ is 
+  Suppose a player hits 40 homeruns in a given season and that the league 
+  average prowess for homerun hitting in that season is 10 homeruns. If the 
+  historical average prowess for homerun hitting is 5 homeruns then our 
+  player's detrended homerun count in that particular season is 
+  $40\times(5/10) = 20$.  In general, the detrending formula is 
+  $Y \times (\text{historic prowess} / \text{league prowess})$ where $Y$ is 
   individual prowess for a particular player in a given season.
 %Fundamentally different approaches for detrending are advocated in 
 %authoritative textbooks such as 
-%	Introduction to Time Series and Forecasting,
-%		by
-%	Peter J. Brockwell and Richard A. Davis,
-%	Time Series Analysis and Its Applications With R Examples, 
-%	  by 
-%	  Robert H. Shumway and David S. Stoffer, 
-%	and
-%	Time Series Analysis and Forecasting by Example, 
-%	  by
-%	  S{\o}ren Bisgaard and Murat Kulahci. %,
+% Introduction to Time Series and Forecasting,
+%   by
+% Peter J. Brockwell and Richard A. Davis,
+% Time Series Analysis and Its Applications With R Examples, 
+%   by 
+%   Robert H. Shumway and David S. Stoffer, 
+% and
+% Time Series Analysis and Forecasting by Example, 
+%   by
+%   S{\o}ren Bisgaard and Murat Kulahci. %,
 %%%and all of the authors conversations with statisticians.  
 %%%None of which involve the 
 %%%incorporation of an implicitly volatile quantity. 
@@ -1278,19 +1317,17 @@ authoritative textbooks such as
 %Ruth actually hit a lot of home runs on this relative basis,'' 
 %in a BU Today piece written by Rachel Johnson.
 %\citep{johnson2011petersen}.  
-Table 2 in PPS displays the top 25 career detrended homerun totals.  %Their 
-%top 10 list contains 7 players who started their careers before 1950 
-%(the same as Ranker), and their 
-%top 25 list contains 12 players who started their careers before 1950 
-%(the same as fWAR).
+Table 2 in PPS displays the top 25 career detrended homerun totals.  Their 
+top 10 list contains 7 players who started their careers before 1950 
+(the same as Ranker), and their 
+top 25 list contains 12 players who started their careers before 1950 
+(the same as fWAR).
 It is clear that having higher prowess relative to your peers, hitting more 
 runs in this case, is not indicative of a player's prowess with respect to 
 peers from fundamentally different eras.  
-%%%%%%%%%%% I want to include this %%%%%%%%%%%
 %Additionally, PPS's methodology does not account for segregation of baseball 
 %prior to 1947.  There is minimal support for Petersen's claim that PPS detrending 
 %makes the statistics fairer which appears in Johnson's article.
-%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -1329,19 +1366,6 @@ peers from fundamentally different eras.
 
 \subsection{Era bridging}
 
-<<echo = FALSE>>=
-# 6 of the 10 best hitters for average started their career before 1950 
-# 10 of the 25 best hitters for average started their career before 1950 
-data2 <- data[1:13, ]
-data2[13, 2] <- 0.9 * data[13, 2]
-data2[, 3] <- cumsum(data2[, 2]) / sum(data2[, 2])
-p2 <- data2[8, 3]
-
-bridge10 <- 6; bridge25 <- 10
-pbridge10 <- pbinom(bridge10 - 1, p = p2, size = n10, lower = FALSE)
-pbridge25 <- pbinom(bridge25 - 1, p = p2, size = n25, lower = FALSE)
-@
-
 \citet{berry1999eras} claim that their era bridging technique accounts for 
 talent discrepancies across eras.  However, they do not explicitly 
 parameterize this in their hierarchical models.  They state that 
@@ -1375,162 +1399,49 @@ published in 1999 so we recompute the chances of these events where the MLB
 eligible population ends at 1999. % (we approximate this by taking the population 
 %counts in the first 12 rows of Table 1 and then multiplying the population 
 %count in 2000 by 0.9).  
+These calculations are performed with the code below.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# population data through 1999}
+\hlstd{data2} \hlkwb{<-} \hlstd{data[}\hlnum{1}\hlopt{:}\hlnum{13}\hlstd{, ]}
+\hlstd{data2[}\hlnum{13}\hlstd{,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlnum{0.9} \hlopt{*} \hlstd{data[}\hlnum{13}\hlstd{,} \hlnum{2}\hlstd{]}
+\hlstd{data2[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(data2[,} \hlnum{2}\hlstd{])} \hlopt{/} \hlkwd{sum}\hlstd{(data2[,} \hlnum{2}\hlstd{])}
+
+\hlcom{# proportion of MLB eligible population who started their career }
+\hlcom{# before 1950}
+\hlstd{p2} \hlkwb{<-} \hlstd{data2[}\hlnum{8}\hlstd{,} \hlnum{3}\hlstd{]}
+
+\hlcom{# Binomial probabilities for Berry's top 10 and top 25 lists}
+\hlstd{bridge10} \hlkwb{<-} \hlnum{6}\hlstd{; bridge25} \hlkwb{<-} \hlnum{10}
+\hlstd{pbridge10} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bridge10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p2,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbridge25} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bridge25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p2,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 We calculate the chance that one would expect to 
 observe 6 or more individuals in a top 10 list who started their careers 
-before 1950 as 1 in \Sexpr{round(1 / pbridge10)}. 
+before 1950 as 1 in 30. 
 We calculate the chance that one would expect to observe 10 or more 
 individuals in a top 25 list who started their careers before 1950 as 
-1 in \Sexpr{round(1 / pbridge25, 2)}.  These chances are not as extreme 
+1 in 7.7.  These chances are not as extreme 
 as those in Table~\ref{probvalues}, but they still correspond to events 
-that are unlikely.  
-
-
-
-% Batting average does not have the same increase over the century. 
-% There is a gradual increase in the ability of players
-% to hit for average, but the increase is not nearly as dramatic
-% as for home runs. The distribution of batting average players
-% lends good support to Gould's conjecture. The best players
-% are increasing in ability, but the median and 10th percentile
-% players are increasing faster over the century. It has gotten
-% harder for players of a fixed ability to hit for average. This
-% may be due to the increasing ability of pitchers.
-
-%\subsection{Critique of our testing procedure}
-%\label{ourcritique}
-%Our testing procedure is valid under two assumptions made in 
-%Section~\ref{sec:Stats}.  A sensitivity analysis is given in 
-%Section~\ref{sec:Assumptions} that considers how our findings change under 
-%violations of our assumptions.  The results of the sensitivity analysis are  
-%largely consistent with our original analysis, with an exception being when 
-%we weigh populations with respect to a weighting regime which states that 
-%the eligible MLB population were those who listed baseball as their favorite 
-%sport.  
-
-
-
-
-
-%\begin{table}[h!]
-%\begin{center}
-%\begin{tabular}{lccccc}
-%\hline
-%year & original data & w1 & w2 & w3 & w4 \\
-%\hline
-%\Sexpr{data[1,1]} & \Sexpr{round(data[1,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[1,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[1,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[1,2] / (15*8) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[1,2] / (15*8) * 1e3, 1)}   \\
-%\Sexpr{data[2,1]} & \Sexpr{round(data[2,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[2,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[2,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[2,2] / (15*8) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[2,2] / (15*8) * 1e3, 1)}   \\
-%\Sexpr{data[3,1]} & \Sexpr{round(data[3,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[3,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[3,2] / (15*8) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[3,2] / (15*8) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[3,2] / (15*8) * 1e3, 1)}   \\
-%\Sexpr{data[4,1]} & \Sexpr{round(data[4,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[4,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[4,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[4,2] / (25*16) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[4,2] / (25*16) * 1e3, 1)}   \\
-%\Sexpr{data[5,1]} & \Sexpr{round(data[5,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w1[5,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w2[5,2] / (25*16) * 1e3, 1)}   
-%  & \Sexpr{round(data.w3[5,2] / (25*16) * 1e3, 1)} 
-%  & \Sexpr{round(data.w4[5,2] / (25*16) * 1e3, 1)}   \\ 
-%  %& & & & & \\   
-%\Sexpr{data[6,1]} & \Sexpr{round(data[6,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[6,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[6,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[6,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[6,2] / (25*16) * 1e3, 1)}  \\
-%\Sexpr{data[7,1]} & \Sexpr{round(data[7,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[7,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[7,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[7,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[7,2] / (25*16) * 1e3, 1)}  \\
-%\Sexpr{data[8,1]} & \Sexpr{round(data[8,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[8,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[8,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[8,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[8,2] / (25*16) * 1e3, 1)}  \\
-%\Sexpr{data[9,1]} & \Sexpr{round(data[9,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[9,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[9,2] / (25*16) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[9,2] / (25*16) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[9,2] / (25*16) * 1e3, 1)}  \\  
-%\Sexpr{data[10,1]} & \Sexpr{round(data[10,2] / (25*24) * 1e3, 1)}  
-%  & \Sexpr{round(data.w1[10,2] / (25*24) * 1e3, 1)}  
-%  & \Sexpr{round(data.w2[10,2] / (25*24) * 1e3, 1)}  
-%  & \Sexpr{round(data.w3[10,2] / (25*24) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[10,2] / (25*24) * 1e3, 1)}  \\   
-%  %& & & & & \\ 
-%\Sexpr{data[11,1]} & \Sexpr{round(data[11,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[11,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[11,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[11,2] / (25*26) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[11,2] / (25*26) * 1e3, 1)} \\
-%\Sexpr{data[12,1]} & \Sexpr{round(data[12,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[12,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[12,2] / (25*26) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[12,2] / (25*26) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[12,2] / (25*26) * 1e3, 1)} \\  
-%\Sexpr{data[13,1]} & \Sexpr{round(data[13,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[13,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[13,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[13,2] / (25*30) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[13,2] / (25*30) * 1e3, 1)} \\
-%\Sexpr{data[14,1]} & \Sexpr{round(data[14,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w1[14,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w2[14,2] / (25*30) * 1e3, 1)} 
-%  & \Sexpr{round(data.w3[14,2] / (25*30) * 1e3, 1)}
-%  & \Sexpr{round(data.w4[14,2] / (25*30) * 1e3, 1)} \\
-%\hline
-%\end{tabular}
-%\end{center}
-%\caption{Relative talent dilution when considering the weighted eligible MLB 
-%  population sizes. Numbers are in thousands of people per roster spot. }
-%\label{dilution2}
-%\end{table}
+that are unlikely.  However, it is clear that if we were to reweight the 
+MLB eligible population as we did Section 5, then the calculations in 
+\citet{berry1999eras} would be in line with expectations.
 
 
 
 
 \section{Conclusions}
 
-%Our methodology holds up well when we weight our original data in ways that 
-%reflect relative disbelief in our assumptions.  Moreover, we expect that the 
-%conclusions drawn from weighting with respect to our third weighting regime 
-%are extremely unlikely.  To see this we investigate talent dilution with 
-%respect to the four weighted populations as depicted in 
-%Table~\ref{dilution2}.  From the w3 column of Table~\ref{dilution2}, we see 
-%that talent was least diluted at and before 1900.  If that were truly the 
-%case then we would expect less variability and outliers in achievements 
-%as described by Stephen J. Gould in numerous books, articles, and YouTube 
-%videos.  The baseball reference leader boards for these years 
-%indicate the exact opposite. In particular, see the season batting average 
-%leaders. %%% in \citet{bref}. 
-%This suggests that the talent pool in the MLB was diluted during that 
-%time period.  
-
-%PPS does not offer any insight on how their method fairs when their underlying 
-%assumptions are called into question.  
-%As argued in Section~\ref{WARcritique}, methodology which compares players 
-%across eras by examining who stood the farthest from their peers is 
-%fundamentally flawed.  Era bridging offers a step in the right direction but 
-%the methodology does not explicitly account for a changing talent pool.
-
 The MLB players from the early eras of baseball receive significant attention 
 and praise as a result of their statistical achievements and their mythical 
 lore.  We find that these players are collectively overrepresented in 
 rankings of the greatest players in the history of the MLB, and that popular 
 performance metrics such as WAR fail to properly compare players across eras.  
-%Our statistical methodology provides overwhelming evidence in favor of this 
-%argument.  
 Superior statistical accomplishments achieved 
 by players that started their careers before 1950 are a reflection of our 
 inability to properly compare talent across eras.  It is highly unlikely that 
@@ -1544,9 +1455,13 @@ artists,
 musicians, 
 actors and actresses,
 scientists, or 
-leaders?  Do our perceptions change when we focus beyond nostalgia?  
+leaders?  
+Do our perceptions change when we focus beyond nostalgia?  
+
+
 
 \section*{Acknowledgements}
+
 This work would not be what it is today without the many conversations that 
 the author had with family, friends, and peers.
 I am very grateful to 
@@ -1560,7 +1475,7 @@ Steven A. Culpepper,
 Andrew Depuy, 
 Evan Eck, 
 Fred Eck, 
-Joe Eck, 
+Joe Eck,
 Kim Eck, 
 Marcus A. Eck, 
 Michael Eck, 
@@ -1592,53 +1507,55 @@ Jarret Zook,
 the editorial board at Chance, 
 and 
 two anonymous referees at Chance
-for helpful comments and discussions (some of which went very long).
+for helpful comments and discussions (some of which went very long).  
+I would also like to think the r/baseball and r/Sabermetrics reddit boards 
+for some useful discussions.  
 This work was partially supported by NIH grants NICHD DP2 HD091799-01.
 
 
-%\section*{Appendix A: Mathematical Details}
-%We revisit the calculation discussed in the Statistical Evidence section. The chance that 
-%an eligible MLB player whose career was largely before 1950 appears in the top 
-%10 occurs with probability $p = \Sexpr{signif(data[8,3], 3)}$ 
-%(up to three significant figures).  We use the binomial distribution to 
-%calculate the probability of at least 6 eligible MLB players whose career 
-%started before 1950 appear in the top 10.  More formally, we are interested in 
-%calculating $P(X \geq 6)$ where $X$ is the number of players whose careers 
-%started before 1950 appearing in the top 10.  So we have
-%$$  
-%  P(X \geq 6) = P(X = 6) + \cdots + P(X = 10). 
-%$$
-%The binomial distribution is used to calculate $P(X = 6)$, $\ldots$, 
-%$P(X = 10)$ where
-%$$  
-%  P(X = x) = {10 \choose x}p^x(1-p)^{10-x}
-%$$
-%for $x = 6,7,8,9,10$. For example, when $x = 6$ we have
-%$$  
-%  P(X = 6) = {10 \choose 6}p^6(1-p)^{4}. 
-%$$
-%Specifying $x = 6$ is equivalent to 6 eligible MLB players whose careers started 
-%before 1950 appearing in the top 10.  We do not care about the order 
-%that players appear in the top 10.  The number ${10 \choose 6}$ corrects for 
-%this. The number ${10 \choose 6}$ is the number of possible orderings of 6 
-%``successes" and 4 ``failures" that can occur.  In our context a success is a 
-%MLB player whose career began before 1950 and a failure is an 
-%MLB player whose career began after 1950.  Any particular ordering of the top 
-%10 with 6 MLB players whose careers started before 1950 appearing 
-%in the list occurs with probability $p^6(1-p)^4$. 
-%Therefore the probability that 6 MLB players who started their careers  
-%before 1950 appear in the top 10 is given by
-%$$  
-%  P(X = 6) = {10 \choose 6}p^6(1-p)^{4} 
-%    = \Sexpr{choose(10, 6)} \times \Sexpr{p}^6 \times (1 - \Sexpr{p})^4
-%    = \Sexpr{dbinom(6, size = 10, p = p)} . 
-%$$
-%R statistical software was used as a calculator throughout the Statistical 
-%Evidence section.  Similar calculations to this one are made to calculate 
-%all of the probabilities that appear in Tables~\ref{probvalues} and 
-%\ref{probvalues.weights}.
 
 
+\section*{Appendix: Mathematical Details}
+
+We revisit the calculation discussed in the Statistical Evidence section.  
+The chance that a MLB eligible player whose career started before 1950 
+appears in the top 10 occurs with probability $p = 0.187$ 
+(up to three significant figures).  We use the binomial distribution to 
+calculate the probability of at least 6 MLB eligible players whose career 
+started before 1950 appear in the top 10.  More formally, we are interested in 
+calculating $P(X \geq 6)$ where $X$ is the number of players whose careers 
+started before 1950 appearing in the top 10.  So we have
+$$  
+  P(X \geq 6) = P(X = 6) + \cdots + P(X = 10). 
+$$
+The binomial distribution is used to calculate $P(X = 6)$, $\ldots$, 
+$P(X = 10)$ where
+$$  
+  P(X = x) = {10 \choose x}p^x(1-p)^{10-x}
+$$
+for $x = 6,7,8,9,10$. For example, when $x = 6$ we have
+$$  
+  P(X = 6) = {10 \choose 6}p^6(1-p)^{4}. 
+$$
+Specifying $x = 6$ is equivalent to 6 MLB eligible players whose careers 
+started before 1950 appearing in the top 10.  We do not care about the order 
+that players appear in the top 10.  The number ${10 \choose 6}$ corrects for 
+this. The number ${10 \choose 6}$ is the number of possible orderings of 6 
+``successes" and 4 ``failures" that can occur.  In our context a success is a 
+MLB player whose career began before 1950 and a failure is an 
+MLB player whose career began after 1950.  Any particular ordering of the top 
+10 with 6 MLB players whose careers started before 1950 appearing 
+in the list occurs with probability $p^6(1-p)^4$. 
+Therefore the probability that 6 MLB players who started their careers  
+before 1950 appear in the top 10 is given by
+$$  
+  P(X = 6) = {10 \choose 6}p^6(1-p)^{4} 
+    = 210 \times 0.1870302^6 \times (1 - 0.1870302)^4
+    = 0.0039263. 
+$$
+Similar calculations to this one are made to calculate all of the 
+probabilities that appear in Tables~\ref{probvalues} and 
+\ref{probvalues.weights}.
 
 
 \begin{FlushLeft}
@@ -1708,6 +1625,11 @@ Berry, S.~M., Reese, C.~S., and Larkey, P.~D. (1999),
 %Doran, N. (2015),
 %\newblock ``Running Down the Velocity Upswing.''
 %\newblock \url{https://redlegnation.com/2015/02/19/running-down-the-velocity-upswing/}
+
+\bibitem[Eck(2019)Eck]{eck2019challenging}
+Eck, D.~J. (2019).
+\newblock ``Challenging nostalgia and performance metrics in baseball.''
+\newblock Accepted at \emph{Chance}.
 
 %\bibitem[ESPN(2015)ESPN]{ESPN}
 %ESPN (2015),
@@ -1853,5 +1775,5 @@ Schmidt, M.~B. and Berri, D.~J. (2005),
 
 
 
-
 \end{document}
+
