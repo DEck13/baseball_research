@@ -21,3 +21,11 @@ To cite the technical report:
   Eck, D.J. (2019).  Supporting data analysis for "Challenging nostalgia and 
   performance metrics in baseball."
 
+
+
+### License
+
+This research is under the GNU General Public License v3.0, this license does 
+not include the file Gallupfavoritesport.png which appears in the 
+Challenging_nostalgia directory.
+
