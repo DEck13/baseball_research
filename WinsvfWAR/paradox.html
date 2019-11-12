@@ -378,7 +378,7 @@ summary {
 <hr />
 <div id="dataset" class="section level3">
 <h3>Dataset</h3>
-<p>The dataset is taken is from fangraphs (thank you again Fangraphs!) and it includes total team wins and fWAR for every MLB team dating back to 1920. The year 1920 is chosen because it is considered the first year of the modern era and, although fWAR can account for the run environment of a season in isolation, we do not include deadball era seasons in this analysis. The first 6 rows of the dataset are displayed below.</p>
+<p>The dataset is taken is from Fangraphs (thank you again Fangraphs!) and it includes total team wins and fWAR for every MLB team dating back to 1920. The year 1920 is chosen because it is considered the first year of the modern era and, although fWAR can account for the run environment of a season in isolation, we do not include deadball era seasons in this analysis. The first 6 rows of the dataset are displayed below.</p>
 <pre class="r"><code>WinsvfWAR &lt;- read.csv(&quot;WinsvfWAR.csv&quot;)
 library(parallel)
 library(tidyverse)
@@ -390,6 +390,25 @@ head(WinsvfWAR)</code></pre>
 ## 4 Cardinals 75  9.5  26.6 36.1 1920
 ## 5      Cubs 75 14.1  15.2 29.3 1920
 ## 6    Giants 86 12.2  27.0 39.2 1920</code></pre>
+<p>The dataset creates separate team information for franchises that had different names. We combine this information and rename the franchise to its current name. For example, the Braves and the Bees team information is combined to form the Braves franchise. We do this for all such franchises</p>
+<pre class="r"><code>## combine franchises
+library(forcats)
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Braves = c(&quot;Braves&quot;,&quot;Bees&quot;))
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Nationals = c(&quot;Nationals&quot;,&quot;Expos&quot;))
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Orioles = c(&quot;Orioles&quot;,&quot;Browns&quot;))
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Twins = c(&quot;Twins&quot;,&quot;Senators&quot;))
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Astros = c(&quot;Astros&quot;,&quot;Colt .45's&quot;))
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Reds = c(&quot;Reds&quot;,&quot;Redlegs&quot;))
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Dodgers = c(&quot;Dodgers&quot;,&quot;Robins&quot;))
+WinsvfWAR$Team &lt;- WinsvfWAR$Team %&gt;% 
+  fct_collapse(Rays = c(&quot;Rays&quot;,&quot;Devil Rays&quot;))</code></pre>
 <hr />
 </div>
 <div id="analysis-1-fwar-is-a-good-predictor-of-wins" class="section level3">
@@ -443,7 +462,8 @@ diagnostics %&gt;% summarise(mean(constvar), mean(normality))</code></pre>
 </div>
 <div id="analysis-2-several-teams-consistently-underoverperform-their-predicted-fwar" class="section level3">
 <h3>Analysis 2: Several teams consistently under/overperform their predicted fWAR</h3>
-<p>We now show that several teams consistently win more games or less games than what fWAR predicts. To do this, we compute the average residual across seasons for each team and then divide that average residual value by the corresponding standard error. We will denote these computed quantities as normal scores. Observe that there are 11 franchises out of 38 total franchises with an absolute normal score greater than or equal to 2. There are technically 39 franchises but the Pilots were dropped from consideration because they only played 1 season, and you cannot a standard error from 1 data point.</p>
+<p>We now show that several teams consistently win more games or less games than what fWAR predicts. To do this, we compute the average residual across seasons for each franchise and then divide that average residual value by the corresponding standard error. We will denote these computed quantities as normal scores. These normal scores are approximately normally distributed with mean equal to 0 and standard deviation equal to 1 when the sample size is large enough provided that residuals are independent and mean zero across seasons.</p>
+<p>Observe that there are 11 franchises out of 30 total franchises with an absolute normal score greater than or equal to 2. There are technically 31 franchises but the Pilots were dropped from consideration because they only played 1 season, and you cannot a standard error from 1 data point.</p>
 <pre class="r"><code>## add intra-season residuals to dataset
 WinsvfWAR &lt;- WinsvfWAR %&gt;% 
   mutate(resid = do.call(rbind, mclapply(models, mc.cores = 12, 
@@ -451,30 +471,36 @@ WinsvfWAR &lt;- WinsvfWAR %&gt;%
       matrix(m$residuals, ncol = 1)
 })))
 
-normalscore &lt;- as.data.frame(WinsvfWAR %&gt;% group_by(Team) %&gt;% 
-  summarise(normalized = mean(resid)/(sd(resid)/sqrt(length(year)))) %&gt;% 
-  arrange(desc(abs(normalized))))
+normalscore &lt;- unlist(mclapply(split(WinsvfWAR, 
+  f = as.factor(WinsvfWAR$Team)), mc.cores = 12, 
+  FUN = function(xx){
+    resid &lt;- xx$resid
+    mean(resid)/(sd(resid)/sqrt(nrow(xx)))
+  }))
+normalscore &lt;- normalscore[complete.cases(normalscore)]
+normalscore &lt;- normalscore[sort.int(abs(normalscore), 
+  decreasing = TRUE, index.return = TRUE)$ix]
 
 ## number of franchises (Seattle Pilots dropped)
-nrow(normalscore) - 1</code></pre>
-<pre><code>## [1] 38</code></pre>
+length(normalscore)</code></pre>
+<pre><code>## [1] 30</code></pre>
 <pre class="r"><code>## franchises with normal scores &gt;= 2
-normalscore %&gt;% filter(abs(normalized) &gt;= 2)</code></pre>
-<pre><code>##          Team normalized
-## 1      Giants   3.182230
-## 2    Phillies  -3.069237
-## 3     Red Sox  -3.008894
-## 4      Tigers  -2.961556
-## 5    Mariners  -2.889537
-## 6  Devil Rays  -2.693505
-## 7   Athletics   2.444990
-## 8        Bees   2.374846
-## 9      Braves   2.189987
-## 10    Marlins  -2.189601
-## 11     Angels   2.007475</code></pre>
+data.frame(normalscore = normalscore[which(abs(normalscore) &gt;= 2)])</code></pre>
+<pre><code>##           normalscore
+## Rays        -3.271747
+## Giants       3.182230
+## Phillies    -3.069237
+## Red Sox     -3.008894
+## Tigers      -2.961556
+## Mariners    -2.889537
+## Braves       2.644756
+## Athletics    2.444990
+## Marlins     -2.189601
+## Dodgers      2.080632
+## Angels       2.007475</code></pre>
 <p>Under the assumption that there is no relationship between MLB teams and the regression residuals, we expect roughly 2 teams to have an absolute normal score greater than or equal to 2 (corresponding to a test with error tolerance equal to 0.05). However, we observed 11 such teams. The probability of observing 11 or more such teams is computed below.</p>
-<pre class="r"><code>pbinom(10, size = 39, p = 0.05, lower = FALSE)</code></pre>
-<pre><code>## [1] 2.214294e-06</code></pre>
+<pre class="r"><code>pbinom(10, size = 30, p = 0.05, lower = FALSE)</code></pre>
+<pre><code>## [1] 1.096938e-07</code></pre>
 <p>This probability is very low, and we would therefore conclude that the assumption of no relationship between regression residuals and MLB teams is violated. In other words, a significantly large number of teams consistently win or lose more games than what is expected by fWAR.</p>
 <hr />
 </div>
