@@ -22,6 +22,14 @@ To cite the technical report:
   performance metrics in baseball."
 
 
+### Paradoxical relationship of fWAR and wins
+
+The WinsvfWAR directory contains analyses which show that in any given season, a team's 
+total fangraphs wins above replacement (fWAR) is a great single predictor for a team's 
+total wins. We also show that a significant number of franchises consistently 
+underperform or overperform their fWAR. These two facts are in direct constrast of each 
+other and it is surprising that they can hold simultaneously. Data credit goes to 
+Fangraphs.
 
 ### License
 
