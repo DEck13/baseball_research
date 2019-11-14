@@ -31,6 +31,13 @@ underperform or overperform their fWAR. These two facts are in direct constrast 
 other and it is surprising that they can hold simultaneously. Data credit goes to 
 Fangraphs.
 
+### Direct calculation of WAR
+
+[with Sixian Li] The directWAR directory contains some exploratory analyses for a new 
+simple approach to calculate a player's WAR that draws on ideas from causal inference. 
+More to come.
+
+
 ### License
 
 This research is under the GNU General Public License v3.0, this license does 
