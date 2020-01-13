@@ -20,6 +20,9 @@ To cite the technical report:
 
   Eck, D.J. (2019).  Supporting data analysis for "Challenging nostalgia and 
   performance metrics in baseball."
+  
+A shiny app that allows others to produce their own analyses within the framework of 
+this paper can be viewed [here](https://deck13.shinyapps.io/challenging_baseball_nostalgia/).
 
 
 ### Paradoxical relationship of fWAR and wins
