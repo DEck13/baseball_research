@@ -61,24 +61,38 @@ of baseball's all time greatest players.
 The purpose of this document is to make transparent the analysis in 
 \citet{eck2019challenging}.  All calculations and tables that appear in 
 \citet{eck2019challenging} are displayed in this document.  
-This document is a technical report that can be compiled by anyone with a 
-computer who has the UN Census data file,
+%This document is a technical report that can be compiled by anyone with a 
+%computer who has the UN Census data file,
+%\begin{center}
+%\begin{verbatim}
+%  WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv
+%\end{verbatim}
+%\end{center}
+%This file is located at \url{https://population.un.org/wpp/Download/Standard/Population/}. 
+%The relevant file is the population by age groups - male .xls file under the 
+%age composition sub group.  The corresponding .csv file is included on the 
+%author's GitHub page along with this technical report.  
+This document doubles as a technical report that can be reproduced by anyone 
+with a computer who has the file
 \begin{center}
 \begin{verbatim}
-  WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv
+  population.csv.
 \end{verbatim}
 \end{center}
-This file is located at \url{https://population.un.org/wpp/Download/Standard/Population/}. 
-The relevant file is the population by age groups - male .xls file under the 
-age composition sub group.  The corresponding .csv file is included on the 
-author's GitHub page along with this technical report.  
-
-
-
+This file is available at the author's GitHub page along with this technical 
+report.  See here: 
+\begin{center}
+\begin{verbatim}
+https://github.com/DEck13/baseball_research/tree/master/Challenging_nostalgia
+\end{verbatim}
+\end{center}
+The columns age20 and age25 corresponding to counts of males aged 20-24 and 25-29 
+respectively.
 
 
 \section{Introduction}
 %\doublespacing
+
 It is easy to be blown away by the accomplishments of great old time 
 baseball players when you look at their raw or advanced baseball statistics.  
 %% Consider making a chart for the mind-boggling seasons and careers.
@@ -92,27 +106,32 @@ Rogers Hornsby's 1925 season,
 and
 Lou Gehrig's 1931 season.
 The statistical feats achieved by these players (and others) far surpass 
-the statistics that recent and current players produce.  At first glance 
+the statistics that recent and current players produce.  
+
+At first glance 
 it seems that players from the old eras were vastly superior to the 
 players in more modern eras, but is this true? 
-%Were the old timers actually better? 
 In this paper, we investigate whether baseball players from earlier 
 eras of professional baseball are overrepresented among the game's all-time 
 greatest players according to popular opinion, performance metrics, and expert 
-opinion.  We define baseball players from earlier eras to be those that 
+opinion.  
+
+We define baseball players from ``earlier eras'' to be those that 
 started their MLB careers in the 1950 season or before.  
 This year is chosen because it coincides with the decennial US Census 
 and is close to 1947, the year in which baseball became integrated. 
 
-In this paper we do not compare baseball players via their statistical 
+This article does not compare baseball players via their statistical 
 accomplishments.  Such measures exhibit era biases that are confounded with 
 actual performance.  Consider the single season homerun record as an example. 
 Before Babe Ruth, the single season homerun record was 27 by Ned Williamson in 
-1884. %\citep{reichler1985encyclopedia}.  
+1884.  
 Babe Ruth broke this record in 1919 
 when he hit 29 homeruns.  He subsequently destroyed his own record in 
 the following 1920 season when he hit 54 homeruns.  The runner up in 1920 
-finished the season with a grand total of 15 homeruns.  At this point in time 
+finished the season with a grand total of 15 homeruns.  
+
+At that point, 
 homerun hitting was not an integral part of a batter's approach. %\citep{bref}.  
 This has changed. Now, we often see multiple batters reach at least 30-40 
 homeruns within one season and a 50 homerun season is not a rare 
@@ -122,6 +141,7 @@ combination of his innate talent and circumstance.
 His approach was quickly emulated and became widely adopted. %\citep{bref}.  
 However, Ruth's accomplishments as a homerun hitter would not stand out nearly 
 as much if he played today and put up similar homerun totals.    
+
 The example of homeruns hit by Babe Ruth and the impact they had relative 
 to his peers represents a case where adjustment towards a peer-derived 
 baseline fails across eras.  No one reasonably expects 1920 Babe Ruth to hit 
@@ -129,7 +149,7 @@ more than three times the amount of homeruns hit by the second best homerun
 hitter if the 1920 version of Babe Ruth played today.  
 This is far from an isolated case.  
 
-There are several statistical approaches currently used to compare baseball 
+Several statistical approaches are currently used to compare baseball 
 players across eras. 
 These include 
 wins above replacement as calculated by baseball reference (bWAR), %\citep{bref}, 
@@ -142,7 +162,8 @@ in the Journal of Statistics Education,
 and era bridging \citep{berry1999eras}. 
 A number of these are touted to be season adjusted and the remainder are 
 widely understood to have the same effect.  
-In one way or another all of these statistical approaches compare the  
+
+In one way or another, all of these statistical approaches compare the  
 accomplishments of players within one season to a baseline that 
 is computed from statistical data within that same season.  
 This method of player comparison ignores talent discrepancies that exist across 
@@ -154,23 +175,27 @@ comparisons, across seasons.  These methods therefore fail to properly
 compare players across eras of baseball despite the claim that they are 
 season adjusted.  
 
-Worse still is that these approaches exhibit a favorable bias towards baseball 
+Worse still, these approaches exhibit a favorable bias towards baseball 
 players who played in earlier seasons 
 \citep{schmidt2005concentration}.  
 We explore this bias from two separate theoretical perspectives underlying how 
 baseball players from different eras would actually compete against each 
-other.  The first perspective is that players would teleport across eras to 
+other.  
+
+The first perspective is that players would teleport across eras to 
 compete against each other.  From this perspective, the players from earlier eras 
 are at a competitive disadvantage because, on average, baseball players have 
 gotten better as time has progressed.
 %\citep{gould1996fullhouse, schmidt2005concentration}.  
 Specifically, it is widely acknowledged that 
 fastball velocity, pitch repertoire, training methods, and management 
-strategies have all improved over time   
+strategies have all improved over time.  
 %\citep{lewis2004moneyball, keh2013offseason, thorn2014pitching, 
 %doran2015velocity, arthur2016bullpen, castrovince2016velocity}.  
 We do not find the teleportation perspective to be of 
-much interest for these reasons.  The second perspective is that a player from 
+much interest for these reasons.  
+
+The second perspective is that a player from 
 one era could adapt naturally to the game conditions of another era if they 
 grew up in that time. 
 This line of thinking is challenging to current statistical methodology because 
@@ -186,82 +211,104 @@ have changed drastically over time.  %\citep{gould1996fullhouse}. \\
 
 The MLB eligible population is not well-defined.  As a proxy, we can say 
 that the MLB eligible population is the decennial count of males aged 
-20-29 that are living in the United States (US) and Canada. 
+20-29 that are living in the United States (US) 
+%(collected on years 1880, 1890,...) 
+and Canada. 
+%(collected on years 1881, 1891,...).
 Baseball was segregated on racial grounds until 1947.  As a result, 
 African American and Hispanic American population counts in the US  
 and Canada are added to our dataset starting in 1960.  The year 1960 is chosen 
 because the integration of the MLB was slow as noted in Armour's work on the 
 integration of baseball in the Society for American Baseball Research.
 
-Players from Central and South American countries and the Caribbean islands 
-were also targets of discrimination.
+
+Players from Latin, Central and South American countries and the Caribbean 
+islands were also targets of discrimination.
 We have added data from these countries to the MLB eligible population starting 
 in 1960:
 %The countries included in our dataset are 
-Mexico, 
-the Dominican Republic, 
-Venezuela, 
+Aruba,
+the Bahamas, 
+Colombia, 
 Cuba, 
-Panama, 
-Puerto Rico, 
-Netherlands Antilles, 
-Aruba, 
+the Dominican Republic, 
 Honduras, 
 Jamaica, 
-the Bahamas, 
-Peru, 
-Colombia,
+Mexico, 
+Netherlands Antilles, 
 Nicaragua, 
-and the United States Virgin Islands.  
-In the mid to late 1990s, the MLB and minors saw an influx of Asian baseball 
+Panama, 
+Peru, 
+Puerto Rico, 
+the United States Virgin Islands, 
+and Venezuela.  
+
+In the mid- to late 1990s, the MLB and minors saw an influx of Asian baseball 
 players from Japan, South Korea, Taiwan, and the Philippines.  
 We have added the populations of these countries to the MLB eligible population 
-starting in 2000.  In 2010, the MLB established a national training center in 
-Brazil as noted in Lor{\'e}'s work on the popularity of baseball in Brazil in 
-the Culture Trip.  Therefore, we have included the Brazilian population of 
-20-24 year old men into our MLB eligible population starting in 2010.  
+starting in 2000.  
+
+In 2010, the MLB established a national training center in Brazil %\citep{Brazil}, 
+as noted in Lor{\'e}'s work on the popularity of baseball in Brazil in the 
+Culture Trip.
+Therefore, we have included the Brazilian population of 20-24 year old 
+men into our MLB eligible population starting in 2010.  
 We estimate that the 2011-2015 MLB eligible population is half of the 
 MLB eligible population counted in the 2010 decennial Censuses.  We expect 
 that this underestimates the actual 2011-2015 MLB eligible population 
 since we have observed a constant increase in the overall MLB eligible 
-population as time increases. 
+population as time increases.
 
-We now load in the UN population dataset and begin constructing the population 
-dataset used in our analysis.
+We now load in the population dataset and begin our analysis.  The code 
+below creates our MLB eligible population.
 
-<<pops, cache = TRUE, warnings = FALSE, errors = FALSE>>=
+<<pops, cache = TRUE, warnings = FALSE, errors = FALSE, message = FALSE>>=
 # load in UN dataset and remove irrelevant variables
+library(dplyr)
+library(stringr)
+library(knitr)
 options(warn=-1)
-WPP2010 <- 
-  read.csv("WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv", 
-  header = TRUE)
-colnames(WPP2010)[3] <- c("region")
-colnames(WPP2010)[6] <- c("year")
-colnames(WPP2010)[7:17] <- paste("age", 0:10 * 5, sep = "")
-WPP2010 <- WPP2010[, c(3, 6, 11, 12)]
+population_data <- read.csv("population.csv", header = TRUE)[, -1] %>% 
+  mutate(age20 = age20 / 1e3, age25 = age25 / 1e3) %>% 
+  filter(year > 1950)
 
 # restrict attention to countries of interest
-countries <- c("Mexico", "Aruba", "Panama", 
-  "Columbia", "Cuba", "Honduras", "Jamaica", 
-  "Bahamas", "Peru", "Dominican Republic", 
-  "Netherlands Antilles", "Puerto Rico", 
-  "Venezuela (Bolivarian Republic of)", "Nicaragua", 
-  "United States Virgin Islands", "Canada", 
-  "United States of America")
+countries <- c("Aruba", "Bahamas", "Brazil", "Colombia", "Cuba", 
+  "Dominican Republic", "Honduras", "Jamaica", "Japan", "Mexico", 
+  "Netherlands Antilles", "Nicaragua", "Panama", "Philippines", "Peru", 
+  "Puerto Rico", "Republic of Korea", "Taiwan", 
+  "Venezuela (Bolivarian Republic of)", "United States Virgin Islands", 
+  "Canada", "United States of America")
 
-# obtain population data for all countries for all years
-dataset <- WPP2010[WPP2010[, 1] %in% countries, ]
-dataset[, 3] <- as.numeric(levels(dataset[, 3]))[dataset[, 3]]
-dataset[, 4] <- as.numeric(levels(dataset[, 4]))[dataset[, 4]]
-dataset[, 3:4] <- dataset[, 3:4] / 1000
+# trim population dataset
+foo <- population_data[population_data$region %in% countries, ]
+foo$region <- droplevels(foo$region)
+bar <- split(foo, f = as.factor(foo$region))
 
-# get population dataset for this analysis corresponding to the 
-# Census years 
-dataset.years <- dataset[dataset[, 2] %in% 
-  c("1960", "1970", "1980", "1990", "2000", "2010"), ]
-dataset.years[, 2] <- factor(dataset.years[, 2])
-dataset.years.list <- split(dataset.years, f = as.factor(dataset.years[, 2]))
-pops <- unlist(lapply(dataset.years.list, function(x) sum(x[, 3:4])))
+# highlight countries that will be included starting in 2000
+asian_countries <- c("Japan", "Philippines", "Republic of Korea", "Taiwan")
+
+# extract relevant age 20-29 totals
+baz <- lapply(bar, function(xx){
+  region <- unique(xx$region)
+  
+  # only include age 20-24 males from Brazil staring in 2010
+  if(region == "Brazil"){
+    xx <- (xx %>% filter(year >= 2010))
+    xx$age25 <- 0
+    xx <- xx %>% mutate(total = age20 + age25) %>% 
+      dplyr::select("year", "total")
+  }
+  # filter out Asian countries
+  else if(region %in% asian_countries){
+    xx <- xx %>% mutate(total = age20 + age25) %>% 
+      dplyr::select("year", "total") %>% filter(year >= 2000)
+  }
+  else{
+    xx <- xx %>% mutate(total = age20 + age25) %>% 
+      dplyr::select("year", "total")
+  }
+})
 @
 
 We now add in the Taiwan population figures from the CIA World Factbook.  
@@ -273,10 +320,7 @@ the Taiwan male population aged 20-29 for 2000 or 2010.
 <<Taiwan, cache = TRUE, warnings = FALSE, errors = FALSE>>=
 #approximation from CIA World Factbook at 
 #https://www.cia.gov/library/publications/the-world-factbook/geos/print_tw.html
-dataTaiwan2000 <- 1.50 
-dataTaiwan2010 <- 1.50 
-pops[5] <- pops[5] + dataTaiwan2000
-pops[6] <- pops[6] + dataTaiwan2010
+baz$'Taiwan' <-data.frame(year = c(2000, 2010), total = c(1.5, 1.5))
 @
 
 We now add in the US and Canadian population data for the Census years from 
@@ -287,7 +331,7 @@ proportion of Canadian males aged 20-30 from 1911-1951 for which
 an accurate count of Canadian males aged 20-30 was not easy to find.  
 
 <<oldCanadaandUS, cache = TRUE, warnings = FALSE, errors = FALSE>>=
-## Canadian population before 1960
+### Canadian population before 1960
 #https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
 Can1881 <- 0.21 + 0.17
 #https://www65.statcan.gc.ca/acyb02/1907/acyb02_1907001701a-eng.htm
@@ -312,8 +356,8 @@ Can1931 <- 5.37 * propCan2030
 Can1941 <- 5.90 * propCan2030 
 #https://www65.statcan.gc.ca/acyb02/1967/acyb02_19670194010-eng.htm
 Can1951 <- 7.09 * propCan2030 
-  
-## US population before 1960
+
+### US population before 1960
 #https://www2.census.gov/library/publications/decennial/1880/vol-01-population/1880_v1-15.pdf
 US1880 <- 2.22 + 1.84  
 #https://www2.census.gov/library/publications/decennial/1900/volume-2/volume-2-p5.pdf
@@ -332,43 +376,16 @@ US1940 <- 1.08 + 1.06 + 1.01 + 1.00 + 1.01 +
 US1950 <- 5.00 + 5.30 
 @
 
-We now add the Japan, South Korea, and Philippines population for men aged 
-20-29 for 2000 or 2010 and the 2010 Brazil population for men aged 20-24 to 
-the population dataset.   
-
-<<additionalcountries, cache = TRUE, warnings = FALSE, errors = FALSE>>=
-# load in UN dataset and remove irrelevant variables
-options(warn=-1)
-WPP2010 <- 
-  read.csv("WPP2010_DB4_F2A_POPULATION_BY_AGE_MALE_ANNUAL_1950-2010.csv", 
-  header = TRUE)
-colnames(WPP2010)[3] <- c("region")
-colnames(WPP2010)[6] <- c("year")
-colnames(WPP2010)[7:17] <- paste("age", 0:10 * 5, sep = "")
-WPP2010 <- WPP2010[, c(3, 6, 11, 12)]
-
-# get population data for relevant countries 
-countries <- c("Brazil", "Japan", "Philippines", "Republic of Korea")
-dataset <- WPP2010[WPP2010[, 1] %in% countries, ]
-dataset[, 3] <- as.numeric(levels(dataset[, 3]))[dataset[, 3]]
-dataset[, 4] <- as.numeric(levels(dataset[, 4]))[dataset[, 4]]
-dataset[, 3:4] <- dataset[, 3:4] / 1000
-
-# get population dataset for this analysis corresponding to the 
-# Census years 
-dataset.years <- dataset[dataset[, 2] %in% c("2000", "2010"), ]
-dataset.years[, 2] <- factor(dataset.years[, 2])
-# Brazil age 20-24, year 2010
-Brazil2010 <- round(dataset.years[8, 3], 2)
-dataset.years <- dataset.years[c(1:3,5:7), ]
-dataset.years.list <- split(dataset.years, f = as.factor(dataset.years[, 2]))
-aspop <- unlist(lapply(dataset.years.list, function(x) sum(x[, 3:4])))
-@
 
 The final dataset with all countries' populations is created. 
 
 <<popsdata, cache = TRUE, warnings = FALSE, errors = FALSE>>=
-# refine the population dataset that is used in the analysis
+# get post 1960 population totals
+qux <- do.call(rbind, baz)
+pops_year_post1950 <- unlist(lapply(split(qux, f = as.factor(qux$year)), 
+  function(xx) sum(xx$total)))
+
+# build MLB eligible population
 pops <- as.numeric(c(US1880 + Can1881, 
   US1890 + Can1891, 
   US1900 + Can1901, 
@@ -377,9 +394,7 @@ pops <- as.numeric(c(US1880 + Can1881,
   US1930 + Can1931, 
   US1940 + Can1941, 
   US1950 + Can1951, 
-  pops))
-pops[14] <- pops[14] + Brazil2010 
-pops[13:14] <- pops[13:14] + aspop
+  pops_year_post1950))
 pops <- c(pops, pops[14]/2)
 
 # proportion of total population in current year and previous years
@@ -387,23 +402,22 @@ pop_prop <- cumsum(pops) / sum(pops)
 
 # build the dataset
 year <- c(1880 + 0:13 * 10, 2015)
-pop <- pops
-data <- cbind(year, pop, pop_prop)
-data[, 2] <- round(data[, 2], 2)
+dat <- cbind(year, pops, pop_prop)
+dat[, 2] <- round(dat[, 2], 2)
 @
 
 The MLB eligible population is displayed in Table 1.
 The cumulative proportion means that at each era, the population of the 
 previous eras is also included. As an example of how to interpret this 
-dataset, consider the year 1950. There were \Sexpr{round(data[8, 2], 3)} 
+dataset, consider the year 1950. There were \Sexpr{round(dat[8, 2], 3)} 
 million males aged 20-29. The proportion of the historical MLB eligible 
-population that existed at or before 1950 is \Sexpr{round(data[8, 3], 3)}. 
+population that existed at or before 1950 is \Sexpr{round(dat[8, 3], 3)}. 
 
 <<results="asis">>=
 # the dataset
 library(xtable)
-colnames(data)[c(2:3)] <- c("population", "cumulative population proportion")
-print(xtable(as.data.frame(data), digits = c(0,0,3,3), 
+colnames(dat)[c(2:3)] <- c("population", "cumulative population proportion")
+print(xtable(as.data.frame(dat), digits = c(0,0,3,3), 
   align = c("l","c","c","c"), 
   caption = "Eligible MLB population throughout the years. The first 
     column indicates the year, the second column indicates the 
@@ -510,10 +524,10 @@ career before 1950 using the proportion depicted in Table 1.  Consider the
 bWAR list for example.  According to bWAR, we see that 6 of the top 10 
 players started their careers before 1950.  From Table 1 we see that the 
 proportion of the MLB eligible population that played at or  
-before 1950 was approximately \Sexpr{round(data[8,3], 3)}.  
+before 1950 was approximately \Sexpr{round(dat[8,3], 3)}.  
 We then calculate the probability that one would expect to observe 6 or more 
 individuals in a top 10 list from that time period where the chance of 
-observing each individual is about \Sexpr{round(data[8,3], 3)}.  We calculate 
+observing each individual is about \Sexpr{round(dat[8,3], 3)}.  We calculate 
 this probability using the Binomial distribution, details are included in the 
 Appendix.  This calculation and all other calculations for each top 10 and 
 top 25 list depicted in Table~\ref{top25} are conducted using R statistical 
@@ -522,7 +536,7 @@ software below.  The results are provided in Table~\ref{probvalues}.
 <<basicinfo, cache = TRUE, warnings = FALSE, errors = FALSE>>=
 options(scipen=999)
 # proportion of MLB eligible population before who lived before 1950
-p <- data[8, 3]
+p <- dat[8, 3]
 
 # count of great players who started their careers before 1950
 ranker10 <- 7; ranker25 <- 15
@@ -619,7 +633,9 @@ National Basketball Association (NBA) and the National Football League (NFL)
 started in 1946 and 1920 respectively %\citep{NBA, NFL} 
 with both sports greatly rising in popularity since the inception of their 
 respective professional leagues.  Soccer and hockey have also risen in 
-popularity in the United States.  That being said, it is widely known that 
+popularity in the United States.  
+
+That being said, it is widely known that 
 MLB salaries have substantially increased.
 %\citep{badenhausen2016salary, haupert2016salary, shaikin2016salary, 
 %radcliffe2018salary}.  
@@ -645,6 +661,7 @@ Baseball salaries have grown by more than 20,000\% the last 50 years.''
 %See also Brent Radcliff's article 
 %``Baseball Greats Who Were Paid Like Benchwarmers.''
 %has plenty more surprising MLB salary figures.
+
 In short,
 baseball players made far less than they do today relative to the general US 
 population and it is unlikely that one could consider playing professional 
@@ -656,13 +673,14 @@ players.  %This suggests that our second assumption may be conservative.
 %again, if we had refined data on the MLB eligible population then the 
 %calculations in Table~\ref{probvalues} would be even more extreme.  
 
-Though we cannot confirm this theory with absolute certainty, at worst, our 
-our second assumption suffers some modest violations.  
-To account for this possibility we consider a sensitivity 
-analysis applied to the findings in Table~\ref{probvalues}.  We weight the 
+Although we cannot confirm this theory with absolute certainty, the second 
+assumption suffers modest violations at worst.  To account for this 
+possibility, we consider applying a sensitivity analysis to the findings
+in Table~\ref{probvalues}.  We weight the 
 decennial populations displayed in Table 1 to reflect the overall interest 
 that the US population has had in baseball over time irrespective of salary 
 increases based on Gallup polling data.  
+
 The four weighting regimes that we consider 
 %The weights discussed in Section~\ref{sec:Assumptions} are 
 are given in Table 4 below.  %These weights reflect reliable Gallup 
@@ -681,25 +699,6 @@ non existence of the radio prior to 1920,
 the dead-ball era,
 and low compensation.  
 
-%Our weighting regimes are deliberately designed to place more weight than 
-%one would reason
-%chosen to be antagonistic to the conclusions of the 
-%original analysis in the absence of reliable polling data.  
-
-
-%The four specific weighting regimes, denoted by 
-%$w_1$, $w_2$, $w_3$, and $w_4$, and their full descriptions are given in the 
-%Appendix.  We briefly describe these weighting regimes.  The first and second 
-%weighting regimes weigh populations with respect to overall interest in baseball.  
-%No information is given for pre-1940 baseball.  As a result of this 
-%we weigh years before 1940 with more weight than years after 1940 
-%and w2 places more weight on pre-1940 populations than w1.  
-%The third weighting regime weighs populations based on favorite sport 
-%information.  No information is given for pre-1940 baseball.  As a result of 
-%this we give the highest weight observed at or after 1940 for all 
-%pre-1940 years.  The fourth weighting regime is an average of w2 and w3.  
-%All of these weighting regimes suggest that the MLB eligible population was 
-%more interested in reaching the MLB in earlier eras than in modern eras.  
 
 David W. Moore and Joseph Carroll's Gallup article entitled 
 ``Baseball Fan Numbers Steady, But Decline May Be Pending'' shows that 
@@ -719,11 +718,12 @@ on fan interest prior to 1940.  %These choices of weights
 The third weighting regime (w3), constructed from the Gallup polling data in 
 Figure~\ref{Gallup}, reflects the proportion of the US population who 
 listed baseball as their favorite sport.  
+
 The appropriateness of this regime is intuitively questionable because 
 some people play baseball even if it is not their favorite sport and the 
 weight placed on pre-1940 years is very high.  
+
 The fourth weighting regime (w4) is the average of w2 and w3.  
-%The weighting regimes w2, w3, and w4 are especially conservative.  
 
 
 
@@ -758,7 +758,7 @@ schemes outlined in Table 4.
 w1 <- c(rep(0.5, 6), rep(0.4, 9))
 
 # construct rewighted dataset with respect to w1
-data.w1 <- data
+data.w1 <- dat
 data.w1[, 2] <- data.w1[, 2] * w1
 data.w1[, 3] <- cumsum(data.w1[, 2]) / sum(data.w1[, 2])
 
@@ -767,7 +767,7 @@ data.w1[, 3] <- cumsum(data.w1[, 2]) / sum(data.w1[, 2])
 w2 <- c(rep(0.6, 6), rep(0.4, 9))
 
 # construct rewighted dataset with respect to w2
-data.w2 <- data
+data.w2 <- dat
 data.w2[, 2] <- data.w2[, 2] * w2
 data.w2[, 3] <- cumsum(data.w2[, 2]) / sum(data.w2[, 2])
 
@@ -776,13 +776,13 @@ data.w2[, 3] <- cumsum(data.w2[, 2]) / sum(data.w2[, 2])
 w3 <- c(rep(0.4, 6), 0.35, 0.38, 0.34, 0.28, 0.16, 0.16, 0.13, 0.12, 0.10)
 
 # construct rewighted dataset with respect to w3
-data.w3 <- data
+data.w3 <- dat
 data.w3[, 2] <- data.w3[, 2] * w3
 data.w3[, 3] <- cumsum(data.w3[, 2]) / sum(data.w3[, 2])
 
 # construct rewighted dataset with respect to w4
 w4 <- (w2 + w3) / 2
-data.w4 <- data
+data.w4 <- dat
 data.w4[, 2] <- data.w4[, 2] * w4
 data.w4[, 3] <- cumsum(data.w4[, 2]) / sum(data.w4[, 2])
 @
@@ -811,8 +811,8 @@ Table~\ref{probvalues.weights} are largely consistent with those in
 Table~\ref{probvalues}.  %It is very unlikely that such a sparsely populated 
 %time period could have produced so many historically great baseball players.  
 The third weighting regime presents some conflicting conclusions.  When 
-weighting populations with respect to w3 we see that popular opinion and 
-bWAR overrepresent players who started their careers before 1950.  
+weighting populations with respect to w3, popular opinion and 
+bWAR still overrepresent players who started their careers before 1950.  
 However, the same is not so for fWAR and ESPN. 
 The overall finding of this sensitivity analysis is that conservatively 
 weighting populations with respect to fan interest in baseball yields the 
@@ -876,7 +876,7 @@ pESPN25.w4   <- pbinom(ESPN25 - 1, p = p.w4, size = 25, lower = FALSE)
 <<echo = FALSE, eval = FALSE>>=
 w5 <- c(0.20, 0.20, 0.20, 0.20, 0.25, 0.40, 0.40, 0.35, 0.38, 
   0.34, 0.28, 0.16, 0.13, 0.12, 0.20)
-data.w5 <- data
+data.w5 <- dat
 data.w5[, 2] <- data.w5[, 2] * w5
 data.w5[, 3] <- cumsum(data.w5[, 2]) / sum(data.w5[, 2])
 
@@ -1021,21 +1021,13 @@ w4 & probability of extreme event in top 10 list
 \subsection{Versus your peers methods}
 \label{WARcritique}
 
-There are several methods which are used to compare players across eras that 
-do so by computing a baseline achievement threshold within one season and then 
-comparing players to that baseline.  These methods then rank players by how far 
-they stood above their peers, the greatest players were better than their peers 
-by the largest amount. 
-%As noted in the Introduction, examples include 
-%bWAR, 
-%fWAR, 
-%adjusted OPS+,
-%adjusted ERA+,
-%and computing normal scores.
-%This manner of player comparison is purely statistical and it ignores talent 
-%discrepancies that exist across seasons.  
-We have shown that this approach can exhibit major biases in player comparisons 
-as evidenced by career bWAR and fWAR.  Adjusted OPS+ is a worse offender 
+Several methods are used to compare players across eras by computing a 
+baseline achievement threshold within one season and then comparing players 
+to that baseline. These methods then rank players by how far they stood 
+above their peers; the greatest players were better than their peers by 
+the largest amount. 
+This approach can exhibit major biases in player comparisons, as evidenced by 
+career bWAR and fWAR.   Adjusted OPS+ is a worse offender 
 than bWAR or fWAR.  Adjusted ERA+ is right in line with ESPN rankings.
 
 %Philosophically speaking, WAR is a one-number summary of the added value of a 
@@ -1079,18 +1071,15 @@ than bWAR or fWAR.  Adjusted ERA+ is right in line with ESPN rankings.
 
 \subsection{PPS detrending}
 
-We describe and critique the methodology of \citet{petersen} (PPS). 
-%in the context of comparing players across eras.  
-%We will refer to their paper as PPS due to repeated mentions.  
-As described in PPS, they detrend player statistics by normalizing 
-achievements to seasonal averages, which they claim accounts for changes in 
-relative player ability resulting from both exogenous and endogenous factors, 
-such as 
-talent dilution from expansion, 
-equipment and training improvements, 
-as well as performance enhancing drug usage. 
-PPS misunderstands the effect of talent dilution from expansion and ignores 
-reality.  The talent pool was more diluted in the earlier eras of 
+The methodology of \citet{petersen} (PPS) detrends player statistics 
+by normalizing achievements to seasonal averages, which PPS claim accounts 
+for changes in relative player ability resulting from both exogenous and 
+endogenous factors, such as talent dilution from expansion, equipment and 
+training improvements, and performance enhancing drug usage. However, 
+PPS misunderstand the effect of talent dilution from expansion and 
+ignores reality.
+
+The talent pool was more diluted in the earlier eras of 
 baseball than now because of a small relative eligible population size and 
 the exclusion of entire populations of people on racial grounds.  
 See Table~\ref{dilution} for the specifics.  PPS's position with respect 
@@ -1110,22 +1099,22 @@ segregation prior to 1947.
 \hline
 year & eligible pop. & number of teams & roster size & eligible pop. per roster spot \\
 \hline
-\Sexpr{data[1,1]} & \Sexpr{data[1,2]}  & 8  & 15 & \Sexpr{round(data[1,2] / (8*15) * 1e3, 1)}   \\
-\Sexpr{data[2,1]} & \Sexpr{data[2,2]}  & 8  & 15 & \Sexpr{round(data[2,2] / (8*15) * 1e3, 1)}   \\
-\Sexpr{data[3,1]} & \Sexpr{data[3,2]}  & 8  & 15 & \Sexpr{round(data[3,2] / (8*15) * 1e3, 1)}   \\
-\Sexpr{data[4,1]} & \Sexpr{data[4,2]}  & 16 & 25 & \Sexpr{round(data[4,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[5,1]} & \Sexpr{data[5,2]}  & 16 & 25 & \Sexpr{round(data[5,2] / (16*25) * 1e3, 1)}  \\
+\Sexpr{dat[1,1]} & \Sexpr{dat[1,2]}  & 8  & 15 & \Sexpr{round(dat[1,2] / (8*15) * 1e3, 1)}   \\
+\Sexpr{dat[2,1]} & \Sexpr{dat[2,2]}  & 8  & 15 & \Sexpr{round(dat[2,2] / (8*15) * 1e3, 1)}   \\
+\Sexpr{dat[3,1]} & \Sexpr{dat[3,2]}  & 8  & 15 & \Sexpr{round(dat[3,2] / (8*15) * 1e3, 1)}   \\
+\Sexpr{dat[4,1]} & \Sexpr{dat[4,2]}  & 16 & 25 & \Sexpr{round(dat[4,2] / (16*25) * 1e3, 1)}  \\
+\Sexpr{dat[5,1]} & \Sexpr{dat[5,2]}  & 16 & 25 & \Sexpr{round(dat[5,2] / (16*25) * 1e3, 1)}  \\
   & & & &  \\
-\Sexpr{data[6,1]} & \Sexpr{data[6,2]}  & 16 & 25 & \Sexpr{round(data[6,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[7,1]} & \Sexpr{data[7,2]}  & 16 & 25 & \Sexpr{round(data[7,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[8,1]} & \Sexpr{data[8,2]}  & 16 & 25 & \Sexpr{round(data[8,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[9,1]} & \Sexpr{data[9,2]}  & 16 & 25 & \Sexpr{round(data[9,2] / (16*25) * 1e3, 1)}  \\
-\Sexpr{data[10,1]} & \Sexpr{data[10,2]}  & 24 & 25 & \Sexpr{round(data[10,2] / (24*25) * 1e3, 1)}  \\
+\Sexpr{dat[6,1]} & \Sexpr{dat[6,2]}  & 16 & 25 & \Sexpr{round(dat[6,2] / (16*25) * 1e3, 1)}  \\
+\Sexpr{dat[7,1]} & \Sexpr{dat[7,2]}  & 16 & 25 & \Sexpr{round(dat[7,2] / (16*25) * 1e3, 1)}  \\
+\Sexpr{dat[8,1]} & \Sexpr{dat[8,2]}  & 16 & 25 & \Sexpr{round(dat[8,2] / (16*25) * 1e3, 1)}  \\
+\Sexpr{dat[9,1]} & \Sexpr{dat[9,2]}  & 16 & 25 & \Sexpr{round(dat[9,2] / (16*25) * 1e3, 1)}  \\
+\Sexpr{dat[10,1]} & \Sexpr{dat[10,2]}  & 24 & 25 & \Sexpr{round(dat[10,2] / (24*25) * 1e3, 1)}  \\
   & & & &  \\
-\Sexpr{data[11,1]} & \Sexpr{data[11,2]} & 26 & 25 & \Sexpr{round(data[11,2] / (26*25) * 1e3, 1)} \\
-\Sexpr{data[12,1]} & \Sexpr{data[12,2]} & 26 & 25 & \Sexpr{round(data[12,2] / (26*25) * 1e3, 1)} \\
-\Sexpr{data[13,1]} & \Sexpr{data[13,2]} & 30 & 25 & \Sexpr{round(data[13,2] / (30*25) * 1e3, 1)} \\
-\Sexpr{data[14,1]} & \Sexpr{data[14,2]} & 30 & 25 & \Sexpr{round(data[14,2] / (30*25) * 1e3, 1)} \\
+\Sexpr{dat[11,1]} & \Sexpr{dat[11,2]} & 26 & 25 & \Sexpr{round(dat[11,2] / (26*25) * 1e3, 1)} \\
+\Sexpr{dat[12,1]} & \Sexpr{dat[12,2]} & 26 & 25 & \Sexpr{round(dat[12,2] / (26*25) * 1e3, 1)} \\
+\Sexpr{dat[13,1]} & \Sexpr{dat[13,2]} & 30 & 25 & \Sexpr{round(dat[13,2] / (30*25) * 1e3, 1)} \\
+\Sexpr{dat[14,1]} & \Sexpr{dat[14,2]} & 30 & 25 & \Sexpr{round(dat[14,2] / (30*25) * 1e3, 1)} \\
 \hline
 \end{tabular}
 \end{center}
@@ -1218,42 +1207,6 @@ top 25 list contains 12 players who started their careers before 1950
 It is clear that having higher prowess relative to your peers, hitting more 
 runs in this case, is not indicative of a player's prowess with respect to 
 peers from fundamentally different eras.  
-%Additionally, PPS's methodology does not account for segregation of baseball 
-%prior to 1947.  There is minimal support for Petersen's claim that PPS detrending 
-%makes the statistics fairer which appears in Johnson's article.
-
-
-
-
-%\vspace{1cm}\noindent {\bf Side quotes}: \\
-
-%That is, according to passionate baseball fan Alexander Petersen.  Using 
-%statistical physics theory, he's found a way to compare baseball players over 
-%the generations, whether they played in the dead-ball era in the early 1900s 
-%or the steroids era beginning in the 1990s \citep{johnson2011petersen}. \\
-
-%``Basically,'' says Petersen, ``detrending corresponds to removing the 
-%inflationary factor, so we could compare two items like the cost of a candy 
-%bar in 1920 to the cost of a candy bar in 2000. In this case, we compare Babe 
-%Ruth's home runs--the ability of someone to get a home run then versus 
-%now--and you see Babe Ruth actually hit a lot of home runs on this relative 
-%basis.'' Petersen's new statistics compare career longevity, success, and 
-%productivity. When comparing the baseball statistics, he was startled to 
-%discover a statistical pattern, what he calls a beautiful power-law curve 
-%(a type of bell curve), emerging from seemingly random careers 
-%\citep{johnson2011petersen}. \\
-
-
-%``The relative significance of their accomplishments gets reduced because 
-%their contemporaries are hitting a lot of home runs as well,'' says 
-%Petersen. Players like Babe Ruth, Lou Gehrig, and Ted Williams shoot up the 
-%list because they were giants in their own era as well as across the 
-%decades.  Petersen says his approach is a way to make the statistics fairer: 
-%besides accounting for the possible effects of steroids, detrending allows 
-%for changes in equipment, diet, conditioning, even medical procedures like 
-%Tommy John surgery (replacing a ligament in the elbow with a tendon to 
-%lengthen a pitching career), all of which have changed the game since 
-%Ruth's time \citep{johnson2011petersen}. \\
 
 
 
@@ -1296,13 +1249,13 @@ These calculations are performed with the code below.
 
 <<bridging, cache = TRUE>>=
 # population data through 1999
-data2 <- data[1:13, ]
-data2[13, 2] <- 0.9 * data[13, 2]
-data2[, 3] <- cumsum(data2[, 2]) / sum(data2[, 2])
+dat2 <- dat[1:13, ]
+dat2[13, 2] <- 0.9 * dat[13, 2]
+dat2[, 3] <- cumsum(dat2[, 2]) / sum(dat2[, 2])
 
 # proportion of MLB eligible population who started their career 
 # before 1950
-p2 <- data2[8, 3]
+p2 <- dat2[8, 3]
 
 # Binomial probabilities for Berry's top 10 and top 25 lists
 bridge10 <- 6; bridge25 <- 10
@@ -1337,15 +1290,21 @@ inability to properly compare talent across eras.  It is highly unlikely that
 athletes from such a scarcely populated era of available baseball talent 
 could represent top 10 and top 25 lists so abundantly. 
 
-We close with a general discussion on greatness.  The conclusions of this 
-article have broader implications than just rankings of baseball players.  
-Who are the greatest all-time athletes in other sports, 
-artists, 
+
+As a general discussion of greatness, the conclusions in this article have 
+broader implications than just rankings of athletes. 
+Who are the greatest  
+actors and actresses, 
+artists,
 musicians, 
-actors and actresses,
-scientists, or 
-leaders?  
+scientists, 
+revolutionaries,
+or 
+leaders who have ever lived?  
 Do our perceptions change when we focus beyond nostalgia?  
+Do our perceptions change when we recognize and properly account for 
+gender and racial discrimination that has existed throughout human 
+history into the present day?   
 
 
 
