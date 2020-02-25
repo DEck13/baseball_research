@@ -1,0 +1,303 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+%\usepackage{amscd}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{natbib}
+\usepackage{url}
+
+\usepackage{geometry}
+\usepackage[usenames]{color}
+\geometry{margin=1in}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Hcal}{\mathcal{H}}
+
+\newcommand{\Ybf}{\textbf{Y}}
+\newcommand{\Xbf}{\textbf{X}}
+\newcommand{\Hbf}{\textbf{H}}
+\newcommand{\V}{\textbf{V}}
+\newcommand{\W}{\textbf{W}}
+\newcommand{\y}{\textbf{y}}
+\newcommand{\x}{\textbf{x}}
+\newcommand{\h}{\textbf{h}}
+\newcommand{\w}{\textbf{w}}
+\newcommand{\s}{\textbf{s}}
+\newcommand{\tbf}{\textbf{t}}
+\newcommand{\Wstar}{\W^{\textstyle{*}}}
+\newcommand{\wstar}{w^{\textstyle{*}}}
+\newcommand{\wstarsq}{w^{\textstyle{*}^2}}
+\newcommand{\wstarpwr}{w^{\textstyle{*}^{5/4}}}
+\newcommand{\lamstar}{\lambda^{\textstyle{*}}}
+
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\indep}{\perp\!\!\!\perp}
+
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\MSE}{MSE}
+
+
+\newtheorem{cor}{Corollary}
+\newtheorem{lem}{Lemma}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{prop}{Proposition}
+
+\newcommand\red[1]{{\color{red}#1}}
+
+\allowdisplaybreaks
+
+\title{Spray chart distributions: a context rich approach to player evaluation}
+\author{Charlie Young, David Dalpiaz, Daniel J. Eck}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+
+
+\section{Introduction}
+
+Baseball has had a rich statistical history dating back to the first box score created by Henry Chadwick in 1859. Fans, journalists, and baseball teams have been enamored and obsessed with statistics in baseball ever since. This obsession about baseball statistics is best summarized by the existence of \cite{schwarz2004numbers}, a best selling book devoted to the statistical history of baseball. Baseball data is analyzed in the classroom as well. Max Marchi, Jim Albert, and Benjamin S. Baumer have written a book that teaches R through baseball analysis \citep{marchi2019analyzing}, and Jim Albert maintains an actively updated website Exploring Baseball Data with R that supplements this book. GET SHANE JANSEN's ARTICLES and DAVID BERRI's ARTICLES.
+
+
+Most baseball statistics used for player evaluations are obtained from raw box score totals. While box score totals are a enjoyable statistical summary for baseball fans, the information contained in them is not very substantive, they ignore rich contextual information. Most commonly used player evaluation metrics are functions of context-free box score totals. These include, and are far from limited to, adjusted earned run average (ERA+), adjusted on base plus slugging percentage (OPS+), and wins above replacement (WAR). These metrics all ignore which pitchers a batter faced and the game situations which complement the outcomes that are recorded. \cite{eck2020challenging} showed that these context-free metrics and the class of metrics that compares a player's accomplishments directly with that player's peers are ill-equipped for player comparisons across eras of baseball. This finding holds even when these metrics have been adjusted to account for annual league and park effects \citep{eck2020challenging}. 
+
+
+
+
+In this article we develop spray chart distributions as a methodology for understanding batter pitcher matchups visually and numerically. Informally, spray chart distributions are 2-dimensional contours that overlay spray charts \citep[Section 12]{marchi2019analyzing}. We construct spray chart distributions for batter pitcher matchups where separate batter spray chart distribution are  constructed for each of the pitches that the pitcher throws. Rich pitch characteristic information is used to supplement labelled pitch type data since the velocity, trajectory, and other characteristics of a pitch exhibit large variation across pitcher. The reported spray chart distribution for the batter pitcher matchup is the aggregation of the spray chart distributions for each pitch that the pitcher throws, the aggregation is with respect to the percentage that the pitcher throws each pitch.
+%We can use spray distributions to calculate player evaluation metrics directly from batted ball location data instead of from outcomes that are obtained from the boxscore. We also motivate a synthetic player construction that can lead to estimated spray chart distributions with lower mean squared error (MSE).
+One concern with this approach is that batter pitcher matchup data can be sparse. We develop a synthetic pitcher with similar characteristics as the pitcher under study to alleviate this concern. The synthetic pitcher is constructed in a similar fashion as how synthetic controls are created via synthetic control methodology (SCM) \citep{abadie2010synthetic} in the policy evaluation with observational data literature (need citation).
+
+
+Need to describe what our developments bring to the table, both visually and numerically.
+
+\section{Motivating Example}
+
+In this section we present a snapshot of what our proposed visualization and methodology can provide users. Perhaps the spray chart distribution of Mike Trout vs. Justin Verlander should go here.
+
+
+\section{Pitcher and batter characteristics}
+
+We need to explain the pitch data and all of the preprocessing employed. 
+
+
+\section{Spray chart distributions}
+
+A spray chart distribution for a batter is a distribution $F$ over a bounded subset $\Y \in \R^2$. The set $\Y$ contains plausible locations of batted balls from home plate. Let $(0,0) \in \Y$ denote the location of home plate where the batter stands. With this specification we can take $\Y = \{\y \in \R^2: \|\y\| \leq 1000\}$ where values in $\Y$ are locations in feet and $\|\cdot\|$ is the Euclidean norm. This specification of $\Y$ practically guarantees that $F(\Y) = 1$ for all batters in history, no human in history has ever come close to hitting a ball 1000 feet.
+
+Our main inferential goal will be to consider spray chart distributions that are conditional on several pitcher, batter, defense, ballpark, and other characteristics belonging to a space $\X$. 
+The conditional spray density function will be denoted as $f(\cdot|\x)$ for all $\x \in \X$.
+We will estimate $f(\cdot|\x)$ with a multivariate kernel estimator
+\begin{equation} \label{general}
+  \hat f_\Hbf(\y|\x) = \frac{1}{n_\x|\Hbf|}\sum_{i=1}^{n_\x} K\left(\Hbf^{-1}(\y_i - \y)\right)
+\end{equation}
+where $K$ is a multivariate kernel function, $\Hbf$ is a matrix of bandwidth parameters, and 
+$\y_1,\ldots,\y_{n_\x}$ is the $n_\x$ batted ball locations from home plate observed when the batter faced situation $\x$. The estimated spray chart density function \eqref{general} is a smoothed surface overlaying a spray chart. Our visualization of the spray chart distribution will be along $n_g$ common grid points $g_1,\ldots,g_{n_g}$ for all batters and all conditional characteristics $\x \in \X$ under study. Commonality of grid of points across the batters and $\x$ allows for straightforward comparisons of spray chart distributions.
+
+Our implementation will estimate $f(\cdot|\x)$ using the \texttt{kde2d} function in the \texttt{Mass} R package \citep{MASS}. The \texttt{kde2d} function is chosen because of its presence in the \texttt{geom\_density\_2d} function in the \texttt{ggplot2} R package \citep{ggplot2} which will be employed for our visualizations. Therefore, we estimate $f(\cdot|\x)$ using a bivariate nonparametric Gaussian kernel density estimator
+\begin{equation} \label{spraydens}
+  \hat f_\h(\y|\x) = 
+    \frac{1}{n_\x h_{y_1}h_{y_2}}\sum_{i=1}^{n_\x} \phi\left(\frac{y_1 - y_{1i}}{h_{y_1}}\right)
+      \phi\left(\frac{y_2 - y_{2i}}{h_{y_2}}\right)
+\end{equation}
+where $\phi$ is a standard Gaussian density, $\h \in \R^2$ is a bandwidth parameter so that the matrix $\Hbf$ in \eqref{general} is $\Hbf = \text{diag}(\h)$, and $(y_{1i},y_{2i})$, $i = 1,\ldots,n_x$ are the observed batted ball locations. 
+
+
+%We are not interested in estimating $f_\h(\y|\x)$ across $\x$, just interested in a chosen batter pitcher matchup. 
+
+
+
+
+\section{Synthetic player construction}
+
+
+
+
+We develop a method for synthetically cloning baseball players in order to alleviate the small sample size concerns of individual batter pitcher matchups. Our synthetic player creation method is inspired by the mechanics of SCM introduced in \cite{abadie2010synthetic}. 
+
+Our method for building spray chart distributions for batter pitcher matchups with an additional  synthetic pitcher is as follows: we isolate the pitch repertoire of the pitcher of interest. We obtain the types of pitches that the pitcher throws and then compute the mean of all pitch characteristics for each of these pitches. This will form the basis of our comparison. In the notation of \cite{abadie2010synthetic} let $\Xbf_1 \in \R^p$ denote the mean pitch characteristics of one pitch, let $\Xbf_0 \in \R^{p \times J}$ denote the matrix of pitch characteristics for each pitcher who throws that pitch where $J$ is the number of pitchers who throw that pitch (minimum at bats against the batter under consideration). We will let $\Xbf_0\W$ denote a synthetic version of the pitcher under consideration with respect to the weight vector $\W$. To measure the discrepancy between one pitch of the pitcher under consideration $\Xbf_1$ and the synthetic version of that pitcher's pitch $\Xbf_0\W$ we will employ the distance measure
+$ 
+ \|\Xbf_1 - \Xbf_0\W\|_\V = \sqrt{(\Xbf_1 - \Xbf_0\W)'\V(\Xbf_1 - \Xbf_0\W)},
+$
+where $\V$ is a weight matrix. In our implementation, $\V$ will be a diagonal matrix with elements that are inverse standard deviations of the rows of $\Xbf_0$. Of all the candidate weights $\W$ for a particular pitch, we will choose $\Wstar$ to be 
+$
+  \Wstar = \text{argmin}_\W \|\Xbf_1 - \Xbf_0\W\|_\V.
+$
+We repeat this process for every type of pitch thrown by the pitcher under consideration.
+
+
+
+We then construct the spray chart distribution against the synthetic pitcher. For each pitch thrown by the pitcher under study, we take a weighted average of the hitter's spray chart. The estimate of the synthetic pitcher $\tilde{f}(\y|\x)$ is  
+\begin{equation} \label{synthetic-pitcher}
+  \tilde{f}(\y|\x) = \sum_{j=1}^J \wstar_j\hat{f}_{\h_j}(\y|\x_j)
+\end{equation}
+where $\hat{f}_{\h_j}(\y|\x_j)$ are estimated spray chart distributions from the batter's matchups against the $j$th pitcher with pitch characteristics $\x_j$. The estimator \eqref{synthetic-pitcher} is obviously a biased estimator for $f(\y|\x)$. However, it can lead to lower MSE in certain scenarios. One obvious case is when $\wstar_j = 1 - \varepsilon$ where $\varepsilon > 0$ is small and $n_{\x_j} > n_{\x}$. In this setting, pitcher $j$ possess very similar pitch characteristics as the pitcher that the batter is facing, and the batter has had more encounters with pitcher $j$ than the current pitcher. Another obvious case is when the batter has never faced the pitcher before so that no data is available to estimate $f(\y|\x)$ directly, although that does not guarantee that $\tilde{f}(\y|\x)$ is a good estimator for $f(\y|\x)$. Our implementation will estimate $f(\y|\x)$ with
+\begin{equation} \label{sd-implem}
+  \hat{g}_{\lambda}(\y|\x) = \lambda \hat f_\h(\y|\x) + (1 - \lambda)\tilde{f}(\y|\x),
+\end{equation}
+where the choice of $0 \leq \lambda \leq 1$ will be discussed in the next Section where we  calculate and compare the MSE of \eqref{spraydens} and \eqref{sd-implem}. Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $\Wstar$ since $\Wstar$ is a deterministic function of the pitch characteristics.
+
+
+
+\section{Choosing $\lambda$}
+
+We motivate a choice of $\lambda$ in \eqref{sd-implem} by comparing the MSE of \eqref{spraydens} and \eqref{sd-implem}. Let $n_\wstar = \sum_{j=1}^J \wstarpwr_j n_j$ and define $\text{logit}(x) = 1/(1 + \exp(-x))$. Our implementation will use $\lamstar = \text{logit}\left((n_\wstar - n)/n\right)$ as our choice for $\lambda$. Intuitively, $\lamstar$ favors the synthetic pitcher when there exists a $j$ such that $n_j > n$ and the weight $\wstar_j$ is large, and it protects against scenarios where no $\wstar_j$ is large but $n_j > n$ for several $1 \leq j \leq J$. We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation.
+
+
+The best batters in baseball are good at hitting the ball with general intent but batted ball locations will still exhibit variation. Therefore we expect for spray chart densities to be smooth and lacking of sharp peaks. It is reasonable to assume that $f(\cdot|\cdot)$ belongs to a multivariate H{\"o}lder class of densities which we will denote by $H(\beta,L)$. The space $H(\beta,L)$ is the set of functions $f(\y|\x)$ such that 
+\begin{align*}
+|D_{\y}^\s f(\y_1|\x) - D_{\y}^\s f(\y_2|\x)| &\leq L_\x\|\y_1 - \y_2\|^{\beta - |\s|}, \\
+|D_{\x}^\tbf f(\y|\x_1) - D_{\x}^\tbf f(\y|\x_2)| &\leq L_\y\|\x_1 - \x_2\|^{\beta - |\tbf|}, 
+\end{align*}
+for all $\y_1,\y_2 \in \Y$, all $\x_1,\x_2 \in \X$, and all $\s$ such that $|\s| = \beta - 1$ where
+$D_{\y}^\s = \partial^{s_1 + s_2}/\partial y_1^{s_1} \partial y_2^{s_2}$, 
+$D_{\x}^\tbf = \partial^{t_1 + \cdots + t_p}/\partial x_1^{t_1} \cdots \partial x_p^{t_p}$ and $L_\x \leq L$ for all $\x \in \X$ and $L_\y \leq L$ for all $\y \in \Y$.
+% Notes on multi var kde: https://bookdown.org/egarpor/NP-UC3M/kde-ii-asymp.html
+We will assume the following regularity conditions for our spray chart distributions and kernel functions: 
+
+\begin{itemize}
+\item[A1.] The density $f$ is square integrable, twice continuously differentiable, and all the second order partial derivatives are square integrable.
+\item[A2.] The kernel $K$ is a spherically symmetric and bounded pdf with finite second moment and square integrable.
+\item[A3.] $\h = \h_n$ is a deterministic sequence of positive definite symmetric matrices such that, when $n_\x \to \infty$, $\h \to 0$. %$n_\x h_1h_2 \to 0$. 
+\end{itemize}
+
+Condition A2 holds for the multivariate Gaussian kernel function that we use in our implementation.
+We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{\x_j} = O(n_\x)$ and $\h_j = O(\h)$ for all $j = 1,\ldots,J$. 
+%Properties to verify
+%$$
+%  \E(\hat f_\h(\y|\x)) - f(\y|\x) \approx \frac{\mu_2(K)\h'\Hcal_f(\y|\x)\h}{2}
+%$$
+%and
+%$$
+% \Var(\hat f_\h(\y|\x)) \approx \frac{R_{\x}(f)f(\y|\x)}{\det(\Hbf)}
+%$$
+
+% https://www.ssc.wisc.edu/~bhansen/718/NonParametrics1.pdf
+From Hansen's notes: 
+$$
+  \E(\hat f_\h(\y|\x)) - f(\y|\x) = \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+    + o(\|\h\|^2)
+$$
+and
+$$
+ \Var(\hat f_\h(\y|\x)) = \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} + O\left(\frac{1}{n_\x}\right)
+$$
+
+With these properties we have
+\begin{align*}
+  &\MSE(\hat g_\lambda(\y|\x)) 
+    = \Var\left(\hat g_\lambda(\y|\x)\right) 
+    + \left(\E\hat g_\lambda(\y|\x) - f(\y|\x)\right)^2 \\
+  &\qquad= \Var\left(\lambda \hat f_\h(\y|\x) + (1 - \lambda)\tilde{f}(\y|\x)\right) 
+    + \left(\lambda\E\hat f_\h(\y|\x) 
+    + (1 - \lambda)\E\tilde{f}(\y|\x) - f(\y|\x)\right)^2 \\
+  &\qquad= \lambda^2\Var\left(\hat f_h(\y|\x)\right) 
+    + (1 - \lambda)^2\Var\left(\tilde{f}(\y|\x)\right) \\
+      &\qquad\qquad+ \left(\lambda\E\hat f_\h(\y|\x) 
+      +  (1 - \lambda)\E\tilde{f}(\y|\x) 
+      - f(\y|\x)\right)^2 \\ 
+  &\qquad= \lambda^2\Var\left(\hat f_\h(\y|\x)\right) 
+    + (1 - \lambda)^2\Var\left(\sum_{j=1}^J\wstar_j\hat f(\y|\x_j)\right) \\
+      &\qquad\qquad+ \left(\lambda\E\hat f_\h(\y|\x) 
+      + (1 - \lambda)\E\sum_{j=1}^J\wstar_j\hat f(\y|\x_j) 
+      - f(\y|\x)\right)^2 \\ 
+  &\qquad= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} + O\left(\frac{1}{n_\x}\right)
+    + (1 - \lambda)^2\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} \\
+    &\qquad\qquad+ \left(\lambda\left[f(\y|\x) + \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+    + o(\|\h\|^2)\right] - f(\y|\x) \right. \\
+	&\qquad\qquad+ \left. 
+	(1 - \lambda)\sum_{j=1}^J\wstar_j\left[f(\y|\x_j) + 
+	\frac{\mu_2(K)\h_j'\text{diag}(\Hcal_f(\y|\x_j))\h_j}{2} 
+    + o(\|\h\|^2)\right]\right)^2 \\
+  &\qquad= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} + O\left(\frac{1}{n_\x}\right)
+    + (1 - \lambda)^2\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} \\
+    &\qquad\qquad+ \left(\lambda\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+    + o(\|\h\|^2) - (1-\lambda)f(\y|\x) \right. \\
+	&\qquad\qquad+ \left. 
+	(1 - \lambda)\sum_{j=1}^J\wstar_jf(\y|\x_j) + 
+	(1 - \lambda)\sum_{j=1}^J\frac{\mu_2(K)\h_j'\text{diag}(\Hcal_f(\y|\x_j))\h_j}{2}\right)^2. \\    
+\end{align*}
+In our application $\max_{\y \in \Y, \x \in \X}\|\Hcal_f(\y|\x)\|$ is thought be small, so that $\h'\text{diag}(\Hcal_f(\y|\x))\h = O(\|\h\|^2)$. With this, we have
+\begin{align*}
+  &\MSE(\hat g_\lambda(\y|\x)) = \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} 
+    + (1 - \lambda)^2\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
+    + O\left(\frac{1}{n_\x}\right) \\
+    &\qquad\qquad+ (1-\lambda)^2\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j) 
+    + O(\|\h\|^2)\right)^2 \\
+  &\qquad=  \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} 
+    + (1 - \lambda)^2\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
+    + O\left(\frac{1}{n_\x}\right) + O(\|\h\|^2) \\
+    &\qquad\qquad+ (1-\lambda)^2\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2.
+\end{align*}
+Similar reasoning yields
+\begin{align*}
+  &\MSE(\hat f_\h(\y|\x)) = \Var\left(\hat f_\h(\y|\x)\right) 
+    + \left(\E\hat f_\h(\y|\x) - f(\y|\x)\right)^2 \\
+  &\qquad= \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} + O\left(\frac{1}{n_\x}\right) + O(\|\h\|^2).
+\end{align*}
+
+Ignoring the lower order terms, we want to pick $\lambda$ so that $\MSE(\hat g_\lambda(\y|\x)) \leq \MSE(\hat f_\h(\y|\x))$. Therefore, we want to pick $\lambda$ so that 
+\begin{align*}
+  &\lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} 
+    + (1 - \lambda)^2\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+    + (1-\lambda)^2\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2 \\
+	&\qquad\qquad\leq \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} \\
+  &\implies (1 - \lambda)^2\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+    + (1-\lambda)^2\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2 \\
+    &\qquad\qquad\leq \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}(1 - \lambda^2) \\
+  &\implies (1 - \lambda)\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+    + (1-\lambda)\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2 \\
+    &\qquad\qquad\leq \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}(1 + \lambda) \\
+  &\implies \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+    - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
+    + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2 \\
+    &\qquad\qquad\leq 
+    \lambda\left(\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
+    + \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} 
+    + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2\right) \\
+  &\implies \lambda \geq
+  \frac
+  {
+    \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+      - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
+      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  }
+  {
+    \left(\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
+      + \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} 
+      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2\right)
+  }.
+\end{align*}
+
+This says that that $\lambda$ should be high when there exists a $j$ such that $n_j \geq n$ and $\wstar_j$ is large. The exponent in $\wstarpwr_j$ is chosen to be a balance between the differences 
+$
+  \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+    - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
+$
+and $f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)$ and exploiting the smoothness of the space $H(\beta, L)$ that $f(\cdot|\cdot)$ lives in. (May need to revisit this)
+
+
+
+
+
+\bibliographystyle{plainnat}
+\bibliography{spray}
+
+
+\end{document}
+
