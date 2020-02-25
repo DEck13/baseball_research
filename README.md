@@ -14,12 +14,12 @@ performed in the paper transparent.  This technical report is fully reproducible
 
 To cite this paper:
 
-  Eck, D.J. (2019). Challenging nostalgia and performance metrics in baseball.
-  Accepted at CHANCE.
+  Eck, D.J. (2020). Challenging nostalgia and performance metrics in baseball.
+  CHANCE, 33 (1), 16-25.
 
 To cite the technical report:
 
-  Eck, D.J. (2019).  Supporting data analysis for "Challenging nostalgia and 
+  Eck, D.J. (2020).  Supporting data analysis for "Challenging nostalgia and 
   performance metrics in baseball."
   
 A Shiny app that allows others to produce their own analyses within the framework of 
@@ -30,7 +30,8 @@ this paper can be viewed [here](https://deck13.shinyapps.io/challenging_baseball
 
 [with Charlie Young and David Dalpiaz] This directory contains a preliminary draft of a 
 manuscript on spray chart distributions. Spray chart distributions are 2-dimensional 
-distributions of the final batted ball locations in a scenario of interest. More to come.
+distributions of the final batted ball locations corresponding to a batter/pitcher scenario of 
+interest. More to come.
 
 
 ### Paradoxical relationship of fWAR and wins
