@@ -156,7 +156,11 @@ where the choice of $0 \leq \lambda \leq 1$ will be discussed in the next Sectio
 
 \section{Choosing $\lambda$}
 
-We motivate a choice of $\lambda$ in \eqref{sd-implem} by comparing the MSE of \eqref{spraydens} and \eqref{sd-implem}. Let $n_\wstar = \sum_{j=1}^J \wstarpwr_j n_j$ and define $\text{logit}(x) = 1/(1 + \exp(-x))$. Our implementation will use $\lamstar = \text{logit}\left((n_\wstar - n)/n\right)$ as our choice for $\lambda$. Intuitively, $\lamstar$ favors the synthetic pitcher when there exists a $j$ such that $n_j > n$ and the weight $\wstar_j$ is large, and it protects against scenarios where no $\wstar_j$ is large but $n_j > n$ for several $1 \leq j \leq J$. We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation.
+We motivate a choice of $\lambda$ in \eqref{sd-implem} by comparing the MSE of \eqref{spraydens} and \eqref{sd-implem}. Let $n_\wstar = \sum_{j=1}^J \wstarpwr_j n_j$ and define $\text{logit}(x) = 1/(1 + \exp(-x))$. Our implementation will use 
+$$
+  \lamstar = 1 - \text{logit}\left((n_\wstar - n)/n\right)
+$$ 
+as our choice for $\lambda$. Intuitively, $\lamstar$ favors the synthetic pitcher when there exists a $j$ such that $n_j > n$ and the weight $\wstar_j$ is large, and it protects against scenarios where no $\wstar_j$ is large but $n_j > n$ for several $1 \leq j \leq J$. We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation.
 
 
 The best batters in baseball are good at hitting the ball with general intent but batted ball locations will still exhibit variation. Therefore we expect for spray chart densities to be smooth and lacking of sharp peaks. It is reasonable to assume that $f(\cdot|\cdot)$ belongs to a multivariate H{\"o}lder class of densities which we will denote by $H(\beta,L)$. The space $H(\beta,L)$ is the set of functions $f(\y|\x)$ such that 
@@ -173,7 +177,7 @@ We will assume the following regularity conditions for our spray chart distribut
 \begin{itemize}
 \item[A1.] The density $f$ is square integrable, twice continuously differentiable, and all the second order partial derivatives are square integrable.
 \item[A2.] The kernel $K$ is a spherically symmetric and bounded pdf with finite second moment and square integrable.
-\item[A3.] $\h = \h_n$ is a deterministic sequence of positive definite symmetric matrices such that, when $n_\x \to \infty$, $\h \to 0$. %$n_\x h_1h_2 \to 0$. 
+\item[A3.] $\Hbf = \Hbf_n$ is a deterministic sequence of positive definite symmetric matrices such that, $n_x\det(\Hbf) \to \infty$ when $n_\x \to \infty$ and $\Hbf \to 0$ elementwise. 
 \end{itemize}
 
 Condition A2 holds for the multivariate Gaussian kernel function that we use in our implementation.
@@ -278,21 +282,104 @@ Ignoring the lower order terms, we want to pick $\lambda$ so that $\MSE(\hat g_\
       + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
   }
   {
-    \left(\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
+    \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
       + \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} 
-      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2\right)
-  }.
+      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  }. 
 \end{align*}
 
-This says that that $\lambda$ should be high when there exists a $j$ such that $n_j \geq n$ and $\wstar_j$ is large. The exponent in $\wstarpwr_j$ is chosen to be a balance between the differences 
-$
-  \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
-    - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
-$
-and $f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)$ and exploiting the smoothness of the space $H(\beta, L)$ that $f(\cdot|\cdot)$ lives in. (May need to revisit this)
+%This says that that $\lambda$ should be high when there exists a $j$ such that $n_j \geq n$ and $\wstar_j$ is large. The exponent in $\wstarpwr_j$ is chosen to be a balance between the differences 
+%$
+%  \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+%    - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
+%$
+%and $f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)$ and exploiting the smoothness of the space $H(\beta, L)$ that $f(\cdot|\cdot)$ lives in. (May need to revisit this)
 
+We will now choose the bandwidth parameters such that $\det(\Hbf_j) = \det(\Hbf)n_\x/n_{\x_j}$ in order to simplify our derivation for $\lambda$. We will also assume that we can specify $\beta = 2$ for the H{\"o}lder class $H(\beta,L)$ that governs the smoothness of $f(\cdot|\cdot)$. The specification of $\beta = 2$ implies that
+\begin{align*}
+  f(\y|\x) - L\|\x-\x_j\|^2 \leq &f(\y|\x_j) \leq f(\y|\x) + L\|\x-\x_j\|^2, \\
+  R_\x(f) - L\|\x-\x_j\|^2 \leq &R_{\x_j}(f) \leq R_\x(f) + L\|\x-\x_j\|^2.
+\end{align*}
+We will suppose that $\wstarsq_j\|\x-\x_j\|^2$ and $\wstarsq_j\|\x-\x_j\|^4$ are negligible. The intuition for this approximation is that an appreciable value $\wstarsq_j$ of implies that $\|\x-\x_j\|^k$, for $k=2,4$ is negligible and vice-versa. 
 
-
+The specifications of $\det(\Hbf_j) = \det(\Hbf)n_\x/n_{\x_j}$ and $\beta = 2$ in the H{\"o}lder class $H(\beta,L)$, and the negligibility of $\wstarsq_j\|\x-\x_j\|^2$ and $\wstarsq_j\|\x-\x_j\|^4$ combine to yield
+\begin{align*}
+  &\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+      - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
+   = \frac{1}{n_\x\det(\Hbf)}\left(\sum_{j=1}^J\wstarsq_jR_{\x_j}(f)f(\y|\x_j) - 	
+   		R_{\x}(f)f(\y|\x)\right) \\
+  &\qquad\leq \frac{1}{n_\x\det(\Hbf)}\left(\sum_{j=1}^J\wstarsq_j
+    (R_\x(f) + L\|\x-\x_j\|^2)(f(\y|\x) + L\|\x-\x_j\|^2) - 	
+   		R_{\x}(f)f(\y|\x)\right) \\
+  &\qquad= \frac{1}{n_\x\det(\Hbf)}\left(\sum_{j=1}^J\wstarsq_j
+    \left(R_\x(f)f(\y|\x) + R_\x(f)L\|\x-\x_j\|^2 
+    + L\|\x-\x_j\|^2f(\y|\x) + L^2\|\x-\x_j\|^4\right)\right. \\
+    &\qquad\qquad- \left.R_{\x}(f)f(\y|\x)\right) \\
+  &\qquad\approx \frac{1}{n_\x\det(\Hbf)}\left(\sum_{j=1}^J\wstarsq_j
+    R_\x(f)f(\y|\x) - R_{\x}(f)f(\y|\x)\right) \\
+  &\qquad= \frac{1}{n_\x\det(\Hbf)}
+    \left(\sum_{j=1}^J\wstarsq_j - 1\right)f(\y|\x)R_{\x}(f).
+\end{align*}
+A similar argument gives
+\begin{align*}
+  &\sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+      - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} \\
+   &\qquad\geq \frac{1}{n_\x\det(\Hbf)}\left(\sum_{j=1}^J\wstarsq_j
+    (R_\x(f) - L\|\x-\x_j\|^2)(f(\y|\x) - L\|\x-\x_j\|^2) - 	
+   		R_{\x}(f)f(\y|\x)\right) \\
+  &\qquad\approx \frac{1}{n_\x\det(\Hbf)}
+    \left(\sum_{j=1}^J\wstarsq_j - 1\right)f(\y|\x)R_{\x}(f), 
+\end{align*}
+and
+\begin{align*}
+  \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
+    + \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
+  \approx \frac{1}{n_\x\det(\Hbf)}
+    \left(\sum_{j=1}^J\wstarsq_j + 1\right)f(\y|\x)R_{\x}(f).
+\end{align*}
+Putting all of this together yields 
+\begin{align*}
+  &\frac
+  {
+    \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
+      - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
+      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  }
+  {
+    \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)}
+      + \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} 
+      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  } \\
+  &\qquad\approx \frac
+  {
+    \frac{1}{n_\x\det(\Hbf)}
+    \left(\sum_{j=1}^J\wstarsq_j - 1\right)f(\y|\x)R_{\x}(f)
+      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  }
+  {
+    \frac{1}{n_\x\det(\Hbf)}
+    \left(\sum_{j=1}^J\wstarsq_j + 1\right)f(\y|\x)R_{\x}(f) 
+      + \left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  } \\
+  &\qquad= \frac
+  {
+    \left(\sum_{j=1}^J\wstarsq_j - 1\right)f(\y|\x)R_{\x}(f)
+      + n_\x\det(\Hbf)\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  }
+  {
+    \left(\sum_{j=1}^J\wstarsq_j + 1\right)f(\y|\x)R_{\x}(f) 
+      + n_\x\det(\Hbf)\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  } \\
+  &\qquad= \frac
+  {
+    \left(\sum_{j=1}^J\wstarsq_j - 1\right)f(\y|\x)R_{\x}(f)
+      + n_\x\det(\Hbf)\left(\sum_{j=1}^J\wstar_jL\|\x-\x_j\|^2\right)^2
+  }
+  {
+    \left(\sum_{j=1}^J\wstarsq_j + 1\right)f(\y|\x)R_{\x}(f) 
+      + n_\x\det(\Hbf)\left(\sum_{j=1}^J\wstar_jL\|\x-\x_j\|^2\right)^2
+  }  
+\end{align*}
 
 
 \bibliographystyle{plainnat}
