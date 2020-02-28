@@ -156,11 +156,13 @@ where the choice of $0 \leq \lambda \leq 1$ will be discussed in the next Sectio
 
 \section{Choosing $\lambda$}
 
-We motivate a choice of $\lambda$ in \eqref{sd-implem} by comparing the MSE of \eqref{spraydens} and \eqref{sd-implem}. Let $n_\wstar = \sum_{j=1}^J \wstarpwr_j n_j$ and define $\text{logit}(x) = 1/(1 + \exp(-x))$. Our implementation will use 
+We motivate a choice of $\lambda$ in \eqref{sd-implem} by comparing the MSE of \eqref{spraydens} and \eqref{sd-implem}. Let $n_{\Wstar} = \sum_{j=1}^J \wstar_j n_{\x_j}$ and define $\text{logit}(x) = 1/(1 + \exp(-x))$. Our implementation will use 
 $$
-  \lamstar = 1 - \text{logit}\left((n_\wstar - n)/n\right)
-$$ 
-as our choice for $\lambda$. Intuitively, $\lamstar$ favors the synthetic pitcher when there exists a $j$ such that $n_j > n$ and the weight $\wstar_j$ is large, and it protects against scenarios where no $\wstar_j$ is large but $n_j > n$ for several $1 \leq j \leq J$. We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation.
+  \lamstar = 1 - \text{logit}\left(-\frac{n_{\Wstar} - n_\x}{n_\x}\right)
+    \left(\max_j(\wstar_j) - \frac{1}{J}\right)
+    \left(\frac{1}{n_\x}1(n_\x \geq M) + 1(n_\x < M) \right)
+$$
+as our choice for $\lambda$ where $\text{logit}(x) = 1/(1 + \exp(-x))$ and $M$ is a user specified input that is meant to void out the influence of the synthetic pitcher if $n_\x$ is thought to be large enough. Intuitively, $\lamstar$ favors the synthetic pitcher when there exists a $j$ such that $n_{\x_j} > n$ and the weight $\wstar_j$ is large, and it protects against scenarios where no $\wstar_j$ is large but $n_{\x_j} > n_{\x}$ for several $1 \leq j \leq J$. We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation.
 
 
 The best batters in baseball are good at hitting the ball with general intent but batted ball locations will still exhibit variation. Therefore we expect for spray chart densities to be smooth and lacking of sharp peaks. It is reasonable to assume that $f(\cdot|\cdot)$ belongs to a multivariate H{\"o}lder class of densities which we will denote by $H(\beta,L)$. The space $H(\beta,L)$ is the set of functions $f(\y|\x)$ such that 
@@ -288,7 +290,7 @@ Ignoring the lower order terms, we want to pick $\lambda$ so that $\MSE(\hat g_\
   }. 
 \end{align*}
 
-%This says that that $\lambda$ should be high when there exists a $j$ such that $n_j \geq n$ and $\wstar_j$ is large. The exponent in $\wstarpwr_j$ is chosen to be a balance between the differences 
+%This says that that $\lambda$ should be high when there exists a $j$ such that $n_{\x_j} \geq n$ and $\wstar_j$ is large. The exponent in $\wstarpwr_j$ is chosen to be a balance between the differences 
 %$
 %  \sum_{j=1}^J\wstarsq_j\frac{R_{\x_j}(f)f(\y|\x_j)}{n_{\x_j}\det(\Hbf_j)} 
 %    - \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)}
@@ -369,17 +371,57 @@ Putting all of this together yields
   {
     \left(\sum_{j=1}^J\wstarsq_j + 1\right)f(\y|\x)R_{\x}(f) 
       + n_\x\det(\Hbf)\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
-  } \\
-  &\qquad= \frac
+  }. %\\
+  %&\qquad\approx \frac
+  %{
+  %  \left(\sum_{j=1}^J\wstarsq_j - 1\right)f(\y|\x)R_{\x}(f)
+  %    + n_\x\det(\Hbf)\left(\sum_{j=1}^J\wstar_jL\|\x-\x_j\|^2\right)^2
+  %}
+  %{
+  %  \left(\sum_{j=1}^J\wstarsq_j + 1\right)f(\y|\x)R_{\x}(f) 
+  %    + n_\x\det(\Hbf)\left(\sum_{j=1}^J\wstar_jL\|\x-\x_j\|^2\right)^2
+  %}  
+\end{align*}
+We want to pick $\lambda$ so that
+\begin{equation} \label{lambound}
+  \lambda \geq \frac
   {
     \left(\sum_{j=1}^J\wstarsq_j - 1\right)f(\y|\x)R_{\x}(f)
-      + n_\x\det(\Hbf)\left(\sum_{j=1}^J\wstar_jL\|\x-\x_j\|^2\right)^2
+      + n_\x\det(\Hbf)\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
   }
   {
     \left(\sum_{j=1}^J\wstarsq_j + 1\right)f(\y|\x)R_{\x}(f) 
-      + n_\x\det(\Hbf)\left(\sum_{j=1}^J\wstar_jL\|\x-\x_j\|^2\right)^2
-  }  
-\end{align*}
+      + n_\x\det(\Hbf)\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2
+  }.
+\end{equation}
+We will now motivate choices for $\lambda$ based on scenarios of $\Wstar$ and $n_{\x}$ and $n_{\x_j}$. Note that our approximations which led to \eqref{lambound} are based upon specifying the bandwidths as $\det(\Hbf_j) = \det(\Hbf)n_\x/n_{\x_j}$ for $j = 1,\ldots,J$.
+
+\vspace{0.25cm}
+\textbf{Case 1: $\wstar_j \approx 1$}. It is easy to see that the existence of a $j$ such that $\wstar_j \approx 1$ implies that $\lambda$ can be essentially any value between 0 and 1. When this is the case we will choose $\lambda \leq 1/2$ when $n_{\x_j} \geq n_\x$ and $\lambda > 1/2$ when $n_{\x_j} < n_\x$. In this setting we have $\lambda \to 0$ and $n_{\x} \to 0$ or $n_{\x_j} \to \infty$.
+
+\vspace{0.25cm}
+\textbf{Case 2: $\wstar_j$ is not large or small, and $n_{\x}$ is large}. If there exists no such $j$ for case 1 to hold and $n_{\x}$ is large then the right hand side (RHS) of \eqref{lambound} is close to 1. Thus we specify that $\lambda \to 1$ as $n_{\x} \to \infty$. 
+
+\vspace{0.25cm}
+\textbf{Case 3: $\max_j(\wstar_j) \approx 1/J$}. In this setting, the synthetic pitcher poorly approximates the pitcher under study. The smoothness of the space $H(L,\beta=2)$ and lack of pronounced modes implies that the $n_\x\det(\Hbf)\left(f(\y|\x) - \sum_{j=1}^J\wstar_jf(\y|\x_j)\right)^2$ terms dominate the other terms provided that $n_{\x}$ is large enough. Thus we specify that $\lambda \to 1$ as $\max_j(\wstar_j) \to 1/J$. When $n_{\x}$ is prohibitively small then we recommend not making inferences using spray chart distributions in this setting.
+
+\vspace{0.25cm}
+\textbf{Case 4: $\wstar_j$ is not large or small, and $n_{\x}$ is not large or small}. If there exists no such $j$ for case 1 to hold and $n_{\x}$ is not large enough for case 2, then the RHS of \eqref{lambound} depends on $\Wstar$, $n_{\x}$, and $n_{\x_j}$ for all $j = 1,\ldots$, $J$. Also note that the supposition that $\wstarsq_j\|\x-\x_j\|^2$ and $\wstarsq_j\|\x-\x_j\|^4$ are negligible may be questionable in this setting.
+
+
+\vspace{0.25cm}
+These cases lead to the following choice for $\lambda$:
+$$
+  \lamstar = 1 - \text{logit}\left(-\frac{n_{\Wstar} - n_\x}{n_\x}\right)
+    \left(\max_j(\wstar_j) - \frac{1}{J}\right)
+    \left(\frac{1}{n_\x}1(n_\x \geq M) + 1(n_\x < M) \right)
+$$
+where $n_{\Wstar} = \sum_{j=1}^J \wstar_j n_{\x_j}$, $\text{logit}(x) = 1/(1 + \exp(-x))$, and $M$ is a user specified input that is meant to void out the influence of the synthetic pitcher if $n_\x$ is thought to be large enough.
+
+
+
+
+
 
 
 \bibliographystyle{plainnat}
