@@ -410,13 +410,13 @@ We will now motivate choices for $\lambda$ based on scenarios of $\Wstar$ and $n
 
 
 \vspace{0.25cm}
-These cases lead to the following choice for $\lambda$:
+These four cases lead to the following choice for $\lambda$:
 $$
   \lamstar = 1 - \text{logit}\left(-\frac{n_{\Wstar} - n_\x}{n_\x}\right)
     \left(\max_j(\wstar_j) - \frac{1}{J}\right)
     \left(\frac{1}{n_\x}1(n_\x \geq M) + 1(n_\x < M) \right)
 $$
-where $n_{\Wstar} = \sum_{j=1}^J \wstar_j n_{\x_j}$, $\text{logit}(x) = 1/(1 + \exp(-x))$, and $M$ is a user specified input that is meant to void out the influence of the synthetic pitcher if $n_\x$ is thought to be large enough.
+where $n_{\Wstar} = \sum_{j=1}^J \wstar_j n_{\x_j}$, $\text{logit}(x) = 1/(1 + \exp(-x))$, and $M$ is a user specified input that is meant to void out the influence of the synthetic pitcher if $n_\x$ is thought to be large enough. The choice $\lamstar$ satisfies Cases 1-3 and we hope that it is a sufficient balance of all the design parameters to be reliable when in Case 4.
 
 
 
