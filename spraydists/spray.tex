@@ -71,20 +71,33 @@
 
 \section{Introduction}
 
-Baseball has had a rich statistical history dating back to the first box score created by Henry Chadwick in 1859. Fans, journalists, and baseball teams have been enamored and obsessed with statistics in baseball ever since. This obsession about baseball statistics is best summarized by the existence of \cite{schwarz2004numbers}, a best selling book devoted to the statistical history of baseball. Baseball data is analyzed in the classroom as well. Max Marchi, Jim Albert, and Benjamin S. Baumer have written a book that teaches R through baseball analysis \citep{marchi2019analyzing}, and Jim Albert maintains an actively updated website Exploring Baseball Data with R that supplements this book. GET SHANE JANSEN's ARTICLES and DAVID BERRI's ARTICLES.
+Baseball has had a rich statistical history dating back to the first box score created by Henry Chadwick in 1859. Fans, journalists, and baseball teams have been enamored and obsessed with statistics in baseball ever since. This obsession about baseball statistics is best summarized by the existence of \cite{schwarz2004numbers}, a best selling book devoted to the statistical history of baseball. Baseball data is analyzed in the classroom as well. Max Marchi, Jim Albert, and Benjamin S. Baumer have written a book that teaches R through baseball analysis \citep{marchi2019analyzing}, and Jim Albert maintains an actively updated website Exploring Baseball Data with R that supplements this book. 
+Quantification of players' skill has appeared in the Statistics literature, with articles devoted to
+hitting \citep{berry1999bridging, albert2008streaky, jensen2009hierarchical},
+pitching (need articles),
+fielding \citep{jensen2009bayesball, piette2012estimating}, 
+and total value \citep{baumer2015openwar}.
 
 
-Most baseball statistics used for player evaluations are obtained from raw box score totals. While box score totals are a enjoyable statistical summary for baseball fans, the information contained in them is not very substantive, they ignore rich contextual information. Most commonly used player evaluation metrics are functions of context-free box score totals. These include, and are far from limited to, adjusted earned run average (ERA+), adjusted on base plus slugging percentage (OPS+), and wins above replacement (WAR). These metrics all ignore which pitchers a batter faced and the game situations which complement the outcomes that are recorded. \cite{eck2020challenging} showed that these context-free metrics and the class of metrics that compares a player's accomplishments directly with that player's peers are ill-equipped for player comparisons across eras of baseball. This finding holds even when these metrics have been adjusted to account for annual league and park effects \citep{eck2020challenging}. 
+Most baseball statistics used for player evaluations are obtained from raw box score totals. While box score totals are a enjoyable statistical summary for baseball fans, the information contained in them is not very substantive, they ignore rich contextual information. Most commonly used player evaluation metrics are functions of context-free box score totals. These include, and are far from limited to, adjusted earned run average (ERA+), adjusted on base plus slugging percentage (OPS+), and wins above replacement (WAR). The more sophisticated techniques in \citet{berry1999bridging}, \cite{jensen2009hierarchical}, and \cite{baumer2015openwar} are also constructed from raw box score totals. These metrics all ignore which pitchers a batter faced and the game situations which complement the outcomes that are recorded. \cite{eck2020challenging} showed that these context-free metrics and the class of metrics that compares a player's accomplishments directly with that player's peers are ill-equipped for player comparisons across eras of baseball, although they may perform well over the course of a single season or a few consecutive seasons. That being said, these context-free metrics do not offer any guidance for any of the particular batter pitcher matchups that occur throughout the season outside of park effects.
 
 
 
+Discuss how PECOTA, \cite{jensen2009hierarchical}, \cite[Section 2.5]{jensen2009bayesball} pool players 
 
-In this article we develop spray chart distributions as a methodology for understanding batter pitcher matchups visually and numerically. Informally, spray chart distributions are 2-dimensional contours that overlay spray charts \citep[Section 12]{marchi2019analyzing}. We construct spray chart distributions for batter pitcher matchups where separate batter spray chart distribution are  constructed for each of the pitches that the pitcher throws. Rich pitch characteristic information is used to supplement labelled pitch type data since the velocity, trajectory, and other characteristics of a pitch exhibit large variation across pitcher. The reported spray chart distribution for the batter pitcher matchup is the aggregation of the spray chart distributions for each pitch that the pitcher throws, the aggregation is with respect to the percentage that the pitcher throws each pitch.
+%The i.i.d. assumption underlying the binomial model has already been justified for hitting totals within a single season (Brown 2008), and so seems reasonable for hitting totals across an entire season. \citep[Section 2.1]{jensen2009hierarchical}. 
+%
+%Get: 
+%Brown, L. D. (2008). “In-Season Prediction of Batting Averages: A Field-test of Simple Empirical Bayes and Bayes Methodologies.” Annals of Applied Statistics, 2: 113–152. 632, 633
+
+
+In this article we develop spray chart distributions as a methodology for understanding batter pitcher matchups visually and numerically. Informally, spray chart distributions are 2-dimensional contours that overlay spray charts \citep[Section 12]{marchi2019analyzing}. We construct spray chart distributions for batter pitcher matchups where separate batter spray chart distribution are  constructed for each of the pitches that the pitcher throws. Rich pitch characteristic information is used to supplement labelled pitch type data since the velocity, trajectory, and other characteristics of a pitch exhibit large variation across pitcher. The reported spray chart distribution for the batter pitcher matchup is the aggregation of the spray chart distributions for each pitch that the pitcher throws, the aggregation is with respect to the percentage that the pitcher throws each pitch. {\bf Need to describe what our developments bring to the table, both visually and numerically.}
 %We can use spray distributions to calculate player evaluation metrics directly from batted ball location data instead of from outcomes that are obtained from the boxscore. We also motivate a synthetic player construction that can lead to estimated spray chart distributions with lower mean squared error (MSE).
-One concern with this approach is that batter pitcher matchup data can be sparse. We develop a synthetic pitcher with similar characteristics as the pitcher under study to alleviate this concern. The synthetic pitcher is constructed in a similar fashion as how synthetic controls are created via synthetic control methodology (SCM) \citep{abadie2010synthetic} in the policy evaluation with observational data literature (need citation).
+
+One concern with this approach is that batter pitcher matchup data can be sparse. We alleviate this concern with the development of a synthetic pitcher with similar characteristics as the pitcher under study. The synthetic pitcher is constructed in a similar fashion as how synthetic controls are created via synthetic control methodology (SCM) \citep{abadie2010synthetic} in the policy evaluation with observational data literature (need citation). The final spray chart distribution reported is a convex combination of that for the pitcher under study and the synthetic pitcher. The parameter which controls the amount of influence that the synthetic pitcher's spray chart distribution has on the final spray chart distribution is chosen with the goal of minimizing mean squared error (MSE).
 
 
-Need to describe what our developments bring to the table, both visually and numerically.
+
 
 \section{Motivating Example}
 
@@ -109,7 +122,11 @@ We will estimate $f(\cdot|\x)$ with a multivariate kernel estimator
 where $K$ is a multivariate kernel function, $\Hbf$ is a matrix of bandwidth parameters, and 
 $\y_1,\ldots,\y_{n_\x}$ is the $n_\x$ batted ball locations from home plate observed when the batter faced situation $\x$. The estimated spray chart density function \eqref{general} is a smoothed surface overlaying a spray chart. Our visualization of the spray chart distribution will be along $n_g$ common grid points $g_1,\ldots,g_{n_g}$ for all batters and all conditional characteristics $\x \in \X$ under study. Commonality of grid of points across the batters and $\x$ allows for straightforward comparisons of spray chart distributions.
 
-Our implementation will estimate $f(\cdot|\x)$ using the \texttt{kde2d} function in the \texttt{Mass} R package \citep{MASS}. The \texttt{kde2d} function is chosen because of its presence in the \texttt{geom\_density\_2d} function in the \texttt{ggplot2} R package \citep{ggplot2} which will be employed for our visualizations. Therefore, we estimate $f(\cdot|\x)$ using a bivariate nonparametric Gaussian kernel density estimator
+Our implementation will estimate $f(\cdot|\x)$ using the \texttt{kde2d} function in the \texttt{Mass} R package \citep{MASS}. 
+%\texttt{ggtern} R package \citep{ggtern}.
+The \texttt{kde2d} function is chosen because of its presence 
+%in the \texttt{geom\_density\_2d} function 
+in the \texttt{ggplot2} R package \citep{ggplot2} which will be employed for our visualizations. Therefore, we estimate $f(\cdot|\x)$ using a bivariate nonparametric Gaussian kernel density estimator
 \begin{equation} \label{spraydens}
   \hat f_\h(\y|\x) = 
     \frac{1}{n_\x h_{y_1}h_{y_2}}\sum_{i=1}^{n_\x} \phi\left(\frac{y_1 - y_{1i}}{h_{y_1}}\right)
@@ -125,20 +142,20 @@ where $\phi$ is a standard Gaussian density, $\h \in \R^2$ is a bandwidth parame
 
 \section{Synthetic player construction}
 
+We develop a method for synthetically recreating baseball players in order to alleviate the small sample size concerns of individual batter pitcher matchups. Our synthetic player creation method is %inspired by the mechanics of SCM introduced in \cite{abadie2010synthetic}. 
+inspired by the notion of similarity scores \citep{james1994politics, PECOTA}. Unlike these notions of similarity scores we base similarity on the underlying pitch characteristics and not observed statistics.
 
+Our method for building spray chart distributions for batter pitcher matchups with an additional  synthetic pitcher is as follows: we isolate the pitch repertoire of the pitcher of interest. We obtain the types of pitches that the pitcher throws and then compute the mean of all pitch characteristics for each of these pitches. This will form the basis of our comparison. \textbf{Finish setup. Get similarity score construction}.
 
-
-We develop a method for synthetically cloning baseball players in order to alleviate the small sample size concerns of individual batter pitcher matchups. Our synthetic player creation method is inspired by the mechanics of SCM introduced in \cite{abadie2010synthetic}. 
-
-Our method for building spray chart distributions for batter pitcher matchups with an additional  synthetic pitcher is as follows: we isolate the pitch repertoire of the pitcher of interest. We obtain the types of pitches that the pitcher throws and then compute the mean of all pitch characteristics for each of these pitches. This will form the basis of our comparison. In the notation of \cite{abadie2010synthetic} let $\Xbf_1 \in \R^p$ denote the mean pitch characteristics of one pitch, let $\Xbf_0 \in \R^{p \times J}$ denote the matrix of pitch characteristics for each pitcher who throws that pitch where $J$ is the number of pitchers who throw that pitch (minimum at bats against the batter under consideration). We will let $\Xbf_0\W$ denote a synthetic version of the pitcher under consideration with respect to the weight vector $\W$. To measure the discrepancy between one pitch of the pitcher under consideration $\Xbf_1$ and the synthetic version of that pitcher's pitch $\Xbf_0\W$ we will employ the distance measure
-$ 
- \|\Xbf_1 - \Xbf_0\W\|_\V = \sqrt{(\Xbf_1 - \Xbf_0\W)'\V(\Xbf_1 - \Xbf_0\W)},
-$
-where $\V$ is a weight matrix. In our implementation, $\V$ will be a diagonal matrix with elements that are inverse standard deviations of the rows of $\Xbf_0$. Of all the candidate weights $\W$ for a particular pitch, we will choose $\Wstar$ to be 
-$
-  \Wstar = \text{argmin}_\W \|\Xbf_1 - \Xbf_0\W\|_\V.
-$
-We repeat this process for every type of pitch thrown by the pitcher under consideration.
+%In the notation of \cite{abadie2010synthetic} let $\Xbf_1 \in \R^p$ denote the mean pitch characteristics of one pitch, let $\Xbf_0 \in \R^{p \times J}$ denote the matrix of pitch characteristics for each pitcher who throws that pitch where $J$ is the number of pitchers who throw that pitch (minimum at bats against the batter under consideration). We will let $\Xbf_0\W$ denote a synthetic version of the pitcher under consideration with respect to the weight vector $\W$. To measure the discrepancy between one pitch of the pitcher under consideration $\Xbf_1$ and the synthetic version of that pitcher's pitch $\Xbf_0\W$ we will employ the distance measure
+%$ 
+% \|\Xbf_1 - \Xbf_0\W\|_\V = \sqrt{(\Xbf_1 - \Xbf_0\W)'\V(\Xbf_1 - \Xbf_0\W)},
+%$
+%where $\V$ is a weight matrix. In our implementation, $\V$ will be a diagonal matrix with elements that are inverse standard deviations of the rows of $\Xbf_0$. Of all the candidate weights $\W$ for a particular pitch, we will choose $\Wstar$ to be 
+%$
+%  \Wstar = \text{argmin}_\W \|\Xbf_1 - \Xbf_0\W\|_\V.
+%$
+%We repeat this process for every type of pitch thrown by the pitcher under consideration.
 
 
 
@@ -146,7 +163,7 @@ We then construct the spray chart distribution against the synthetic pitcher. Fo
 \begin{equation} \label{synthetic-pitcher}
   \tilde{f}(\y|\x) = \sum_{j=1}^J \wstar_j\hat{f}_{\h_j}(\y|\x_j)
 \end{equation}
-where $\hat{f}_{\h_j}(\y|\x_j)$ are estimated spray chart distributions from the batter's matchups against the $j$th pitcher with pitch characteristics $\x_j$. The estimator \eqref{synthetic-pitcher} is obviously a biased estimator for $f(\y|\x)$. However, it can lead to lower MSE in certain scenarios. One obvious case is when $\wstar_j = 1 - \varepsilon$ where $\varepsilon > 0$ is small and $n_{\x_j} > n_{\x}$. In this setting, pitcher $j$ possess very similar pitch characteristics as the pitcher that the batter is facing, and the batter has had more encounters with pitcher $j$ than the current pitcher. Another obvious case is when the batter has never faced the pitcher before so that no data is available to estimate $f(\y|\x)$ directly, although that does not guarantee that $\tilde{f}(\y|\x)$ is a good estimator for $f(\y|\x)$. Our implementation will estimate $f(\y|\x)$ with
+where $\hat{f}_{\h_j}(\y|\x_j)$ are estimated spray chart distributions from the batter's matchups against the $j$th pitcher with pitch characteristics $\x_j$. Our implementation estimates \eqref{synthetic-pitcher} with the \texttt{kde2d.weighted} function in the \texttt{ggtern} R package \citep{ggtern}. The estimator \eqref{synthetic-pitcher} is obviously a biased estimator for $f(\y|\x)$. However, it can lead to lower MSE in certain scenarios. One obvious case is when $\wstar_j = 1 - \varepsilon$ where $\varepsilon > 0$ is small and $n_{\x_j} > n_{\x}$. In this setting, pitcher $j$ possess very similar pitch characteristics as the pitcher that the batter is facing, and the batter has had more encounters with pitcher $j$ than the current pitcher. Another obvious case is when the batter has never faced the pitcher before so that no data is available to estimate $f(\y|\x)$ directly, although that does not guarantee that $\tilde{f}(\y|\x)$ is a good estimator for $f(\y|\x)$. Our implementation will estimate $f(\y|\x)$ with
 \begin{equation} \label{sd-implem}
   \hat{g}_{\lambda}(\y|\x) = \lambda \hat f_\h(\y|\x) + (1 - \lambda)\tilde{f}(\y|\x),
 \end{equation}
@@ -154,7 +171,7 @@ where the choice of $0 \leq \lambda \leq 1$ will be discussed in the next Sectio
 
 
 
-\section{Choosing $\lambda$}
+\subsection{Choice of $\lambda$}
 
 We motivate a choice of $\lambda$ in \eqref{sd-implem} by comparing the MSE of \eqref{spraydens} and \eqref{sd-implem}. Let $n_{\Wstar} = \sum_{j=1}^J \wstar_j n_{\x_j}$ and define $\text{logit}(x) = 1/(1 + \exp(-x))$. Our implementation will use 
 $$
@@ -162,10 +179,13 @@ $$
     \left(\max_j(\wstar_j) - \frac{1}{J}\right)
     \left(\frac{1}{n_\x}1(n_\x \geq M) + 1(n_\x < M) \right)
 $$
-as our choice for $\lambda$ where $\text{logit}(x) = 1/(1 + \exp(-x))$ and $M$ is a user specified input that is meant to void out the influence of the synthetic pitcher if $n_\x$ is thought to be large enough. Intuitively, $\lamstar$ favors the synthetic pitcher when there exists a $j$ such that $n_{\x_j} > n$ and the weight $\wstar_j$ is large, and it protects against scenarios where no $\wstar_j$ is large but $n_{\x_j} > n_{\x}$ for several $1 \leq j \leq J$. We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation.
+as our choice for $\lambda$ where $\text{logit}(x) = 1/(1 + \exp(-x))$ and $M$ is a user specified input that is meant to void out the influence of the synthetic pitcher if $n_\x$ is thought to be large enough. Intuitively, $\lamstar$ favors the synthetic pitcher when there exists a $j$ such that $n_{\x_j} > n$ and the weight $\wstar_j$ is large, and it protects against scenarios where no $\wstar_j$ is large but $n_{\x_j} > n_{\x}$ for several $1 \leq j \leq J$. Technical justification for selecting $\lamstar$ is given in the Appendix.
 
 
-The best batters in baseball are good at hitting the ball with general intent but batted ball locations will still exhibit variation. Therefore we expect for spray chart densities to be smooth and lacking of sharp peaks. It is reasonable to assume that $f(\cdot|\cdot)$ belongs to a multivariate H{\"o}lder class of densities which we will denote by $H(\beta,L)$. The space $H(\beta,L)$ is the set of functions $f(\y|\x)$ such that 
+
+\section*{Appendix: Justification for our choice of $\lambda$}
+
+We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation. The best batters in baseball are good at hitting the ball with general intent but batted ball locations will still exhibit variation. Therefore we expect for spray chart densities to be smooth and lacking of sharp peaks. It is reasonable to assume that $f(\cdot|\cdot)$ belongs to a multivariate H{\"o}lder class of densities which we will denote by $H(\beta,L)$. The space $H(\beta,L)$ is the set of functions $f(\y|\x)$ such that 
 \begin{align*}
 |D_{\y}^\s f(\y_1|\x) - D_{\y}^\s f(\y_2|\x)| &\leq L_\x\|\y_1 - \y_2\|^{\beta - |\s|}, \\
 |D_{\x}^\tbf f(\y|\x_1) - D_{\x}^\tbf f(\y|\x_2)| &\leq L_\y\|\x_1 - \x_2\|^{\beta - |\tbf|}, 
