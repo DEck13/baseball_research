@@ -133,9 +133,10 @@ batters <- merge(batters, BPF)
 ## park effect adjusted batting average and OPS
 # 2/3 weight to league park factor; 1/2 weight to neutral park
 #batters <- batters %>% mutate(AVG = H/AB * (2/3 * 100/BPF + 1/3) ) %>% 
-batters <- batters %>% mutate(AVG = ifelse(AB > 0, H/AB * 100/BPF, 0)) %>% 
-  mutate(OPS = ifelse(AB > 0, round( (((BB + H) / (AB + BB)) +
-    (((H - X2B - X3B- HR) + 2*X2B + 3*X3B + 4*HR) / AB)) * 100/BPF, 3), 0)) %>% 
+batters <- batters %>% filter(AB > 1) %>% 
+  mutate(AVG = H/AB * 100/BPF) %>% 
+  mutate(OPS = round( (((BB + H) / (AB + BB)) +
+    (((H - X2B - X3B- HR) + 2*X2B + 3*X3B + 4*HR) / AB)) * 100/BPF, 3)) %>% 
   select(playerID, POS, yearID, teamID, lgID, AVG, OPS, HR, AB) %>% 
   filter(yearID %in% years)
 batters$playerID <- droplevels(batters$playerID)
@@ -175,12 +176,12 @@ pops <- approx(x = 1880 + 0:14*10, y = pops, xout = years)$y
 
 
 ## decenial weights (correction for AL/NL differences in integration)
-weightsNL <- c(0.10, 0.12, 0.15, 0.18, 0.20, 0.25, 0.23, 0.22, #1947 
-               0.28, 0.28, 0.29, #1956, 1960, 1970
-               0.26, 0.20, 0.18, 0.15, 0.12) #1980-
-weightsAL <- c(0.10, 0.12, 0.15, 0.18, 0.20, 0.25, 0.23, 0.22, #1947 
-               0.23, 0.23, 0.25, #1956, 1960, 1970
-               0.25, 0.20, 0.18, 0.15, 0.12) #1980-
+weightsNL <- c(0.15, 0.15, 0.18, 0.20, 0.22, 0.26, 0.24, 0.23, #1947 
+               0.28, 0.28, 0.28, #1956, 1960, 1970
+               0.26, 0.20, 0.17, 0.14, 0.11) #1980-
+weightsAL <- c(0.15, 0.15, 0.18, 0.20, 0.22, 0.26, 0.24, 0.23, #1947 
+               0.24, 0.24, 0.25, #1956, 1960, 1970
+               0.25, 0.20, 0.17, 0.14, 0.11) #1980-
 
 ## interpolated population counts
 weightsNL <- approx(x = c(1880 + 0:6*10, 1947, 1956, 1960 + 0:6 * 10), 
@@ -197,54 +198,81 @@ data.frame(pops = w_popsAL, lgID = "AL", yearID = 1880 + 0:(14*10 - 2)))
 batters <- merge(batters, pops_data, by = c("lgID", "yearID"))
 
 
+## map normal batting averages to Pareto space 
+# cap talent below max talent for AB < AB_thresh
+AVG_talent <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
+  foo <- batters %>% filter(yearID == yy) %>% arrange(AVG)
+  bar <- foo %>% filter(AB >= AB_thresh)
+  nsys <- nrow(bar)
+  mu_AVG <- mean(bar$AVG)
+  sd_AVG <- sd(bar$AVG)
+  AVG_sorted <- bar$AVG
+  pops <- bar$pops
+  u_int <- order_pnorm_vec(AVG_sorted, mean = mu_AVG, sd = sd_AVG)
+  bar <- bar %>% mutate(talent = order_Pareto_vec(u_int, npop = pops))
+  max_talent <- max(bar$talent) - 1
+  range <- which(!(foo$playerID %in% bar$playerID))
+  bar <- rbind(bar, do.call(rbind, lapply(range, function(j){
+    #pops_full <- baz$pops
+    #u_int_full <- order_pnorm_vec(baz$AVG, mean = mu_AVG, sd = sd_AVG)
+    #baz %>% mutate(talent = order_Pareto_vec(u_int_full, npop = pops_full)) %>% 
+    #  filter(AB < AB_thresh) %>% 
+    #  mutate(talent = ifelse(talent > max_talent+1, max_talent, talent))
+    rbind(bar %>% select(-talent), foo[j, ]) %>% arrange(AVG) %>% 
+      mutate(talent = order_Pareto_vec(order_pnorm_vec(AVG, mean = mu_AVG, sd = sd_AVG), 
+                                     npop = pops)) %>% 
+      filter(AB < AB_thresh) %>% 
+      mutate(talent = ifelse(talent > max_talent+1, max_talent, talent))
+  }))) %>% arrange(talent)
+}))
 
 ## map normal batting averages to Pareto space 
-talent_eval <- function(yy){
-  batters_int <- batters %>% filter(yearID == yy & AB > AB_thresh) %>% 
-    arrange(AVG)
-  nsys <- nrow(batters_int)
-  mu_AVG <- mean(batters_int$AVG)
-  sd_AVG <- sd(batters_int$AVG)
-  AVG_sorted <- batters_int$AVG
-  u_int <- order_pnorm_vec(AVG_sorted, mean = mu_AVG, sd = sd_AVG)
-  #print(cbind(yy, u_int))
-  
+#talent_eval <- function(yy){
+#  batters_int <- batters %>% filter(yearID == yy & AB >= AB_thresh) %>% 
+#    arrange(AVG)
+#  nsys <- nrow(batters_int)
+#  mu_AVG <- mean(batters_int$AVG)
+#  sd_AVG <- sd(batters_int$AVG)
+#  AVG_sorted <- batters_int$AVG
+#  u_int <- order_pnorm_vec(AVG_sorted, mean = mu_AVG, sd = sd_AVG)
+#  #print(cbind(yy, u_int))
+#  
   ## years input and pops need to be the same length
   #years_int <- which(years == yy)
   #npop <- w_pops[years_int]
-  batters_int <- batters_int %>% mutate(talent = 
-    order_Pareto_vec(u_int, npop = pops)
-  ) %>% select(yearID, playerID, pops, AB, AVG, talent)
-  
-  batters_int #%>% filter(talent > 1e7) %>% mutate(talent = talent / 1e7)
-}
+#  batters_int <- batters_int %>% mutate(talent = 
+#    order_Pareto_vec(u_int, npop = pops)
+#  ) %>% select(yearID, playerID, pops, AB, AVG, talent)
+#  
+#  batters_int #%>% filter(talent > 1e7) %>% mutate(talent = talent / 1e7)
+#}
 
 ## compute talent scores for all qualifying seasons
-AVG_talent <- do.call(rbind, lapply(years, talent_eval))
+#AVG_talent <- do.call(rbind, lapply(years, talent_eval))
 
 ## top 25 talent-scores
-top25seasons <- (AVG_talent %>% arrange(-talent))[1:25, ]
-nrow((AVG_talent %>% arrange(-talent))[1:25, ] %>% filter(yearID < 1947))
+top25seasons <- (AVG_talent %>% filter(AB >= AB_thresh) %>% arrange(-talent))[1:25, ]
+nrow((AVG_talent %>% filter(AB >= AB_thresh) %>% 
+        arrange(-talent))[1:25, ] %>% filter(yearID < 1947))
 
 
 ## get peak performance with respect to 1996
-ref_1996 <- AVG_talent %>% filter(yearID == 1996)
+ref_1996 <- AVG_talent %>% filter(yearID == 1996) %>% filter(AB >= AB_thresh)
 mean_AVG_1996 <- mean(ref_1996$AVG)
 sd_AVG_1996 <- sd(ref_1996$AVG)
 w_pops_1996 <- w_popsNL[which(years == 1996)]
 
-
-
 ## restrict attention to players before 1997 to compare
-## with the era-bridging paper
-foo <- AVG_talent %>% filter(AB > AB_thresh, yearID < 1997)
+## with the era-bridging paper and Gould
+foo <- AVG_talent %>% filter(AB >= AB_thresh, yearID < 1997)
 foo$playerID <- droplevels(foo$playerID)
 bar <- split(foo, f = foo$playerID)
 baz <- (do.call(rbind, mclapply(bar, mc.cores = ncores, function(xx){
   xx[which.max(xx$talent), ]
 })) %>% arrange(-talent))[1:25, ]
 
-qux <- do.call(rbind, mclapply(1:25, mc.cores = ncores, function(j){
+# top individual seasons in 1996 for players who came before 1997
+top25seasons_bf1996 <- do.call(rbind, mclapply(1:25, mc.cores = ncores, function(j){
   xx <- baz[j, ]
   xx$pops <- w_pops_1996
   xx$playerID <- paste(xx$playerID, "_proj", sep = "")
@@ -253,42 +281,38 @@ qux <- do.call(rbind, mclapply(1:25, mc.cores = ncores, function(j){
             talent, npop = pops), 
             mean = mean_AVG_1996, sd = sd_AVG_1996))
   int[grepl("_proj", int$playerID), ]
-}))
-qux
+})) %>% select(-AVG,-pops)
+top25seasons_bf1996
 
-
-career_AVG <- function(snippet, year_start = 1996, year_finish = 2018){
-  span <- year_start:year_finish
-  if(nrow(snippet) < length(span)) span <- span[1:nrow(snippet)]
-  snippet <- snippet[1:length(span), ]
-  snippet <- snippet %>% mutate(playerID = paste(playerID, "_proj", sep = ""))
-  do.call(rbind, lapply(span, function(yy){
-    index <- which(span == yy)
-    batters_int <- AVG_talent %>% filter(yearID == span[index])
-    mean_int <- mean(batters_int$AVG)
-    sd_int <- sd(batters_int$AVG)
-    #pops_int <- batters_int %>% select(pops)
-    batters_int <- rbind(batters_int, snippet[index, ])
-    batters_int$pops[nrow(batters_int)] <- batters_int$pops[1]
-    batters_int <- batters_int %>% arrange(talent) %>% 
-      mutate(adj_AVG = order_qnorm(map_Pareto_vals_vec(
-        talent, npop = pops), 
-          mean = mean_int, sd = sd_int)) %>% 
-        filter(playerID == unique(snippet$playerID))
-  })) %>% mutate(span = span)
-
-}
+# top individual seasons in 1996 period
+foo <- AVG_talent %>% filter(AB >= AB_thresh)
+foo$playerID <- droplevels(foo$playerID)
+bar <- split(foo, f = foo$playerID)
+baz <- (do.call(rbind, mclapply(bar, mc.cores = ncores, function(xx){
+  xx[which.max(xx$talent), ]
+})) %>% arrange(-talent))[1:25, ]
+top25seasons_1996 <- do.call(rbind, mclapply(1:25, mc.cores = ncores, function(j){
+  xx <- baz[j, ]
+  xx$pops <- w_pops_1996
+  xx$playerID <- paste(xx$playerID, "_proj", sep = "")
+  int <- rbind(ref_1996, xx) %>% arrange(talent) %>% 
+    mutate(adj_AVG = order_qnorm(map_Pareto_vals_vec(
+      talent, npop = pops), 
+      mean = mean_AVG_1996, sd = sd_AVG_1996))
+  int[grepl("_proj", int$playerID), ]
+})) %>% select(-AVG,-pops)
+top25seasons_1996
 
 
 ## career averages for AB > 3000 (from a desired baseline)
 ## AB > 3000 is chosen to be nearly consistent with Brefs list
 #foo <- batters %>% filter(POS != "P") 
-foo <- AVG_talent %>% filter(AB > AB_thresh)
+foo <- AVG_talent #%>% filter(AB >= AB_thresh)
 foo$playerID <- droplevels(foo$playerID)
 bar <- split(foo, f = foo$playerID)
 year_start = 1996; year_finish = 2018
 
-# may check 3000 AB
+# may check 5000 AB
 index_kAB <- which(unlist(lapply(bar, function(xx){
   ifelse(sum(xx$AB) >= 3e3,1,0)
 })) == 1)
@@ -297,19 +321,51 @@ AVG_talent_kAB <- do.call(rbind, lapply(index_kAB, function(j){
 }))
 AVG_talent_kAB$playerID <- droplevels(AVG_talent_kAB$playerID)
 
+
 # compute career averages at reference span
-career_AVG_kAB <- mclapply(unique(AVG_talent_kAB$playerID), 
+career_AVG <- function(snippet, year_start = 1996, year_finish = 2018){
+  span <- year_start:year_finish
+  if(nrow(snippet) < length(span)) span <- span[1:nrow(snippet)]
+  snippet <- snippet[1:length(span), ]
+  snippet <- snippet %>% mutate(playerID = paste(playerID, "_proj", sep = ""))
+  do.call(rbind, lapply(span, function(yy){
+    index <- which(span == yy)
+    batters_int <- AVG_talent %>% filter(yearID == span[index], AB >= AB_thresh)
+    mean_int <- mean(batters_int$AVG)
+    sd_int <- sd(batters_int$AVG)
+    #pops_int <- batters_int %>% select(pops)
+    batters_int <- rbind(batters_int, snippet[index, ])
+    batters_int$pops[nrow(batters_int)] <- batters_int$pops[1]
+    batters_int <- batters_int %>% arrange(talent) %>% 
+      mutate(adj_AVG = order_qnorm(map_Pareto_vals_vec(
+        talent, npop = pops), 
+        mean = mean_int, sd = sd_int)) %>% 
+      filter(playerID == unique(snippet$playerID))
+  })) %>% mutate(span = span)
+  
+}
+
+career_AVG_kAB <- do.call(rbind, mclapply(unique(AVG_talent_kAB$playerID), 
   function(xx){
     int <- career_AVG(AVG_talent_kAB %>% filter(playerID == xx), 
-             year_start = year_start, year_finish = year_finish) %>% 
-      mutate(adj_H = adj_AVG * AB)
-  data.frame(xx, sum(int$adj_H) / sum(int$AB), sum(int$adj_H))
-}, mc.cores = ncores)
+      year_start = year_start, year_finish = year_finish)%>% 
+      #mutate(adj_H = adj_AVG * AB) %>% 
+      select(-pops, -talent, -AVG)
+  #data.frame(xx, sum(int$adj_H) / sum(int$AB), sum(int$adj_H))
+    int
+}, mc.cores = ncores))
 
-career_AVG_kAB <- do.call(rbind, career_AVG_kAB)
-colnames(career_AVG_kAB) <- c("name", "average", "hits")
-(career_AVG_kAB %>% arrange(-hits))[1:25, ]
-(career_AVG_kAB %>% arrange(-average))[1:25, ]
+career_total_AVG <- do.call(rbind, mclapply(
+  split(career_AVG_kAB, f = droplevels(as.factor(career_AVG_kAB$playerID))), 
+  mc.cores = ncores, FUN = function(xx){
+    xx <- xx %>% mutate(adj_H = adj_AVG * AB)
+    data.frame(unique(xx$playerID), min(xx$yearID), 
+               sum(xx$adj_H) / sum(xx$AB), sum(xx$adj_H))
+  }))
+colnames(career_total_AVG) <- c("name", "rookie year", "average", "hits")
+(career_total_AVG %>% arrange(-hits))[1:25, ]
+(career_total_AVG %>% arrange(-average))[1:25, ]
+
 
 
 ## select old time players
@@ -325,7 +381,6 @@ career_AVG_kAB %>% filter(name == "ansonca01")
 career_AVG_kAB %>% filter(name == "oneilti01")
 career_AVG_kAB %>% filter(name == "duffyhu01")
 
-
 ## Keeler's career if starting in 1996
 career_AVG_kAB %>% filter(name == "keelewi01")
 
@@ -333,8 +388,8 @@ career_AVG_kAB %>% filter(name == "keelewi01")
 
 ## C
 career_AVG_kAB %>% filter(name == "poseybu01")
-career_AVG_kAB %>% filter(name == "mauerjo01")
 career_AVG_kAB %>% filter(name == "piazzmi01")
+career_AVG_kAB %>% filter(name == "mauerjo01")
 career_AVG_kAB %>% filter(name == "rodriiv01")
 career_AVG_kAB %>% filter(name == "molinya01")
 career_AVG_kAB %>% filter(name == "benchjo01")
@@ -342,9 +397,9 @@ career_AVG_kAB %>% filter(name == "cartega01")
 
 ## 1B
 career_AVG_kAB %>% filter(name == "cabremi01") # or 3B
+career_AVG_kAB %>% filter(name == "pujolal01")
 career_AVG_kAB %>% filter(name == "martied01") # DH
 career_AVG_kAB %>% filter(name == "vottojo01")
-career_AVG_kAB %>% filter(name == "pujolal01")
 career_AVG_kAB %>% filter(name == "thomafr04")
 career_AVG_kAB %>% filter(name == "musiast01") # or LF
 career_AVG_kAB %>% filter(name == "bagweje01")
@@ -355,24 +410,25 @@ career_AVG_kAB %>% filter(name == "thomeji01")
 career_AVG_kAB %>% filter(name == "carewro01")
 career_AVG_kAB %>% filter(name == "hornsro01")
 career_AVG_kAB %>% filter(name == "molitpa01")
-career_AVG_kAB %>% filter(name == "alomaro01")
 career_AVG_kAB %>% filter(name == "rosepe01")
+career_AVG_kAB %>% filter(name == "alomaro01")
 career_AVG_kAB %>% filter(name == "biggicr01")
-career_AVG_kAB %>% filter(name == "sandbry01")
 career_AVG_kAB %>% filter(name == "morgajo02")
+career_AVG_kAB %>% filter(name == "sandbry01")
+
 
 ## 3B
 career_AVG_kAB %>% filter(name == "cabremi01") # or 1B
 career_AVG_kAB %>% filter(name == "molitpa01")
 career_AVG_kAB %>% filter(name == "brettge01")
-career_AVG_kAB %>% filter(name == "jonesch06")
 career_AVG_kAB %>% filter(name == "rosepe01")
+career_AVG_kAB %>% filter(name == "jonesch06")
 career_AVG_kAB %>% filter(name == "beltrad01")
 career_AVG_kAB %>% filter(name == "schmimi01")
 
 ## SS
-career_AVG_kAB %>% filter(name == "garcino01")
 career_AVG_kAB %>% filter(name == "jeterde01")
+career_AVG_kAB %>% filter(name == "garcino01")
 career_AVG_kAB %>% filter(name == "trammal01")
 career_AVG_kAB %>% filter(name == "ripkeca01")
 career_AVG_kAB %>% filter(name == "smithoz01")
@@ -381,18 +437,18 @@ career_AVG_kAB %>% filter(name == "wagneho01")
 
 
 ## LF
-career_AVG_kAB %>% filter(name == "willite01")
 career_AVG_kAB %>% filter(name == "musiast01") # or 1B
+career_AVG_kAB %>% filter(name == "willite01")
 career_AVG_kAB %>% filter(name == "bondsba01")
 career_AVG_kAB %>% filter(name == "henderi01")
 
 ## CF
-career_AVG_kAB %>% filter(name == "cobbty01")
 career_AVG_kAB %>% filter(name == "troutmi01")
+career_AVG_kAB %>% filter(name == "cobbty01")
 career_AVG_kAB %>% filter(name == "bettsmo01") # not too many PAs
+career_AVG_kAB %>% filter(name == "mantlmi01")
 career_AVG_kAB %>% filter(name == "mayswi01")
 career_AVG_kAB %>% filter(name == "griffke01")
-career_AVG_kAB %>% filter(name == "mantlmi01")
 career_AVG_kAB %>% filter(name == "beltrca01")
 career_AVG_kAB %>% filter(name == "jonesan01")
 
@@ -402,8 +458,9 @@ career_AVG_kAB %>% filter(name == "clemero01")
 career_AVG_kAB %>% filter(name == "guerrvl01")
 career_AVG_kAB %>% filter(name == "aaronha01")
 career_AVG_kAB %>% filter(name == "robinfr02")
-career_AVG_kAB %>% filter(name == "walkela01")
 career_AVG_kAB %>% filter(name == "ruthba01")
+career_AVG_kAB %>% filter(name == "walkela01")
+
 
 
 
