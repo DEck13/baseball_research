@@ -187,7 +187,7 @@ Our implementation estimates the densities in \eqref{synth-est} with the \texttt
     + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,J+1}) 
     + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,K+1})
 \end{equation}
-where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. The choices of the elements of $\lambdabf$ will be discussed in the next Section where we calculate and compare the MSE of \eqref{spraydens} and \eqref{sd-implem}. Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $\w_{p,j}$ and $\w_{b,k}$ since the weights are a deterministic function of the pitch characteristics.
+where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. The choices of the elements of $\lambdabf$ will be discussed in the next Section where we calculate and compare the MSE of \eqref{spraydens} and \eqref{sd-implem}. Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $w_{p,j}$ and $w_{b,k}$ since the weights are a deterministic function of the pitch characteristics.
 
 
 
@@ -220,10 +220,20 @@ We will assume the following regularity conditions for our spray chart distribut
 
 Condition A2 holds for the multivariate Gaussian kernel function that we use in our implementation.
 We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{p,j} = O(n)$, $n_{b,k} = O(n)$ and $\h_{p,j} = O(\h)$, $\h_{b,k} = O(\h)$ for all $j = 1, \ldots, J$, $k = 1, \ldots, K$. With the specification that $\beta = 2$ in Condition A1 we have that 
- \begin{align*}
-   f(\y|\x) - L\|\x-\x'\|^2 \leq &f(\y|\x') \leq f(\y|\x) + L\|\x-\x'\|^2, \\
-   R_\x(f) - L\|\x-\x'\|^2 \leq &R_{\x'}(f) \leq R_\x(f) + L\|\x-\x'\|^2.
- \end{align*}
+$
+   f(\y|\x) - L\|\x-\x'\|^2 \leq f(\y|\x') \leq f(\y|\x) + L\|\x-\x'\|^2.
+$
+This result implies that
+\begin{align*}
+  R_{\x'}(f) - R_\x(f) &= \int (f(\y|\x')^2 - f(\y|\x)^2) d\y 
+     = \int (f(\y|\x') - f(\y|\x))(f(\y|\x') + f(\y|\x)) d\y \\
+  &\leq L\|\x'-\x\|^2 \int(f(\y|\x') + f(\y|\x)) d\y 
+    = 2L\|\x'-\x\|^2,
+\end{align*}
+and 
+$
+   R_\x(f) - 2L\|\x-\x'\|^2 \leq R_{\x'}(f) \leq R_\x(f) + 2L\|\x-\x'\|^2.
+$ 
 %Properties to verify
 %$$
 %  \E(\hat f_\h(\y|\x)) - f(\y|\x) \approx \frac{\mu_2(K)\h'\Hcal_f(\y|\x)\h}{2}
@@ -235,53 +245,98 @@ We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal element
 
 % https://www.ssc.wisc.edu/~bhansen/718/NonParametrics1.pdf
 %From Hansen's notes: 
-Our derivations will rely heavily upon the following classical results from nonparametric estimation theory,
+
+We now have enough structure to estimate the MSE of \eqref{spraydens} and \eqref{sd-implem}. Standard results from nonparametric estimation theory give
 $$
-  \E \hat f_\h(\y|\x) - f(\y|\x) = \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+  \E(\hat f_\h(\y|\x)) - f(\y|\x) = \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
     + o(\|\h\|^2),
 $$
 and
 $$
- \Var \hat f_\h(\y|\x) = \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
+ \Var(\hat f_\h(\y|\x)) = \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
 $$
-Our specifications yield,
+
+Our multivariate H{\"o}lder class specifications yield,
 \begin{align*}
-  &\E g_{\lambdabf}(y|x) = \lambda \E \hat f_\h(\y|\x)
+  &\E(\hat g_{\lambdabf}(y|x)) = \lambda \E \hat f_\h(\y|\x)
     + \lambda_p \E \hat f_{\text{sp}}(\y|\x_{b,J+1}) 
     + \lambda_b \E \hat f_{\text{sb}}(\y|\x_{p,K+1}) \\
   &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
-    + \lambda_p \sum_{j=1}^J w_{p,j} \E \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,1}) \\
-    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} \E \hat f_{\h_{b,k}}(\y|\x_{p,1},\x_{b,k}) 
+    + \lambda_p \sum_{j=1}^J w_{p,j} \E \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) \\
+    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} \E \hat f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) 
     + o(\|\h\|^2) \\
   &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
   + o(\|\h\|^2) \\
-    &\qquad\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,1}) 
+    &\qquad\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) 
       + \lambda_p\sum_{j=1}^Jw_{p,j}
-      \frac{\mu_2(K)\h_{\x_{p,j}}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_{b,1}))\h_{x_{p,j}}}{2} \\
-    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_{p,1},\x_{b,k}) 
+      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_{b,K+1}))\h_{p,j}}{2} \\
+    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) 
       + \lambda_b\sum_{k=1}^K w_{b,k}
-      \frac{\mu_2(K)\h_{\x_{b,k}}'\text{diag}(\Hcal_f(\y|\x_{p,1},\x_{b,k}))\h_{x_{b,k}}}{2},
+      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_{p,J+1},\x_{b,k}))\h_{b,k}}{2},
 \end{align*}
 and 
 \begin{align*}
-  &\Var g_{\lambdabf}(y|x) = \Var\left(\lambda \hat f_\h(\y|\x) 
-    + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,1}) 
-    + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,1})\right) \\
+  &\Var(\hat g_{\lambdabf}(y|x)) = \Var\left(\lambda \hat f_\h(\y|\x) 
+    + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,K+1}) 
+    + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,J+1})\right) \\
   &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
-    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2 \Var \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,1}) 
-    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 \Var \hat f_{\h_{b,k}}(\y|\x_{p,1},\x_{b,k}) \\
+    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2 \Var \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) 
+    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 \Var \hat f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) \\
   &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
     + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
-      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,1})}{n_{\x_{p,j}}\det(\Hbf_{\x_{p,j}}))} \\
-    &\qquad+ \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
-      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,1},\x_{b,k})}{n_{\x_{b,k}}\det(\Hbf_{\x_{b,k}}))},
+      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,K+1})}{n_{p,j}\det(\Hbf_{p,j})} 
+    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
+      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,J+1},\x_{b,k})}{n_{b,k}\det(\Hbf_{b,k})},
 \end{align*}
-where $\tilde \x_{b,k} = (\x_{p,J+1}',\x_{b,k}')'$ and $\tilde \x_{p,j} = (\x_{p,j}',\x_{b,K+1}')'$.
+where $\tilde \x_{b,k} = (\x_{p,J+1}',\x_{b,k}')'$ and $\tilde \x_{p,j} = (\x_{p,j}',\x_{b,K+1}')'$. We will now choose the bandwidth parameters such that $\det(\Hbf_{p,j}) = \det(\Hbf)n/n_{\x_{p,j}}$ and $\det(\Hbf_{b,k}) = \det(\Hbf)n/n_{\x_{b,k}}$ in order to simplify our derivation for $\lambdabf$. With these specifications, we have that
+\begin{align*}
+  &\Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) \\
+  &=(\lambda^2 - 1)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} 
+    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
+      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,K+1})}{n\det(\Hbf)} 
+    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 
+      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,J+1},\x_{b,k})}{n\det(\Hbf)} \\
+  &\leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^Jw_{p,j}^2
+    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 - 1\right)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
+    &\qquad\qquad+ \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
+      \left(\frac{R_{\x}(f)\|\x-\tilde \x_{p,j}\|^2 
+      + 2Lf(\y|\x)\|\x-\tilde \x_{p,j}\|^2 + 2L^2\|\x-\tilde \x_{p,j}\|^4}{n\det(\Hbf)}\right) \\
+    &\qquad\qquad+ \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
+      \left(\frac{R_{\x}(f)\|\x-\tilde \x_{b,k}\|^2 
+      + 2Lf(\y|\x)\|\x-\tilde \x_{b,k}\|^2 + 2L^2\|\x-\tilde \x_{b,k}\|^4}{n\det(\Hbf)}\right).
+\end{align*}
+We also have
+\begin{align*}
+  \text{Bias}(\hat f_\h(\y|\x),f(\y|\x))^2 
+    &= \left(\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+    + o(\|\h\|^2)\right)^2,
+\end{align*}
+and
+\begin{align*}
+  &\text{Bias}(\hat g_{\lambdabf}(\y|\x),f(\y|\x))^2 = \left(\lambda f(\y|\x) - f(\y|\x) 
+    +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} + o(\|\h\|^2)\right. \\
+    &\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) 
+      + \lambda_p\sum_{j=1}^Jw_{p,j}
+      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_{b,K+1}))\h_{p,j}}{2} \\
+    &\qquad+ \left.\lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) 
+      + \lambda_b\sum_{k=1}^K w_{b,k}
+      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_{p,J+1},\x_{b,k}))\h_{b,k}}{2}\right)^2 
+\end{align*}
 
 
+%\begin{align*}
+% &MSE(\hat g_{\lambdabf}(y|x)) - MSE(\hat f_\h(\y|\x)) 
+%   = \Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) 
+%     + \text{Bias}(\hat g_{\lambdabf}(y|x)) - \text{Bias}(\hat f_\h(\y|\x)) \\
+% &\qquad = (\lambda^2 - 1)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
+%    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
+%      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,K+1})}{n\det(\Hbf)} \\
+%    &\qquad\qquad+ \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 
+%      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,J+1},\x_{b,k})}{n\det(\Hbf)} 
+%      + \text{Bias}(\hat g_{\lambdabf}(y|x)) - \text{Bias}(\hat f_\h(\y|\x)).
+%\end{align*}
 
-
-We will now choose the bandwidth parameters such that $\det(\Hbf_{p,j}) = \det(\Hbf)n/n_{\x_{p,j}}$ and $\det(\Hbf_{b,k}) = \det(\Hbf)n/n_{\x_{b,k}}$ in order to simplify our derivation for $\lambdabf$. 
+ 
 
 
 \bibliographystyle{plainnat}
