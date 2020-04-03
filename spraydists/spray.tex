@@ -149,22 +149,21 @@ $
 and $\V_p$ is a weight matrix that is chosen to scale the pitch characteristics and give preference to pitch characteristics that have higher influence on the spray chart distribution under study. Similarity scores for batters are defined in the same way. Implicit in this construction is the assumption that the underlying pitcher and batter characteristics that we collect represents the true talent of the players under study.
 
 
-Our method for estimating spray chart densities for batter pitcher matchups with synthetic players is as follows: first, without loss of generality, let $\x_{b,1}$ and $\x_{p,1}$ be  the characteristics for the batter and pitcher under study. Then line up the batter and pitcher characteristics for all of the available players, $\x_{b,j}$, $j = 2,...,J+1$ and $\x_{p,k}$, $k = 2,...,K$. Now obtain the similarity scores $s_{p,j-1} = s(\x_{p,1},\x_{p,j})$, $j = 2,...,J$ and $s_{b,k-1} = s(\x_{b,1},\x_{b,k})$, $k = 2,...,K+1$. Now convert the similarity scores to weights 
-$w_{p,j-1} = s_{p,j-1} / \sum_{l=2}^{J+1}s_{p,l-1}$ and $w_{b,k-1} = s_{b,k-1} / \sum_{l=2}^{K+1}s_{b,l-1}$. The spray chart density for a batter facing the synthetic pitcher is 
+Our method for estimating spray chart densities for batter pitcher matchups with synthetic players is as follows: first, without loss of generality, let $\x_{p,J+1}$ and $\x_{b,K+1}$ be the characteristics for the batter and pitcher under study where there are $J$ available pitchers and $K$ available batters. Then line up the batter and pitcher characteristics for all of the available players, $\x_{b,j}$, $j = 1,...,J$ and $\x_{p,k}$, $k = 1,...,K$. Now obtain the similarity scores $s_{p,j} = s(\x_{p,J+1},\x_{p,j})$, $j = 1,...,J$ and $s_{b,k} = s(\x_{b,K+1},\x_{b,k})$, $k = 1,...,K$. Now convert the similarity scores to weights $w_{p,j} = s_{p,j} / \sum_{l=1}^{J}s_{p,l}$ and $w_{b,k} = s_{b,k} / \sum_{l=1}^{K}s_{b,l}$. The spray chart density for a batter facing the synthetic pitcher is 
 \begin{equation} \label{synth-pitch}
-  f_{\text{sp}}(\y|\x_{b,1}) = \sum_{j=1}^J w_{p,j}f(\y|\x_{p,j+1},\x_{b,1}).
+  f_{\text{sp}}(\y|\x_{b,K+1}) = \sum_{j=1}^J w_{p,j}f(\y|\x_{p,j},\x_{b,K+1}).
 \end{equation}
 The spray chart density for a pitcher facing the synthetic batter is 
 \begin{equation} \label{synth-bat}
-  f_{\text{sb}}(\y|\x_{p,1}) = \sum_{k=1}^K w_{b,k}f(\y|\x_{p,1},\x_{b,k+1}).
+  f_{\text{sb}}(\y|\x_{p,J+1}) = \sum_{k=1}^K w_{b,k}f(\y|\x_{p,J+1},\x_{b,k}).
 \end{equation}
 It is clear that the above synthetic densities are biased in the population. We then estimate \eqref{synth-pitch} and \eqref{synth-bat} with
 \begin{equation} \label{synth-est}
-  \hat f_{\text{sp}}(\y|\x_{b,1}) = \sum_{j=1}^J w_{p,j}\hat f_{\h_{p,j}}(\y|\x_{p,j+1},\x_{b,1}), 
+  \hat f_{\text{sp}}(\y|\x_{b,K+1}) = \sum_{j=1}^J w_{p,j}\hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}), 
   \qquad
-  \hat f_{\text{sb}}(\y|\x_{p,1}) = \sum_{k=1}^K w_{b,k}\hat f_{\h_{b,k}}(\y|\x_{p,1},\x_{b,k+1}),
+  \hat f_{\text{sb}}(\y|\x_{p,J+1}) = \sum_{k=1}^K w_{b,k}\hat f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}),
 \end{equation}
-where we let $n_{\x_{p,j}}$ denote the matchup sample size of pitcher $j$ versus the batter under study, $n_{\x_{b,k}}$ denote the matchup sample size of the pitcher under study versus batter $k$, and $\h_{p,j}$ and $\h_{b,k}$ are bandwidth parameters.
+where we let $n_{p,j}$ denote the matchup sample size of pitcher $j$ versus the batter under study, $n_{b,k}$ denote the matchup sample size of the pitcher under study versus batter $k$, and $\h_{p,j}$ and $\h_{b,k}$ are bandwidth parameters.
 
 %In the notation of \cite{abadie2010synthetic} let $\Xbf_1 \in \R^p$ denote the mean pitch characteristics of one pitch, let $\Xbf_0 \in \R^{p \times J}$ denote the matrix of pitch characteristics for each pitcher who throws that pitch where $J$ is the number of pitchers who throw that pitch (minimum at bats against the batter under consideration). We will let $\Xbf_0\W$ denote a synthetic version of the pitcher under consideration with respect to the weight vector $\W$. To measure the discrepancy between one pitch of the pitcher under consideration $\Xbf_1$ and the synthetic version of that pitcher's pitch $\Xbf_0\W$ we will employ the distance measure
 %$ 
@@ -182,11 +181,11 @@ where we let $n_{\x_{p,j}}$ denote the matchup sample size of pitcher $j$ versus
 %\end{equation}
 %where $\hat{f}_{\h_j}(\y|\x_j)$ are estimated spray chart distributions from the batter's matchups against the $j$th pitcher with pitch characteristics $\x_j$. 
 
-Our implementation estimates the densities in \eqref{synth-est} with the \texttt{kde2d.weighted} function in the \texttt{ggtern} R package \citep{ggtern}. The estimators \eqref{synth-est} are obviously biased estimators for $f(\y|\x)$. However, they can lead to lower MSE in certain scenarios. One obvious case is when there exists weights $w_{p,j} \approx 1$, $w_{b,k} \approx 1$  and $n_{\x_{p,j}} > n_{\x_{p,1}}$, $n_{\x_{b,k}} > n_{\x_{b,1}}$. In these settings, the players under study are almost perfectly replicated by another player in the available pool and this player has a larger number of matchups with the batter or pitcher under study. Another obvious case is when the batter has never faced the pitcher before so that no data is available to estimate $f(\y|\x)$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f(\y|\x)$. Our implementation will estimate $f(\y|\x)$ with
+Our implementation estimates the densities in \eqref{synth-est} with the \texttt{kde2d.weighted} function in the \texttt{ggtern} R package \citep{ggtern}. The estimators \eqref{synth-est} are obviously biased estimators for $f(\y|\x)$. However, they can lead to lower MSE in certain scenarios. One obvious case is when there exists weights $w_{p,j} \approx 1$, $w_{b,k} \approx 1$  and $n_{p,j} > n_{p,J+1}$, $n_{b,k} > n_{b,K+1}$. In these settings, the players under study are almost perfectly replicated by another player in the available pool and this player has a larger number of matchups with the batter or pitcher under study. Another obvious case is when the batter has never faced the pitcher before so that no data is available to estimate $f(\y|\x)$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f(\y|\x)$. Our implementation will estimate $f(\y|\x)$ with
 \begin{equation} \label{sd-implem}
   \hat{g}_{\lambdabf}(\y|\x) = \lambda \hat f_\h(\y|\x) 
-    + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,1}) 
-    + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,1})
+    + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,J+1}) 
+    + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,K+1})
 \end{equation}
 where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. The choices of the elements of $\lambdabf$ will be discussed in the next Section where we calculate and compare the MSE of \eqref{spraydens} and \eqref{sd-implem}. Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $\w_{p,j}$ and $\w_{b,k}$ since the weights are a deterministic function of the pitch characteristics.
 
@@ -202,25 +201,29 @@ Technical justification for selecting $\lamstar$ is given in the Appendix.
 
 \section*{Appendix: Justification for our choice of $\lambdabf$}
 
-We now motivate $\lamstar$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation. The best batters in baseball are good at hitting the ball with general intent but batted ball locations will still exhibit variation. Therefore we expect for spray chart densities to be smooth and lacking of sharp peaks. It is reasonable to assume that $f(\cdot|\cdot)$ belongs to a multivariate H{\"o}lder class of densities which we will denote by $H(\beta,L)$. The space $H(\beta,L)$ is the set of functions $f(\y|\x)$ such that 
+We now motivate $\lambdabf$ theoretically. We first assume some additional structure on the space of functions that $f(\cdot|\cdot)$ belongs to in order to facilitate our motivation. The best batters in baseball are good at hitting the ball with general intent but batted ball locations will still exhibit variation. Therefore we expect for spray chart densities to be smooth and lacking of sharp peaks. It is reasonable to assume that $f(\cdot|\cdot)$ belongs to a multivariate H{\"o}lder class of densities which we will denote by $H(\beta,L)$. The space $H(\beta,L)$ is the set of functions $f(\y|\x)$ such that 
 \begin{align*}
-|D_{\y}^\s f(\y_1|\x) - D_{\y}^\s f(\y_2|\x)| &\leq L_\x\|\y_1 - \y_2\|^{\beta - |\s|}, \\
-|D_{\x}^\tbf f(\y|\x_1) - D_{\x}^\tbf f(\y|\x_2)| &\leq L_\y\|\x_1 - \x_2\|^{\beta - |\tbf|}, 
+|D_{\y}^\s f(\y|\x) - D_{\y}^\s f(\y'|\x)| &\leq L_\x\|\y - \y'\|^{\beta - |\s|}, \\
+|D_{\x}^\tbf f(\y|\x) - D_{\x}^\tbf f(\y|\x')| &\leq L_\y\|\x - \x'\|^{\beta - |\tbf|}, 
 \end{align*}
-for all $\y_1,\y_2 \in \Y$, all $\x_1,\x_2 \in \X$, and all $\s$ such that $|\s| = \beta - 1$ where
+for all $\y,\y' \in \Y$, all $\x,\x' \in \X$, and all $\s$ such that $|\s| = \beta - 1$ where
 $D_{\y}^\s = \partial^{s_1 + s_2}/\partial y_1^{s_1} \partial y_2^{s_2}$, 
-$D_{\x}^\tbf = \partial^{t_1 + \cdots + t_p}/\partial x_1^{t_1} \cdots \partial x_p^{t_p}$ and $L_\x \leq L$ for all $\x \in \X$ and $L_\y \leq L$ for all $\y \in \Y$.
+$D_{\x}^\tbf = \partial^{t_1 + \cdots + t_p}/\partial x_1^{t_1} \cdots \partial x_p^{t_p}$ and $L_\x \leq L$ for all $\x \in \X$ and $L_\y \leq L$ for all $\y \in \Y$. 
 % Notes on multi var kde: https://bookdown.org/egarpor/NP-UC3M/kde-ii-asymp.html
 We will assume the following regularity conditions for our spray chart distributions and kernel functions: 
 
 \begin{itemize}
-\item[A1.] The density $f$ is square integrable, twice continuously differentiable, and all the second order partial derivatives are square integrable.
+\item[A1.] The density $f$ is square integrable, twice continuously differentiable, and all the second order partial derivatives are square integrable. We will suppose that $\beta = 2$ in $H(\beta,L)$.
 \item[A2.] The kernel $K$ is a spherically symmetric and bounded pdf with finite second moment and square integrable.
-\item[A3.] $\Hbf = \Hbf_n$ is a deterministic sequence of positive definite symmetric matrices such that, $n_x\det(\Hbf) \to \infty$ when $n_\x \to \infty$ and $\Hbf \to 0$ elementwise. 
+\item[A3.] $\Hbf = \Hbf_n$ is a deterministic sequence of positive definite symmetric matrices such that, $n\det(\Hbf) \to \infty$ when $n \to \infty$ and $\Hbf \to 0$ elementwise. 
 \end{itemize}
 
 Condition A2 holds for the multivariate Gaussian kernel function that we use in our implementation.
-We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{\x_j} = O(n_\x)$ and $\h_j = O(\h)$ for all $j = 1,\ldots,J$. 
+We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{p,j} = O(n)$, $n_{b,k} = O(n)$ and $\h_{p,j} = O(\h)$, $\h_{b,k} = O(\h)$ for all $j = 1, \ldots, J$, $k = 1, \ldots, K$. With the specification that $\beta = 2$ in Condition A1 we have that 
+ \begin{align*}
+   f(\y|\x) - L\|\x-\x'\|^2 \leq &f(\y|\x') \leq f(\y|\x) + L\|\x-\x'\|^2, \\
+   R_\x(f) - L\|\x-\x'\|^2 \leq &R_{\x'}(f) \leq R_\x(f) + L\|\x-\x'\|^2.
+ \end{align*}
 %Properties to verify
 %$$
 %  \E(\hat f_\h(\y|\x)) - f(\y|\x) \approx \frac{\mu_2(K)\h'\Hcal_f(\y|\x)\h}{2}
@@ -231,18 +234,54 @@ We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal element
 %$$
 
 % https://www.ssc.wisc.edu/~bhansen/718/NonParametrics1.pdf
-From Hansen's notes: 
+%From Hansen's notes: 
+Our derivations will rely heavily upon the following classical results from nonparametric estimation theory,
 $$
-  \E(\hat f_\h(\y|\x)) - f(\y|\x) = \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
-    + o(\|\h\|^2)
+  \E \hat f_\h(\y|\x) - f(\y|\x) = \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+    + o(\|\h\|^2),
 $$
 and
 $$
- \Var(\hat f_\h(\y|\x)) = \frac{R_{\x}(f)f(\y|\x)}{n_\x\det(\Hbf)} + O\left(\frac{1}{n_\x}\right).
+ \Var \hat f_\h(\y|\x) = \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
 $$
+Our specifications yield,
+\begin{align*}
+  &\E g_{\lambdabf}(y|x) = \lambda \E \hat f_\h(\y|\x)
+    + \lambda_p \E \hat f_{\text{sp}}(\y|\x_{b,J+1}) 
+    + \lambda_b \E \hat f_{\text{sb}}(\y|\x_{p,K+1}) \\
+  &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+    + \lambda_p \sum_{j=1}^J w_{p,j} \E \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,1}) \\
+    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} \E \hat f_{\h_{b,k}}(\y|\x_{p,1},\x_{b,k}) 
+    + o(\|\h\|^2) \\
+  &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+  + o(\|\h\|^2) \\
+    &\qquad\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,1}) 
+      + \lambda_p\sum_{j=1}^Jw_{p,j}
+      \frac{\mu_2(K)\h_{\x_{p,j}}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_{b,1}))\h_{x_{p,j}}}{2} \\
+    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_{p,1},\x_{b,k}) 
+      + \lambda_b\sum_{k=1}^K w_{b,k}
+      \frac{\mu_2(K)\h_{\x_{b,k}}'\text{diag}(\Hcal_f(\y|\x_{p,1},\x_{b,k}))\h_{x_{b,k}}}{2},
+\end{align*}
+and 
+\begin{align*}
+  &\Var g_{\lambdabf}(y|x) = \Var\left(\lambda \hat f_\h(\y|\x) 
+    + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,1}) 
+    + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,1})\right) \\
+  &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
+    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2 \Var \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,1}) 
+    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 \Var \hat f_{\h_{b,k}}(\y|\x_{p,1},\x_{b,k}) \\
+  &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
+    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
+      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,1})}{n_{\x_{p,j}}\det(\Hbf_{\x_{p,j}}))} \\
+    &\qquad+ \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
+      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,1},\x_{b,k})}{n_{\x_{b,k}}\det(\Hbf_{\x_{b,k}}))},
+\end{align*}
+where $\tilde \x_{b,k} = (\x_{p,J+1}',\x_{b,k}')'$ and $\tilde \x_{p,j} = (\x_{p,j}',\x_{b,K+1}')'$.
 
 
 
+
+We will now choose the bandwidth parameters such that $\det(\Hbf_{p,j}) = \det(\Hbf)n/n_{\x_{p,j}}$ and $\det(\Hbf_{b,k}) = \det(\Hbf)n/n_{\x_{b,k}}$ in order to simplify our derivation for $\lambdabf$. 
 
 
 \bibliographystyle{plainnat}
