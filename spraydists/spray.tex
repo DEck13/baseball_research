@@ -149,19 +149,19 @@ $
 and $\V_p$ is a weight matrix that is chosen to scale the pitch characteristics and give preference to pitch characteristics that have higher influence on the spray chart distribution under study. Similarity scores for batters are defined in the same way. Implicit in this construction is the assumption that the underlying pitcher and batter characteristics that we collect represents the true talent of the players under study.
 
 
-Our method for estimating spray chart densities for batter pitcher matchups with synthetic players is as follows: first, without loss of generality, let $\x_{p,J+1}$ and $\x_{b,K+1}$ be the characteristics for the batter and pitcher under study where there are $J$ available pitchers and $K$ available batters. Then line up the batter and pitcher characteristics for all of the available players, $\x_{b,j}$, $j = 1,...,J$ and $\x_{p,k}$, $k = 1,...,K$. Now obtain the similarity scores $s_{p,j} = s(\x_{p,J+1},\x_{p,j})$, $j = 1,...,J$ and $s_{b,k} = s(\x_{b,K+1},\x_{b,k})$, $k = 1,...,K$. Now convert the similarity scores to weights $w_{p,j} = s_{p,j} / \sum_{l=1}^{J}s_{p,l}$ and $w_{b,k} = s_{b,k} / \sum_{l=1}^{K}s_{b,l}$. The spray chart density for a batter facing the synthetic pitcher is 
+Our method for estimating spray chart densities for batter pitcher matchups with synthetic players is as follows: first, without loss of generality, let $\x_p$ and $\x_b$ be the characteristics for the batter and pitcher under study so that $\x = (\x_p',\x_b')'$. There will be $J$ pitchers and $K$ batters available to form the pool of players that we compare to the pitcher and batter under study. Then line up the batter and pitcher characteristics for all of the available players, $\x_{b,j}$, $j = 1,...,J$ and $\x_{p,k}$, $k = 1,...,K$. Now obtain the similarity scores $s_{p,j} = s(\x_{p,J+1},\x_{p,j})$, $j = 1,...,J$ and $s_{b,k} = s(\x_{b,K+1},\x_{b,k})$, $k = 1,...,K$. Now convert the similarity scores to weights $w_{p,j} = s_{p,j} / \sum_{l=1}^{J}s_{p,l}$ and $w_{b,k} = s_{b,k} / \sum_{l=1}^{K}s_{b,l}$. The spray chart density for a batter facing the synthetic pitcher is 
 \begin{equation} \label{synth-pitch}
-  f_{\text{sp}}(\y|\x_{b,K+1}) = \sum_{j=1}^J w_{p,j}f(\y|\x_{p,j},\x_{b,K+1}).
+  f_{\text{sp}}(\y|\x_b) = \sum_{j=1}^J w_{p,j}f(\y|\x_{p,j},\x_b).
 \end{equation}
 The spray chart density for a pitcher facing the synthetic batter is 
 \begin{equation} \label{synth-bat}
-  f_{\text{sb}}(\y|\x_{p,J+1}) = \sum_{k=1}^K w_{b,k}f(\y|\x_{p,J+1},\x_{b,k}).
+  f_{\text{sb}}(\y|\x_p) = \sum_{k=1}^K w_{b,k}f(\y|\x_p,\x_{b,k}).
 \end{equation}
 It is clear that the above synthetic densities are biased in the population. We then estimate \eqref{synth-pitch} and \eqref{synth-bat} with
 \begin{equation} \label{synth-est}
-  \hat f_{\text{sp}}(\y|\x_{b,K+1}) = \sum_{j=1}^J w_{p,j}\hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}), 
+  \hat f_{\text{sp}}(\y|\x_b) = \sum_{j=1}^J w_{p,j}\hat f_{\h_{p,j}}(\y|\x_{p,j},\x_b), 
   \qquad
-  \hat f_{\text{sb}}(\y|\x_{p,J+1}) = \sum_{k=1}^K w_{b,k}\hat f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}),
+  \hat f_{\text{sb}}(\y|\x_p) = \sum_{k=1}^K w_{b,k}\hat f_{\h_{b,k}}(\y|\x_p,\x_{b,k}),
 \end{equation}
 where we let $n_{p,j}$ denote the matchup sample size of pitcher $j$ versus the batter under study, $n_{b,k}$ denote the matchup sample size of the pitcher under study versus batter $k$, and $\h_{p,j}$ and $\h_{b,k}$ are bandwidth parameters.
 
@@ -181,21 +181,22 @@ where we let $n_{p,j}$ denote the matchup sample size of pitcher $j$ versus the 
 %\end{equation}
 %where $\hat{f}_{\h_j}(\y|\x_j)$ are estimated spray chart distributions from the batter's matchups against the $j$th pitcher with pitch characteristics $\x_j$. 
 
-Our implementation estimates the densities in \eqref{synth-est} with the \texttt{kde2d.weighted} function in the \texttt{ggtern} R package \citep{ggtern}. The estimators \eqref{synth-est} are obviously biased estimators for $f(\y|\x)$. However, they can lead to lower MSE in certain scenarios. One obvious case is when there exists weights $w_{p,j} \approx 1$, $w_{b,k} \approx 1$  and $n_{p,j} > n_{p,J+1}$, $n_{b,k} > n_{b,K+1}$. In these settings, the players under study are almost perfectly replicated by another player in the available pool and this player has a larger number of matchups with the batter or pitcher under study. Another obvious case is when the batter has never faced the pitcher before so that no data is available to estimate $f(\y|\x)$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f(\y|\x)$. Our implementation will estimate $f(\y|\x)$ with
+Our implementation estimates the densities in \eqref{synth-est} with the \texttt{kde2d.weighted} function in the \texttt{ggtern} R package \citep{ggtern}. The estimators \eqref{synth-est} are obviously biased estimators for $f(\y|\x)$. However, they can lead to lower MSE in certain scenarios. One obvious case is when there exists weights $w_{p,j} \approx 1$, $w_{b,k} \approx 1$  and $n_{p,j} > n$, $n_{b,k} > n$. In these settings, the players under study are almost perfectly replicated by another player in the available pool and this player has a larger number of matchups with the batter or pitcher under study. Another obvious case is when the batter has never faced the pitcher before so that no data is available to estimate $f(\y|\x)$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f(\y|\x)$. Our implementation will estimate $f(\y|\x)$ with
 \begin{equation} \label{sd-implem}
   \hat{g}_{\lambdabf}(\y|\x) = \lambda \hat f_\h(\y|\x) 
-    + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,J+1}) 
-    + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,K+1})
+    + \lambda_p \hat f_{\text{sp}}(\y|\x_p) 
+    + \lambda_b \hat f_{\text{sb}}(\y|\x_b)
 \end{equation}
 where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. The choices of the elements of $\lambdabf$ will be discussed in the next Section where we calculate and compare the MSE of \eqref{spraydens} and \eqref{sd-implem}. Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $w_{p,j}$ and $w_{b,k}$ since the weights are a deterministic function of the pitch characteristics.
 
 
-
-\subsection{Choice of $\lambdabf$}
-
-We motivate a choice of $\lambdabf$ in \eqref{sd-implem} by comparing the MSE of \eqref{spraydens} and \eqref{sd-implem}. 
-
-Technical justification for selecting $\lamstar$ is given in the Appendix.
+Our implementation will estimate the elements of $\lambdabf$ as 
+$$
+  \lambda = \frac{n^{3/2}}{n^{3/2} + n_p + n_b}, \qquad
+  \lambda_p = \frac{n_p}{n^{3/2} + n_p + n_b}, \qquad
+  \lambda_b = \frac{n_b}{n^{3/2} + n_b + n_b},
+$$
+where $n_p = \sum_{j=1}^J s_{p,j}n_{p,j}$ and $n_b = \sum_{k=1}^K s_{b,k}n_{b,k}$.  Informally, these choices arise as a balance between the natural bias that exists in our synthetic player construction and the inherent estimation variation. In our application it is reasonable to take $n_{p,j} = O(n)$ and $n_{b,k} = O(n)$ for all $j = 1,\ldots,J$ and $k = 1,\ldots,K$, it is also reasonable to assume  that $n$ will be too small to be of much use, hence the reason why $n_p$ and $n_b$ are aggregated with respect to similarity scores instead of weights that form a convex combination. However, in the event that $n$ is large enough to provide reliable estimation of $f(\y|\x)$ with $\hat f_h(\y|\x)$, then $n^{3/2}$ dominates $n_p$ and $n_b$. Formal technical justification for selecting $\lamstar$ is given in the Appendix.
 
 
 
@@ -219,7 +220,9 @@ We will assume the following regularity conditions for our spray chart distribut
 \end{itemize}
 
 Condition A2 holds for the multivariate Gaussian kernel function that we use in our implementation.
-We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{p,j} = O(n)$, $n_{b,k} = O(n)$ and $\h_{p,j} = O(\h)$, $\h_{b,k} = O(\h)$ for all $j = 1, \ldots, J$, $k = 1, \ldots, K$. With the specification that $\beta = 2$ in Condition A1 we have that 
+We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{p,j} = O(n)$, $n_{b,k} = O(n)$ and $\h_{p,j} = O(\h)$, $\h_{b,k} = O(\h)$ for all $j = 1, \ldots, J$, $k = 1, \ldots, K$. 
+
+With the specification that $\beta = 2$ in Condition A1 we have that 
 $
    f(\y|\x) - L\|\x-\x'\|^2 \leq f(\y|\x') \leq f(\y|\x) + L\|\x-\x'\|^2.
 $
@@ -234,6 +237,17 @@ and
 $
    R_\x(f) - 2L\|\x-\x'\|^2 \leq R_{\x'}(f) \leq R_\x(f) + 2L\|\x-\x'\|^2.
 $ 
+
+We will define $\tilde \x_{b,k} = (\x_p',\x_{b,k}')'$ and $\tilde \x_{p,j} = (\x_{p,j}',\x_b')'$ for notational convenience, and will additionally assume the following regularity approximations:
+\begin{itemize}
+\item[A4.] The quantities $\sum_{j=1}^Jw_{p,j}^2\|\x - \tilde \x_{p,j}\|^m$ and $\sum_{k=1}^Kw_{b,k}^2\|\x - \tilde \x_{b,k}\|^m$ are negligible, where and $m = 2,4$.
+\item[A5.] The quantities $\sum_{j=1}^Jw_{p,j}\left(\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b))\h_{p,j} - \h'\text{diag}(\Hcal_f(\y|\x))\h\right)$ and \\$\sum_{k=1}^Kw_{b,k}\left(\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k}))\h_{b,k} - \h'\text{diag}(\Hcal_f(\y|\x))\h\right)$ are negligible.
+\end{itemize}
+Approximation A4 is reasonable in our baseball application where there are many players similar enough to the players under study so that $\sum_{j=1}^Js_{p,j} > 1$ and $\sum_{k=1}^Ks_{b,k} > 1$ and $s_{p,j}\|\x-\tilde\x_{p,j}\|^m, s_{b,k}\|\x-\tilde\x_{b,k}\|^m \to 0$ as $\|\x-\tilde\x_{p,j}\|,\|\x-\tilde\x_{b,k}\| \to \infty$ for all integers $m$. Approximation A5 is reasonable by similar logic. Specification of $\beta = 2$ implies that  
+$\|\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k})) - \text{diag}(\Hcal_f(\y|\x))\| \leq \sqrt{d_p}L$ and 
+$\|\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b)) - \text{diag}(\Hcal_f(\y|\x))\| \leq \sqrt{d_b}L$
+where $d_p$ and $d_b$ are, respectively, the dimension of $\x_p$ and $\x_b$. 
+
 %Properties to verify
 %$$
 %  \E(\hat f_\h(\y|\x)) - f(\y|\x) \approx \frac{\mu_2(K)\h'\Hcal_f(\y|\x)\h}{2}
@@ -259,43 +273,43 @@ $$
 Our multivariate H{\"o}lder class specifications yield,
 \begin{align*}
   &\E(\hat g_{\lambdabf}(y|x)) = \lambda \E \hat f_\h(\y|\x)
-    + \lambda_p \E \hat f_{\text{sp}}(\y|\x_{b,J+1}) 
-    + \lambda_b \E \hat f_{\text{sb}}(\y|\x_{p,K+1}) \\
+    + \lambda_p \E \hat f_{\text{sp}}(\y|\x_b) 
+    + \lambda_b \E \hat f_{\text{sb}}(\y|\x_p) \\
   &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
-    + \lambda_p \sum_{j=1}^J w_{p,j} \E \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) \\
-    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} \E \hat f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) 
+    + \lambda_p \sum_{j=1}^J w_{p,j} \E \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_b) \\
+    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} \E \hat f_{\h_{b,k}}(\y|\x_p,\x_{b,k}) 
     + o(\|\h\|^2) \\
   &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
   + o(\|\h\|^2) \\
-    &\qquad\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) 
+    &\qquad\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_b) 
       + \lambda_p\sum_{j=1}^Jw_{p,j}
-      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_{b,K+1}))\h_{p,j}}{2} \\
-    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) 
+      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b))\h_{p,j}}{2} \\
+    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_p,\x_{b,k}) 
       + \lambda_b\sum_{k=1}^K w_{b,k}
-      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_{p,J+1},\x_{b,k}))\h_{b,k}}{2},
+      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k}))\h_{b,k}}{2},
 \end{align*}
 and 
 \begin{align*}
   &\Var(\hat g_{\lambdabf}(y|x)) = \Var\left(\lambda \hat f_\h(\y|\x) 
-    + \lambda_p \hat f_{\text{sp}}(\y|\x_{b,K+1}) 
-    + \lambda_b \hat f_{\text{sb}}(\y|\x_{p,J+1})\right) \\
+    + \lambda_p \hat f_{\text{sp}}(\y|\x_b) 
+    + \lambda_b \hat f_{\text{sb}}(\y|\x_p)\right) \\
   &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
-    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2 \Var \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) 
-    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 \Var \hat f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) \\
+    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2 \Var \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_b) 
+    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 \Var \hat f_{\h_{b,k}}(\y|\x_p,\x_{b,k}) \\
   &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
     + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
-      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,K+1})}{n_{p,j}\det(\Hbf_{p,j})} 
+      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_b)}{n_{p,j}\det(\Hbf_{p,j})} 
     + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
-      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,J+1},\x_{b,k})}{n_{b,k}\det(\Hbf_{b,k})},
+      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_p,\x_{b,k})}{n_{b,k}\det(\Hbf_{b,k})},
 \end{align*}
-where $\tilde \x_{b,k} = (\x_{p,J+1}',\x_{b,k}')'$ and $\tilde \x_{p,j} = (\x_{p,j}',\x_{b,K+1}')'$. We will now choose the bandwidth parameters such that $\det(\Hbf_{p,j}) = \det(\Hbf)n/n_{\x_{p,j}}$ and $\det(\Hbf_{b,k}) = \det(\Hbf)n/n_{\x_{b,k}}$ in order to simplify our derivation for $\lambdabf$. With these specifications, we have that
+We will now choose the bandwidth parameters such that $n_{p,j}\det(\Hbf_{p,j}) = n\det(\Hbf)$ and $n_{b,k}\det(\Hbf_{b,k}) = n\det(\Hbf)$ in order to simplify our derivation for $\lambdabf$. With these specifications, we have that
 \begin{align*}
-  &\Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) \\
+  &\Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) + O\left(\frac{1}{n}\right) \\
   &=(\lambda^2 - 1)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} 
     + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
-      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,K+1})}{n\det(\Hbf)} 
+      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_b)}{n\det(\Hbf)} 
     + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 
-      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,J+1},\x_{b,k})}{n\det(\Hbf)} \\
+      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_p,\x_{b,k})}{n\det(\Hbf)} \\
   &\leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^Jw_{p,j}^2
     + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 - 1\right)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
     &\qquad\qquad+ \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
@@ -305,24 +319,50 @@ where $\tilde \x_{b,k} = (\x_{p,J+1}',\x_{b,k}')'$ and $\tilde \x_{p,j} = (\x_{p
       \left(\frac{R_{\x}(f)\|\x-\tilde \x_{b,k}\|^2 
       + 2Lf(\y|\x)\|\x-\tilde \x_{b,k}\|^2 + 2L^2\|\x-\tilde \x_{b,k}\|^4}{n\det(\Hbf)}\right).
 \end{align*}
+Our assumption on the $w_{b,k}^2\|\x-\tilde \x_{,k}\|^m$ and $w_{p,j}^2\|\x-\tilde \x_{p,j}\|^m$, for $m = 2,4$, and an identical lower bound argument implies that 
+$$
+  \Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) 
+    \approx \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^Jw_{p,j}^2 
+      + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 - 1\right)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} 
+      + O\left(\frac{1}{n}\right).
+$$
 We also have
 \begin{align*}
   \text{Bias}(\hat f_\h(\y|\x),f(\y|\x))^2 
     &= \left(\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
     + o(\|\h\|^2)\right)^2,
 \end{align*}
-and
+and regularity approximations A4 and A5 yield
 \begin{align*}
   &\text{Bias}(\hat g_{\lambdabf}(\y|\x),f(\y|\x))^2 = \left(\lambda f(\y|\x) - f(\y|\x) 
     +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} + o(\|\h\|^2)\right. \\
-    &\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_{b,K+1}) 
+    &\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f(\y|\x_{p,j},\x_b) 
       + \lambda_p\sum_{j=1}^Jw_{p,j}
-      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_{b,K+1}))\h_{p,j}}{2} \\
-    &\qquad+ \left.\lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_{p,J+1},\x_{b,k}) 
+      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b))\h_{p,j}}{2} \\
+    &\qquad+ \left.\lambda_b \sum_{k=1}^K w_{b,k} f(\y|\x_p,\x_{b,k}) 
       + \lambda_b\sum_{k=1}^K w_{b,k}
-      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_{p,J+1},\x_{b,k}))\h_{b,k}}{2}\right)^2 
+      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k}))\h_{b,k}}{2}\right)^2 \\
+ &\leq \left(\lambda f(\y|\x) - f(\y|\x) 
+    +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} + o(\|\h\|^2)\right. \\
+    &\qquad+ \lambda_p \sum_{j=1}^J w_{p,j}(f(\y|\x) + L(-1)^t\|\x - \tilde\x_{p,j}\|^2)
+      + \lambda_p\sum_{j=1}^Jw_{p,j}\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} \\  
+    &\qquad+ \left.\lambda_b \sum_{k=1}^K w_{b,k}(f(\y|\x) 
+      + L(-1)^t\|\x - \tilde\x_{b,k}\|^2)
+      + \lambda_b\sum_{k=1}^K w_{b,k}\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2 \\
+ &\approx \left(\lambda_p \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
+   + \lambda_b \sum_{k=1}^K (-1)^tLw_{b,k}\|\x - \tilde\x_{b,k}\|^2\right. \\
+   &\qquad+ \left.\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} + o(\|\h\|^2)\right)^2,
 \end{align*}
-
+where $t \in \{0,1\}$ is chosen to satisfy the above inequality. Putting these variance and bias results together without the lower order terms yields
+\begin{align*}
+  &MSE(\hat g_{\lambdabf}(\y|\x),f(\y|\x)) - MSE(\hat f_{\h}(\y|\x),f(\y|\x)) 
+    \leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^Jw_{p,j}^2 
+      + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 - 1\right)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
+    &\qquad+ \left(\lambda_p \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
+     + \lambda_b \sum_{k=1}^K (-1)^tLw_{b,k}\|\x - \tilde\x_{b,k}\|^2 + 
+     \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2 \\
+    &\qquad- \left(\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2
+\end{align*}
 
 %\begin{align*}
 % &MSE(\hat g_{\lambdabf}(y|x)) - MSE(\hat f_\h(\y|\x)) 
