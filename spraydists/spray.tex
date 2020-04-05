@@ -192,11 +192,11 @@ where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. The choices of
 
 Our implementation will estimate the elements of $\lambdabf$ as 
 $$
-  \lambda = \frac{n^{3/2}}{n^{3/2} + n_p + n_b}, \qquad
-  \lambda_p = \frac{n_p}{n^{3/2} + n_p + n_b}, \qquad
-  \lambda_b = \frac{n_b}{n^{3/2} + n_b + n_b},
+  \lambda = \frac{\sqrt{n}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
+  \lambda_p = \frac{\sqrt{n_p}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
+  \lambda_b = \frac{\sqrt{n_b}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}},
 $$
-where $n_p = \sum_{j=1}^J s_{p,j}n_{p,j}$ and $n_b = \sum_{k=1}^K s_{b,k}n_{b,k}$.  Informally, these choices arise as a balance between the natural bias that exists in our synthetic player construction and the inherent estimation variation. In our application it is reasonable to take $n_{p,j} = O(n)$ and $n_{b,k} = O(n)$ for all $j = 1,\ldots,J$ and $k = 1,\ldots,K$, it is also reasonable to assume  that $n$ will be too small to be of much use, hence the reason why $n_p$ and $n_b$ are aggregated with respect to similarity scores instead of weights that form a convex combination. However, in the event that $n$ is large enough to provide reliable estimation of $f(\y|\x)$ with $\hat f_h(\y|\x)$, then $n^{3/2}$ dominates $n_p$ and $n_b$. Formal technical justification for selecting $\lamstar$ is given in the Appendix.
+where $n_p = \sum_{j=1}^J s_{p,j}^2n_{p,j}$ and $n_b = \sum_{k=1}^K s_{b,k}^2n_{b,k}$.  Informally, these choices arise as a balance between the natural bias that exists in our synthetic player construction and the inherent estimation variation. In our application it is reasonable to take $n_{p,j} = O(n)$ and $n_{b,k} = O(n)$ for all $j = 1,\ldots,J$ and $k = 1,\ldots,K$, it is also reasonable to assume  that $n$ will be too small to be of much use, hence the reason why $n_p$ and $n_b$ are aggregated with respect to similarity scores instead of weights that form a convex combination. However, in the event that $n$ is large enough to provide reliable estimation of $f(\y|\x)$ with $\hat f_h(\y|\x)$, then $n$ dominates $n_p$ and $n_b$. Formal technical justification for selecting $\lamstar$ is given in the Appendix.
 
 
 
@@ -302,29 +302,30 @@ and
     + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
       \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_p,\x_{b,k})}{n_{b,k}\det(\Hbf_{b,k})},
 \end{align*}
-We will now choose the bandwidth parameters such that $n_{p,j}\det(\Hbf_{p,j}) = n\det(\Hbf)$ and $n_{b,k}\det(\Hbf_{b,k}) = n\det(\Hbf)$ in order to simplify our derivation for $\lambdabf$. With these specifications, we have that
+Let $\theta_{p,j} = n\det(\Hbf)/n_{p,j}\det(\Hbf_{p,j})$ and $\theta_{b,k} = n\det(\Hbf)/n_{b,k}\det(\Hbf_{b,k})$. With these specifications, we have that
 \begin{align*}
   &\Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) + O\left(\frac{1}{n}\right) \\
   &=(\lambda^2 - 1)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} 
-    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
+    + \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
       \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_b)}{n\det(\Hbf)} 
-    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 
+    + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 
       \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_p,\x_{b,k})}{n\det(\Hbf)} \\
-  &\leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^Jw_{p,j}^2
-    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 - 1\right)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
-    &\qquad\qquad+ \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
+  &\leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
+    + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right)
+      \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
+    &\qquad\qquad+ \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
       \left(\frac{R_{\x}(f)\|\x-\tilde \x_{p,j}\|^2 
       + 2Lf(\y|\x)\|\x-\tilde \x_{p,j}\|^2 + 2L^2\|\x-\tilde \x_{p,j}\|^4}{n\det(\Hbf)}\right) \\
-    &\qquad\qquad+ \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
+    &\qquad\qquad+ \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2
       \left(\frac{R_{\x}(f)\|\x-\tilde \x_{b,k}\|^2 
       + 2Lf(\y|\x)\|\x-\tilde \x_{b,k}\|^2 + 2L^2\|\x-\tilde \x_{b,k}\|^4}{n\det(\Hbf)}\right).
 \end{align*}
 Our assumption on the $w_{b,k}^2\|\x-\tilde \x_{,k}\|^m$ and $w_{p,j}^2\|\x-\tilde \x_{p,j}\|^m$, for $m = 2,4$, and an identical lower bound argument implies that 
 $$
   \Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) 
-    \approx \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^Jw_{p,j}^2 
-      + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 - 1\right)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} 
-      + O\left(\frac{1}{n}\right).
+    \approx \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J\theta_{p,j}w_{p,j}^2 
+      + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right)
+      \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
 $$
 We also have
 \begin{align*}
@@ -356,27 +357,59 @@ and regularity approximations A4 and A5 yield
 where $t \in \{0,1\}$ is chosen to satisfy the above inequality. Putting these variance and bias results together without the lower order terms yields
 \begin{align*}
   &MSE(\hat g_{\lambdabf}(\y|\x),f(\y|\x)) - MSE(\hat f_{\h}(\y|\x),f(\y|\x)) 
-    \leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^Jw_{p,j}^2 
-      + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 - 1\right)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
+    \leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J\theta_{p,j}w_{p,j}^2 
+      + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right)
+      \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
     &\qquad+ \left(\lambda_p \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
      + \lambda_b \sum_{k=1}^K (-1)^tLw_{b,k}\|\x - \tilde\x_{b,k}\|^2 + 
      \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2 \\
     &\qquad- \left(\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2
 \end{align*}
+This motivates the following choice of $\lambdabf$,
+$$
+  \lambda = \frac{\sqrt{n}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
+  \lambda_p = \frac{\sqrt{n_p}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
+  \lambda_b = \frac{\sqrt{n_b}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}},
+$$
+where $n_p = \sum_{j=1}^J s_{p,j}^2n_{p,j}$ and $n_b = \sum_{k=1}^K s_{b,k}^2n_{b,k}$. We will now develop intuition for these choices. First, notice that
+$$
+  \lambda_p\sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
+    = \frac{\sqrt{\sum_{j=1}^J s_{p,j}^2n_{p,j}}
+      \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2}
+      {\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}} \longrightarrow 0,
+$$
+when $\|\x - \tilde\x_{p,j}\| \to 0$ and $\min_j(\|\x - \tilde\x_{p,j}\|) \to \infty$. These cases correspond, respectively, to there being a few highly similar pitchers or there being no similar pitchers to the pitcher under study. Thus, the discrepancy in bias vanishes in the extreme cases. The same argument holds for batters. Now notice that
+$$
+  \lambda_p^2 \sum_{j=1}^J\theta_{p,j}w_{p,j}^2 
+    = \frac{\sum_{j=1}^J s_{p,j}^2n_{p,j}\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}
+      {(\sqrt{n} + \sqrt{n_p} + \sqrt{n_b})^2} \longrightarrow 0
+$$
+when $\min_j(\|\x - \tilde\x_{p,j}\|) \to \infty$, and that
 
+
+%This motivates the following choice of $\lambdabf$,
 %\begin{align*}
-% &MSE(\hat g_{\lambdabf}(y|x)) - MSE(\hat f_\h(\y|\x)) 
-%   = \Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) 
-%     + \text{Bias}(\hat g_{\lambdabf}(y|x)) - \text{Bias}(\hat f_\h(\y|\x)) \\
-% &\qquad = (\lambda^2 - 1)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
-%    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
-%      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_{b,K+1})}{n\det(\Hbf)} \\
-%    &\qquad\qquad+ \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 
-%      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_{p,J+1},\x_{b,k})}{n\det(\Hbf)} 
-%      + \text{Bias}(\hat g_{\lambdabf}(y|x)) - \text{Bias}(\hat f_\h(\y|\x)).
+%   \text{numerator}(\lambda) &= \sqrt{\frac{1}{\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}},\\
+%   \text{numerator}(\lambda_p) &= \sqrt{\frac{1}{\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}}, \\   
+%   \text{numerator}(\lambda_b) &= \sqrt{\frac{1}{\sum_{j=1}^K\theta_{b,k}w_{b,k}^2}}.
 %\end{align*}
+%We will develop some intuition for these choices. First notice that
+%\begin{align*}
+%  &\frac{\text{numerator}(\lambda)}{\text{numerator}(\lambda_p)} 
+%    = \sqrt{\frac{\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}
+%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}} 
+%    = \sqrt{\frac{\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}
+%      {\sum_{j=1}^Js_{p,j}^2}}\sqrt{\frac{\sum_{j=1}^Js_{p,j}^2}
+%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}} \\
+%    &\qquad= \frac{\sqrt{\sum_{j=1}^J\theta_{p,j}s_{p,j}^2}}
+%      {\sum_{j=1}^Js_{p,j}^2}\sqrt{\frac{\sum_{j=1}^Js_{p,j}^2}
+%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}} 
+%    = \sqrt{\frac{\sum_{j=1}^J\theta_{p,j}s_{p,j}^2}
+%      {\sum_{j=1}^Js_{p,j}^2}}\sqrt{\frac{1}
+%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}}
+%\end{align*}
+%Therefore, when there are no pitchers similar to the pitcher under study we observe that $\lambda/$
 
- 
 
 
 \bibliographystyle{plainnat}
