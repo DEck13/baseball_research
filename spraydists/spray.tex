@@ -371,45 +371,34 @@ $$
   \lambda_p = \frac{\sqrt{n_p}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
   \lambda_b = \frac{\sqrt{n_b}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}},
 $$
-where $n_p = \sum_{j=1}^J s_{p,j}^2n_{p,j}$ and $n_b = \sum_{k=1}^K s_{b,k}^2n_{b,k}$. We will now develop intuition for these choices. First, notice that
+where $n_p = \sum_{j=1}^J s_{p,j}^2n_{p,j}$ and $n_b = \sum_{k=1}^K s_{b,k}^2n_{b,k}$. We will now develop intuition for these choices. First, notice that $\lambda_p,\lambda_b \to 0$ as 
+$\min_j(\|\x - \tilde\x_{p,j}\|), \min_k(\|\x - \tilde\x_{b,k}\|) \to \infty$. These cases correspond, to there being no similar pitchers or batters to the players under study. We turn attention to the bias terms, notice that 
 $$
   \lambda_p\sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
     = \frac{\sqrt{\sum_{j=1}^J s_{p,j}^2n_{p,j}}
       \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2}
       {\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}} \longrightarrow 0,
 $$
-when $\|\x - \tilde\x_{p,j}\| \to 0$ and $\min_j(\|\x - \tilde\x_{p,j}\|) \to \infty$. These cases correspond, respectively, to there being a few highly similar pitchers or there being no similar pitchers to the pitcher under study. Thus, the discrepancy in bias vanishes in the extreme cases. The same argument holds for batters. Now notice that
+when there exists some $j'$ such that $\|\x - \tilde\x_{p,j}\| \to 0$ or $\min_j(\|\x - \tilde\x_{p,j}\|) \to \infty$. These cases correspond, respectively, to there being a few highly similar pitchers or there being no similar pitchers to the pitcher under study. Thus, the discrepancy in bias vanishes in the extreme cases. The same argument holds for batters. Now notice that
 $$
   \lambda_p^2 \sum_{j=1}^J\theta_{p,j}w_{p,j}^2 
     = \frac{\sum_{j=1}^J s_{p,j}^2n_{p,j}\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}
-      {(\sqrt{n} + \sqrt{n_p} + \sqrt{n_b})^2} \longrightarrow 0
+      {(\sqrt{n} + \sqrt{n_p} + \sqrt{n_b})^2} \longrightarrow 
+      \left\{\begin{array}{cl}
+       0, & \min_j(\|\x - \tilde\x_{p,j}\|) \to \infty; \\
+         & \\
+       \frac{n}
+         {(\sqrt{n} + \sqrt{n_{p,j'}} + \sqrt{n_b})^2}, & w_{p,j'} \to 1.
+      \end{array}\right.
 $$
-when $\min_j(\|\x - \tilde\x_{p,j}\|) \to \infty$, and that
-
-
-%This motivates the following choice of $\lambdabf$,
-%\begin{align*}
-%   \text{numerator}(\lambda) &= \sqrt{\frac{1}{\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}},\\
-%   \text{numerator}(\lambda_p) &= \sqrt{\frac{1}{\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}}, \\   
-%   \text{numerator}(\lambda_b) &= \sqrt{\frac{1}{\sum_{j=1}^K\theta_{b,k}w_{b,k}^2}}.
-%\end{align*}
-%We will develop some intuition for these choices. First notice that
-%\begin{align*}
-%  &\frac{\text{numerator}(\lambda)}{\text{numerator}(\lambda_p)} 
-%    = \sqrt{\frac{\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}
-%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}} 
-%    = \sqrt{\frac{\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}
-%      {\sum_{j=1}^Js_{p,j}^2}}\sqrt{\frac{\sum_{j=1}^Js_{p,j}^2}
-%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}} \\
-%    &\qquad= \frac{\sqrt{\sum_{j=1}^J\theta_{p,j}s_{p,j}^2}}
-%      {\sum_{j=1}^Js_{p,j}^2}\sqrt{\frac{\sum_{j=1}^Js_{p,j}^2}
-%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}} 
-%    = \sqrt{\frac{\sum_{j=1}^J\theta_{p,j}s_{p,j}^2}
-%      {\sum_{j=1}^Js_{p,j}^2}}\sqrt{\frac{1}
-%      {\sum_{j=1}^Js_{p,j}^2 + \sum_{k=1}^Ks_{b,k}^2}}
-%\end{align*}
-%Therefore, when there are no pitchers similar to the pitcher under study we observe that $\lambda/$
-
+The same argument holds fo batters. Therefore, when there is a pitcher $j'$ and batter $k'$ so that  $w_{p,j'},w_{b,k'} \to 1$, we have that 
+$$
+  \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
+    + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right) \longrightarrow 
+    \frac{3n}
+      {(\sqrt{n} + \sqrt{n_{p,j'}} + \sqrt{n_{b,k'}})^2} - 1.
+$$
+The above is not always less than 0 for all configurations. However, it will be less than 0 when $n$ is comparable to $n_{p,j'}$ and $n_{b,k'}$, a setting that we will guard against in our implementation by specifying a minimal sample size to enter into available player pool.
 
 
 \bibliographystyle{plainnat}
