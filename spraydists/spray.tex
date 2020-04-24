@@ -97,9 +97,9 @@ Most baseball statistics used for player evaluations are obtained from raw box s
 In this article we develop spray chart distributions as a methodology for understanding batter pitcher matchups visually and numerically. Informally, spray chart distributions are 2-dimensional contours that overlay spray charts \citep{pettispray, marchi2019analyzing}. We construct spray chart distributions for batter pitcher matchups where separate batter spray chart distribution are  constructed for each of the pitches that the pitcher throws. Rich pitch characteristic information is used to supplement labelled pitch type data since the velocity, trajectory, and movement characteristics and release points of a pitch exhibit large variation across pitcher. The reported spray chart distribution for the batter pitcher matchup is the aggregation of the spray chart distributions for each pitch that the pitcher throws, the aggregation is with respect to the percentage that the pitcher throws each pitch. These spray chart distributions are estimated nonparametrically using the \texttt{kde2d} function in the \texttt{Mass} R package \citep{MASS}.
 %We can use spray distributions to calculate player evaluation metrics directly from batted ball location data instead of from outcomes that are obtained from the boxscore. We also motivate a synthetic player construction that can lead to estimated spray chart distributions with lower mean squared error (MSE).
 
-One concern with this approach is that batter pitcher matchup data can be sparse. We alleviate this concern with the development of synthetic batters and pitchers with similar characteristics as the batter and pitcher under study. Our synthetic player creation methodology is inspired by the notion of similarity scores \citep{james1994politics, PECOTA}. However, unlike the similarity scores presented in \cite{james1994politics} and \cite{PECOTA}, we construct similarity scores using a nearest neighbor approach that is based on the underlying batter and pitcher characteristics of the players under study instead of observed statistics. The pitcher characteristics collected are averages of the velocity, trajectory, movement, and release point of a pitches thrown by pitchers. The batter characteristics collected are averages of launch angle, exit velocity, spray angle (\textbf{Charlie, is this collected?}), and binned batted ball location information. These pitcher and batter characteristics are obtained from STATCAST (\textbf{Charlie, is this correct? Can you add a reference?}) and they reflect the underlying talent and tendencies of baseball players. For each batter and pitcher matchup we estimate three spray chart densities, the first is the natural spray chart distribution corresponding to the players under study, the second is the spray chart of the synthetic pitcher versus the original batter, and the third is the spray chart of the original pitcher versus the synthetic batter. We report a synthetic spray chart distribution which is a weighted average of these spray chart distributions. The weights are chosen with the aim of minimizing mean squared error.
+One concern with this approach is that batter pitcher matchup data can be sparse. We alleviate this concern with the development of synthetic batters and pitchers with similar characteristics as the batter and pitcher under study. Our synthetic player creation methodology is inspired by the notion of similarity scores \citep{james1994politics, PECOTA}. However, unlike the similarity scores presented in \cite{james1994politics} and \cite{PECOTA}, we construct similarity scores using a nearest neighbor approach that is based on the underlying batter and pitcher characteristics of the players under study instead of observed statistics. The pitcher characteristics collected are averages of the velocity, trajectory, movement, and release point of a pitches thrown by pitchers. The batter characteristics collected are averages of launch angle, exit velocity, spray angle (\textbf{Charlie, is this collected?: no, we calculate it using trig}), and binned batted ball location information. These pitcher and batter characteristics are obtained from Statcast (\textbf{Charlie, is this correct? Can you add a reference?: correct, using the R scraper from http://billpetti.github.io/baseballr/}) and they reflect the underlying talent and tendencies of baseball players. For each batter and pitcher matchup we estimate three spray chart densities, the first is the natural spray chart distribution corresponding to the players under study, the second is the spray chart of the synthetic pitcher versus the original batter, and the third is the spray chart of the original pitcher versus the synthetic batter. We report a synthetic spray chart distribution which is a weighted average of these spray chart distributions. The weights are chosen with the aim of minimizing mean squared error.
 
-The main contribution of this work is a Shiny app which gives its users the ability to display the synthetic spray chart distribution for any batter pitcher matchup that has occurred or could have occurred in the last five years, the years that STATCAST data exists. These synthetic spray charts are visualized over an image of a baseball field so that the batted ball distribution is displayed in its proper context. We also report performance metrics that are computed as expectations with respect to the synthetic spray chart distribution. The expected number of singles, doubles, triples, homeruns are reported, and the expected batting average on balls in play (BABIP) and the expected total bases on contact (xBsCON) are also reported. These matchup dependent metrics allow for any user to assess the expected performance of batters and pitchers when they face each other. 
+The main contribution of this work is a Shiny app which gives its users the ability to display the synthetic spray chart distribution for any batter pitcher matchup that has occurred or could have occurred in the last five years, the years that Statcast data exists. These synthetic spray charts are visualized over an image of a baseball field so that the batted ball distribution is displayed in its proper context. We also report performance metrics that are computed as expectations with respect to the synthetic spray chart distribution. The expected number of singles, doubles, triples, homeruns are reported, and the expected batting average on balls in play (xBABIP) and the expected total bases on contact (xBsCON) are also reported. These matchup dependent metrics allow for any user to assess the expected performance of batters and pitchers when they face each other. 
 
 
 
@@ -109,10 +109,55 @@ In this section we present a snapshot of what our Shiny app offers users. The Sh
 
 \noindent Some things to do:
 \begin{itemize}
-\item[1.] Find one or two interesting matchups. Include pictures of the display
-\item[2.] Explain what the sliders do and why they are important.
-\item[3.] Explain why these visualizations and metrics offer users.
-\item[4.] Highlight that the Shiny app displays the most similar players.
+\item[1.] Find one or two interesting matchups. Include pictures of the display \\
+The default matchup in the application pairs the reigning American League Cy Young winner against the reigning American League MVP, in Justin Verlander vs. Mike Trout. The layout includes a sidebar with four filters: two dropdowns for pitcher/batter selection and two sliders for metric adjustment.
+
+\begin{figure}
+\centering
+    \includegraphics[width=5.5in, height=3in]{layout.png}
+    \caption{The layout of the application upon submission}
+\end{figure}
+
+\begin{figure}
+\centering
+    \includegraphics[width=3in, height=2in]{trout_traditional.png}
+    \caption{Mike Trout's traditional spray chart, with no weighting}
+\end{figure}
+
+\begin{figure}
+\centering
+    \includegraphics[width=3in, height=2in]{synthetic_trout.png}
+    \caption{Mike Trout's synthetic spray chart vs. Justin Verlander}
+\end{figure}
+
+\begin{figure}
+\centering
+    \includegraphics[width=3in, height=2in]{synthetic_verlander.png}
+    \caption{Justin Verlander's synthetic spray chart vs. Mike Trout}
+\end{figure}
+
+\begin{figure}
+\centering
+    \includegraphics[width=3in, height=2in]{trout_verlander_master.png}
+    \caption{The complete synthetic spray chart for Mike Trout vs. Justin Verlander}
+\end{figure}
+
+\item[2.] Explain what the sliders do and why they are important. \\
+One slider changes the ratio of pitcher “stuff” to release metrics. Stuff includes velocity, spin rate, and movement. Release includes release angles and release point.
+One slider changes the ratio of batter launch conditions to location. Launch conditions includes exit velocity and launch angle. Location includes pull\%, middle\%, oppo\%. These can be used to tailor the comparisons - for example, it may be more useful to weight batted ball location higher to alter infielder position, while it may be more useful to weight launch conditions higher to alter outfielder depth.
+
+\item[3.] Explain why these visualizations and metrics offer users. \\
+As mentioned above, these visualizations can help coaches position their fielders effectively. While a traditional spray chart may be useful in aggregate, building a custom spray chart to reflect a specific pitcher-batter matchup will yield more accurate results on a plate appearance by plate appearance level.
+
+\item[4.] Highlight that the Shiny app displays the most similar players. \\
+Below the two synthetic charts, there is a leaderboard displaying the most similar pitchers/batters. These include their similarity and a variety of performance metrics.
+
+\begin{figure}
+\centering
+    \includegraphics[width=6in, height=3in]{verlander_similar.png}
+    \caption{The most similar pitchers to Justin Verlander with an 85\% stuff-to-release ratio}
+\end{figure}
+
 \end{itemize}
 
 \textbf{Explanation of sliders}: The slider displays allow users to determine the relative importance of stuff, a colloquial term for pitch quality, versus release point for pitchers and contact quality versus batted ball tendencies for batters in forming the synthetic players. The default setting of the pitcher slider favors stuff over release point information. The logic for this is that quality of pitches is more representative of ability than release point. The default setting of the batter slider favors quality of contact over batted ball tendencies which appears to bias the synthetic batter's spray chart away from that of the batter under consideration. That being said, the batted ball tendencies are recorded as percentages of balls hit to six large grids on the baseball field, ignoring the quality, trajectory, and exact location of the batted ball. Thus, the quality of contact forms a more complete representation of a batter's skill than tendency.
@@ -121,8 +166,42 @@ In this section we present a snapshot of what our Shiny app offers users. The Sh
 
 \section{Pitcher and batter characteristics}
 
-We need to explain the batter and pitcher data used and all of the preprocessing employed. Where is the data from? What steps were taken to convert the data into something useful? 
+The data was acquired via Bill Petti's baseballR package. It is comprised of every pitch thrown since 2015 that has been captured by Statcast. A few preprocessing steps are involved:
 
+\begin{itemize}
+    \item Pitches classified with the following pitch types are removed: Eephus, Screwball
+    \item Pitches classified as Knuckle-Curve are renamed to Curveball
+    \item Pitches classified as Forkball are renamed to Splitter
+    \item Pitch launch angles are calculated using rudimentary kinematics
+    \item Batted ball locations are adjusted to reflect accurate baseball field coordinates (https://www.fangraphs.com/tht/research-notebook-new-format-for-statcast-data-export-at-baseball-savant/)
+    \item Spray angle is calculated from the x and y coordinates of the batted ball, and adjusted where a negative angle implies the ball was pulled
+\end{itemize}
+
+For pitcher comparisons, pitchers are aggregated on a season, pitch type basis. These are the mean columns:
+
+\begin{itemize}
+ \item velocity
+ \item spin rate
+ \item horizontal break
+ \item horizontal release angle
+ \item horizontal release point
+ \item vertical break
+ \item vertical release angle
+ \item vertical release point
+ \item extension
+\end{itemize}
+
+For a specific pitcher, the pool of pitchers must have thrown at least 10 pitches for at least $\lceil \frac{n_{pitch\_types}}{2} \rceil$ of the main pitcher's pitch types. For example, for a main pitcher who throws three pitch types, to be eligible for comparing a pitcher must throw at least two of the same pitch types.
+
+For batter comparisons, batter are aggregated on a season, handedness, vs. pitch type basis. These are the mean columns:
+
+\begin{itemize}
+ \item exit velocity
+ \item launch angle
+ \item pull\%
+ \item middle\%
+ \item oppo\%
+\end{itemize}
 
 \section{Spray chart distributions}
 
@@ -249,7 +328,7 @@ The previous paragraph outlines how we would calculate our performance metrics i
 
 The primary contribution of this work is the development of synthetic spray chart distributions that live under the hood of a Shiny app which provides users with visual and numeric summary measures of baseball matchups. This app will be of interest to baseball fans, analysts, players, and team executives alike. Our tools show users batter tendencies versus pitchers while providing summaries of their overall success or lack thereof. Our tools greatly improve upon the inferential power of spray charts \citep{pettispray, marchi2019analyzing} as a visualization of a batter's hitting tendencies. Spray charts may be uninformative for individual matchups due to a lack of data. Our synthetic player construction alleviates this problem.
 
-We are not the first to incorporate additional players into an analysis via similarity scores with the understanding that doing so improves estimation performance. The PECOTA prediction methodology \citep{PECOTA} tries to forecast the ability of players using aggregate estimates obtained from other similar players. To the best of our knowledge, we are the first to base similarity scores exclusively on STATCAST data which we believe provides a truer notion of similarity in the context of individual batter pitcher matchups.  
+We are not the first to incorporate additional players into an analysis via similarity scores with the understanding that doing so improves estimation performance. The PECOTA prediction methodology \citep{PECOTA} tries to forecast the ability of players using aggregate estimates obtained from other similar players. To the best of our knowledge, we are the first to base similarity scores exclusively on Statcast data which we believe provides a truer notion of similarity in the context of individual batter pitcher matchups.  
 
 
 
