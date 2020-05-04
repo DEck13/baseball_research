@@ -117,10 +117,7 @@ In this section we present a snapshot of what our Shiny app offers users. The Sh
 
 \begin{figure}
 \centering
-    \includegraphics[width=3in, height=2in]{trout_verlander_master.png}
-    \includegraphics[width=3in, height=2in]{trout_traditional.png}
-    \includegraphics[width=3in, height=2in]{synthetic_trout.png}
-    \includegraphics[width=3in, height=2in]{synthetic_verlander.png}    
+    \includegraphics[width=4in, height=3in]{combined.png}  
     \caption{Spray chart distributions constructed by our app.  This example 
     corresponds to the spray chart distribution when batter Mike Trout faces 
     pitcher Justin Verlander.
@@ -172,7 +169,6 @@ The pitcher slider allows users to determine the relative importance of ``stuff'
 
 As previously mentioned, these visualizations can help coaches position their fielders effectively. While a traditional spray chart may be useful in aggregate, building a custom spray chart to reflect a specific batter-pitcher matchup will yield more accurate results on a plate appearance by plate appearance level. This synthetically created spray chart will give the user an expected distribution of batted balls for the batter-pitcher matchup based on a combination the distribution of similar batters against the pitcher, the distribution of similar pitchers against the batter, and any observations of pitcher vs batter since 2015. The app also displays two additional synthetic charts and a leaderboard displaying the most similar pitchers/batters. These include their overall similarity score and a variety of performance metrics. See Figure~\ref{synthpitcher} for an example of the top 10 most similar pitchers to Justin Verlander.
 
-
 \begin{figure}
 \centering
     \includegraphics[width=6in, height=3in]{verlander_similar.png}
@@ -180,7 +176,7 @@ As previously mentioned, these visualizations can help coaches position their fi
     \label{synthpitcher}
 \end{figure}
 
-
+This matchup presents a good example of how to interpret the resulting spray charts. Trout seems to be a pull-heavy hitter in general according to his traditional chart. When facing pitchers similar to Verlander, he seems to push the ball the opposite way. This may be explained by Verlander's high velocity fastball. In general, batters have a hard time ``getting around'' (pulling) an upper-90's fastball, so they end up hitting the ball to the opposite field. Given this spray chart distribution, a coach may position the shortstop more towards third base, the second baseman more up the middle, and the first baseman more towards second base. This will protect against Trout's usual habit of pulling the ball, and also put the first baseman in a position to cover the opposite field soft ground ball. If this decision were made just by Trout's traditional chart, the first baseman might not have been moved to cover ground balls through the right side.
 
 \section{Pitcher and batter characteristics}
 
@@ -190,6 +186,10 @@ The data for our app was acquired via the \texttt{baseballr} R package \citep{ba
     \item Pitches classified as Knuckle-Curve are renamed to Curveball.
     \item Pitches classified as Forkball are renamed to Splitter.
     \item Pitch launch angles are calculated using rudimentary kinematics.
+        \begin{itemize}
+            \item $launch_h = \arctan(\frac{vx_r}{vy_r})$
+            \item $launch_v = \arctan\left(\frac{vz_r}{\sqrt{vx_r^2 + vy_r^2}}\right)$
+        \end{itemize}
     \item Batted ball locations are adjusted to reflect accurate baseball field coordinates \citep{petti2017research}.
     \item Spray angle is calculated from the x and y coordinates of the batted ball, and adjusted where a negative angle implies the ball was pulled.
 \end{itemize}
