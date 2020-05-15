@@ -193,30 +193,12 @@ The data for our app was acquired via the \texttt{baseballr} R package \citep{ba
         where $vx_r$, $vy_r$, $vz_r$ are, respectively, the $x$, $y$, $z$ components of release velocity.
     \item Batted ball locations are adjusted to reflect accurate baseball field coordinates \citep{petti2017research}.
     \item Spray angle is calculated from the x and y coordinates of the batted ball, and adjusted where a negative angle implies the ball was pulled.
+    \item Player characteristic data are standardized to have mean zero and standard deviation 1. The player characteristic data are physically dimensionless after standardization. 
 \end{itemize}
 
-For pitcher comparisons, pitchers are aggregated on a season and pitch type basis. The variables considered are: velocity, spin rate, horizontal break, horizontal release angle, horizontal release point, vertical break, vertical release angle, vertical release point, and extension. Averages of these variables are taken across each pitcher-pitch type combination.
-%\begin{itemize}
-% \item velocity
-% \item spin rate
-% \item horizontal break
-% \item horizontal release angle
-% \item horizontal release point
-% \item vertical break
-% \item vertical release angle
-% \item vertical release point
-% \item extension
-%\end{itemize}
-To be eligible for comparison, a pitcher must share at least  $\lceil \frac{n_{\text{pitch\_types}}}{2} \rceil$ pitches with the pitcher under study.
+For pitcher comparisons, pitchers are aggregated on a season and pitch type basis. The variables considered are: velocity, spin rate, horizontal break, horizontal release angle, horizontal release point, vertical break, vertical release angle, vertical release point, and extension. Averages of these variables are taken across each pitcher-pitch type combination. To be eligible for comparison, a pitcher must share at least  $\lceil \frac{n_{\text{pitch\_types}}}{2} \rceil$ pitches with the pitcher under study.
 
 For batter comparisons, batters are aggregated on a season, handedness, and pitch type basis. The variables considered are: exit velocity, launch angle, pull\%, middle\%, and oppo\%. Averages of these variables are taken across each batter-pitch type combination.
-%\begin{itemize}
-% \item exit velocity
-% \item launch angle
-% \item pull\%
-% \item middle\%
-% \item oppo\%
-%\end{itemize}
 
 
 \section{Spray chart distributions and densities}
@@ -349,6 +331,10 @@ We are not the first to incorporate additional players into an analysis via simi
 
 There needs to be a clear distinction made that clarifies the goal of this study. The goal of this synthetic spray chart approach is to provide a system to estimate the position of a batted ball given a certain batter-pitcher matchup - it is \textbf{not} to gauge true talent. On average, players who hit the ball harder with a more optimized launch angle will receive better projected stats, since these balls tend to produce more home runs (and thus take fielders out of the equation.) Tools like speed and eye at the plate, therefore, will will not be reflected in this application.
 
+
+\section*{Acknowledgements}
+
+We would like to thank ATLAS Infrastructure and Illini Analytics for computational resources that made our Shiny app possible. We would also like to thank Alan Nathan, Jim Albert, James Balamuta, Dootika Vats, John Marden, and Dave Zhao for helpful comments that improved our article and our Shiny app.
 
 
 \section*{Appendix: Justification for our choice of $\lambdabf$}
