@@ -58,7 +58,7 @@
 
 \allowdisplaybreaks
 
-\title{SEAM methodology for context-rich player matchup evaluations}
+\title{SEAM methodology for context-rich player matchup evaluations in baseball}
 \author{Charles Young, David Dalpiaz, Daniel J. Eck}
 
 \begin{document}
@@ -325,7 +325,9 @@ The previous paragraph outlines how we would calculate our performance metrics i
 
 \section{Discussion}
 
-The primary contribution of this work is the development of synthetic spray chart distributions that are calculated under the hood of a Shiny app which provides users with visual and numeric summary measures of batter-pitcher matchups. This app will be of interest to baseball fans, analysts, players, and team executives alike. Our application shows users batter tendencies versus pitchers while providing summaries of their overall success or lack thereof. Our application greatly improves upon the inferential power of spray charts \citep{pettispray, marchi2019analyzing} as a visualization of a batter's hitting tendencies. Spray charts may be uninformative for individual matchups due to a lack of data. Our synthetic player construction alleviates this problem.
+The primary methodological contribution of this work is the development of synthetic spray chart distributions and density functions. These density functions are calculated under the hood of a Shiny app which provides users with visual and numeric summary measures of batter-pitcher matchups. Our method of synthetic player construction is generalizable to other settings in baseball as well as other sports.
+
+Our Shiny app will be of interest to baseball fans, analysts, players, and team executives alike. Our application shows users batter tendencies versus pitchers while providing summaries of their overall success or lack thereof. Our application greatly improves upon the inferential power of spray charts \citep{pettispray, marchi2019analyzing} as a visualization of a batter's hitting tendencies. Spray charts may be uninformative for individual matchups due to a lack of data. Our synthetic player construction alleviates this problem.
 
 We are not the first to incorporate additional players into an analysis via similarity scores with the understanding that doing so improves estimation performance. The PECOTA prediction methodology \citep{PECOTA} tries to forecast the ability of players using aggregate estimates obtained from other similar players. To the best of our knowledge, we are the first to base similarity scores exclusively on Statcast data which we believe provides a truer notion of similarity in the context of individual batter-pitcher matchups.  
 
