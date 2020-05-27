@@ -1,5 +1,7 @@
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
+
+\usepackage{mathptmx}
 
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -59,21 +61,24 @@
 \allowdisplaybreaks
 
 \title{SEAM methodology for context-rich player matchup evaluations in baseball}
-\author{Charles Young\thanks{cdy2@illinois.edu}, 
-David Dalpiaz\thanks{dalpiaz2@illinois.edu}, 
-and Daniel J. Eck\thanks{dje13@illinois.edu} \\[1em]
-Department of Statistics, University of Illinois Urbana-Champaign
-}
+%\author{Charles Young\thanks{cdy2@illinois.edu}, 
+%David Dalpiaz\thanks{dalpiaz2@illinois.edu}, 
+%and Daniel J. Eck\thanks{dje13@illinois.edu} \\[1em]
+%Department of Statistics, University of Illinois Urbana-Champaign
+%}
 \date{}
+
+\linespread{2}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-We develop the SEAM (synthetic estimated average matchup) method for describing batter versus pitcher matchups in baseball, both numerically and visually. We first estimate the distribution of balls put into play by a batter facing a pitcher, called the spray chart distribution. This distribution is conditional on batter and pitcher characteristics. These characteristics are a better expression of talent than any conventional statistics. Many individual matchups have a sample size that is too small to be reliable. Synthetic versions of the batter and pitcher under consideration are constructed in order to alleviate these concerns. Weights governing how much influence these synthetic players have on the overall spray chart distribution are constructed to minimize expected mean square error. We then provide novel performance metrics that are calculated as expectations taken with respect to the spray chart distribution. These performance metrics provide a context rich approach to player evaluation. Our main contribution is a Shiny app that allows users to evaluate any batter-pitcher matchup that has occurred or could have occurred in the last five years. One can access this app at \url{https://seam.stat.illinois.edu/app/}. This interactive tool has utility for anyone interested in baseball as well as team executives and players.
+We develop the SEAM (synthetic estimated average matchup) method for describing batter versus pitcher matchups in baseball, both numerically and visually. We first estimate the distribution of balls put into play by a batter facing a pitcher, called the spray chart distribution. This distribution is conditional on batter and pitcher characteristics. These characteristics are a better expression of talent than any conventional statistics. Many individual matchups have a sample size that is too small to be reliable. Synthetic versions of the batter and pitcher under consideration are constructed in order to alleviate these concerns. Weights governing how much influence these synthetic players have on the overall spray chart distribution are constructed to minimize expected mean square error. We then provide novel performance metrics that are calculated as expectations taken with respect to the spray chart distribution. These performance metrics provide a context rich approach to player evaluation. Our main contribution is a Shiny app that allows users to evaluate any batter-pitcher matchup that has occurred or could have occurred in the last five years. One can access this app at \url{https://seam.shinyapps.io/seam/}. This interactive tool has utility for anyone interested in baseball as well as team executives and players.
 \end{abstract}
 
+\noindent\textbf{Keywords}: Nonparametric density estimation; Similarity scores; Model averaging; Reproducible research; Sabermetrics; Big data applications and visualization
 
 
 \section{Introduction}
@@ -110,19 +115,21 @@ The main contribution of this work is a Shiny app which gives users the ability 
 
 \section{Motivating Example}
 
-In this section we present a snapshot of what our Shiny app offers users. The Shiny app is available at \url{https://seam.stat.illinois.edu/app/}. The default matchup in the application pairs the reigning American League Cy Young winner Justin Verlander against the reigning American League MVP Mike Trout. The layout includes a sidebar with four filters: two dropdowns for batter/pitcher selection and two sliders for metric adjustment. A snapshot of the appearance of our visualization is depicted in Figures \ref{layout} and \ref{spraydists}.
+In this section we present a snapshot of what our Shiny app offers users. The Shiny app is available at \url{https://seam.shinyapps.io/seam/}. The default matchup in the application pairs the reigning American League Cy Young winner Justin Verlander against the reigning American League MVP Mike Trout. The layout includes a sidebar with four filters: two dropdowns for batter/pitcher selection and two sliders for metric adjustment. A snapshot of the appearance of our visualization is depicted in Figures \ref{layout} and \ref{spraydists}.
 
 
 \begin{figure}
 \centering
-    \includegraphics[width=5.5in, height=3in]{layout.png}
+\text{[Figure 1 about here]}
+%    \includegraphics[width=5.5in, height=3in]{layout.png}
     \caption{The layout of the application upon submission.}
     \label{layout}
 \end{figure}
 
 \begin{figure}
 \centering
-    \includegraphics[width=4in, height=3in]{combined.png}  
+\text{[Figure 2 about here]}
+%    \includegraphics[width=4in, height=3in]{combined.png}  
     \caption{Spray chart distributions constructed by our app.  This example 
     corresponds to the spray chart distribution when batter Mike Trout faces 
     pitcher Justin Verlander.
@@ -176,7 +183,8 @@ As previously mentioned, these visualizations can help coaches position their fi
 
 \begin{figure}
 \centering
-    \includegraphics[width=6in, height=3in]{verlander_similar.png}
+\text{[Figure 3 about here]}
+    %\includegraphics[width=6in, height=3in]{verlander_similar.png}
     \caption{The most similar pitchers to Justin Verlander with an 85\% stuff-to-release ratio}
     \label{synthpitcher}
 \end{figure}
@@ -545,7 +553,7 @@ $$
 The above is not always less than 0 for all configurations. However, it will be less than 0 when $n$ is comparable to $n_{p,j'}$ and $n_{b,k'}$, a setting that we will guard against in our implementation by specifying a minimal sample size to enter into available player pool.
 
 
-\bibliographystyle{plainnat}
+\bibliographystyle{chicago}
 \bibliography{spray}
 
 
