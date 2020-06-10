@@ -1,0 +1,68 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{mathptmx}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+%\usepackage{amscd}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{natbib}
+\usepackage{url}
+\usepackage{bm}
+
+\usepackage{geometry}
+\usepackage[usenames]{color}
+\geometry{margin=1in}
+
+\newcommand{\y}{\textbf{y}}
+\newcommand{\x}{\textbf{x}}
+
+\title{Revision Checklist}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Minor points}
+
+\noindent\textbf{Comment:} I read through your paper, and I believe it is interesting and has promise. \\
+
+\noindent\textbf{Response:} Thank you for the kind words towards our research. \\
+
+\noindent\textbf{Comment:} As it stands right now, I believe it has a lack of focus. What does this paper accomplish? What problem is solved? The answers are completely unclear. \\
+
+\noindent\textbf{Comment:} Thank you for pointing to a lack of focus. Upon rereading our paper with this comment in mind, we agree that there is a lack of focus. In this revision we attempt to restrict the focus of our paper to the development of a weighted average of nonparametric density estimators to estimate a spray chart (batted-ball) density function corresponding to batter-pitcher matchups that have sparse observations. The Shiny app is now given secondary attention.
+
+\section*{Major points}
+
+\noindent\textbf{Comment 1.} Decide what problem you are solving. What is your contribution? It can’t just be the Shiny app. I think it is the methodology behind the app. \\
+
+\noindent\textbf{Response:} You are right, the methodology behind the app is the main contribution. Sentences like "Our main contribution is a Shiny app..." have been removed in this revised version of the manuscript. We have also reorganized the manuscript so that our methodology is formally introduced before the Shiny app. To emphasize that the primary focus of our paper is the methodological development, the first sentence of our Discussion now reads "The primary contribution of this work is the development of the SEAM method..." \\
+
+
+\noindent\textbf{Comment 2.} Don’t be afraid to do some math in the body of the paper. The JQAS audience is more sophisticated than you might think. JQAS is a publication of the American Statistical Association, so most readers are ASA members. That said, don’t go overboard with the math. If there are some very technical issues, you can put them in an appendix, but I think you can begin with the development of the probability behind the spray chart. \\
+
+
+\noindent\textbf{Response:} We have reorganized this version of the manuscript so that it begins with the probability behind the spray chart. We have also added more mathematical wording throughout the manuscript. As an example, many instances of the phrase "spray chart density function" are replaced with $f(\y|\x)$.  \\
+
+\noindent\textbf{Comment 3.} What can someone do with the spray chart? If it’s not to measure talent, then why bother? \\
+
+\noindent\textbf{Response:} Thank you for pointing this out. We do measure a batter's talent conditional on putting a ball in to play. By the same token, we measure a pitcher's talent in limiting quality contact conditional on a ball being put in play. However, we wanted to emphasize that these notions of talent do not constitute the complete talent profile of baseball players. We agree that some of our wording choices undercut our contribution. We have now removed the following paragraph that previously ended our Discussion section: \\
+
+``There needs to be a clear distinction made that clarifies the goal of this study. The goal of this synthetic spray chart approach is to provide a system to estimate the position of a batted ball given a certain batter-pitcher matchup - it is \textbf{not} to gauge true talent. On average, players who hit the ball harder with a more optimized launch angle will receive better projected stats, since these balls tend to produce more home runs (and thus take fielders out of the equation.) Tools like speed and eye at the plate, therefore, will will not be reflected in this application.'' \\
+
+\noindent We added the following paragraph to the end of the Performance metrics section: \\
+
+``One should note that our performance metrics do not measure the complete talent profile of baseball players. On average, players who hit the ball harder with a more optimized launch angle will receive better projected stats, since these balls tend to produce more home runs (and thus take fielders out of the equation). However, tools such as speed and eye at the plate will not be fully captured by our methodology.''
+	
+\end{document}
+
+
+
+
