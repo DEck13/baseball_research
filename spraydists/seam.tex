@@ -118,18 +118,12 @@ We also provide a Shiny app which gives users the ability to display the synthet
 
 A spray chart distribution for a batter is a distribution $F$ over a bounded subset $\Y \in \R^2$. The set $\Y$ contains plausible locations of batted balls from home plate. Let $(0,0) \in \Y$ denote the location of home plate. With this specification we can take $\Y = \{\y \in \R^2: \|\y\| \leq 1000\}$ where values in $\Y$ are locations in feet and $\|\cdot\|$ is the Euclidean norm. This specification of $\Y$ guarantees that $F(\Y) = 1$ for all batters in history. No human in history has ever come close to hitting a ball 1000 feet.
 
-Our main inferential goal will be to consider spray chart distributions that are conditional on several characteristics for pitchers $\x_p$ and batters $\x_b$, where $\x = (\x_p',\x_b')' \in \X$, and $\X$ is assumed to be bounded.  The variables comprising $\x_p$ are: velocity, spin rate, horizontal break, horizontal release angle, horizontal release point, vertical break, vertical release angle, vertical release point, and extension. Averages of these variables are taken across each pitcher-pitch type combination. The variables comprising $\x_b$ are: exit velocity, launch angle, pull\%, middle\%, and oppo\%. Averages of these variables are taken across each batter-pitch type combination.
-
-
-
-
-
-The conditional spray chart density function will be denoted as $f(\cdot|\x)$ for all $\x \in \X$. We will estimate $f(\cdot|\x)$ with a multivariate kernel estimator
+Our methodology will consider spray chart distributions that are conditional on several characteristics for pitchers $\x_p$ and batters $\x_b$, where $\x = (\x_p',\x_b')' \in \X$, and $\X$ is assumed to be bounded. Denote the conditional spray chart distribution as $F(\y|\x)$ for $\x \in \X$ and $\y \in \Y$. The conditional spray chart density function corresponding to $F(\y|\x)$ will be denoted as $f(\y|\x)$ for all $\x \in \X$ and $\y \in \Y$. Thus, $f(\y|\x)$ is a regression nonparametric regression model that we will estimate with a multivariate kernel estimator
 \begin{equation} \label{general}
-  \hat f_\Hbf(\y|\x) = \frac{1}{n|\Hbf|}\sum_{i=1}^{n_\x} K\left(\Hbf^{-1}(\y_i - \y)\right), 
+  \hat f_\Hbf(\y|\x) = \frac{1}{n|\Hbf|}\sum_{i=1}^{n} K\left(\Hbf^{-1}(\y_i - \y)\right), 
   \qquad y \in \Y, 
 \end{equation}
-where $K$ is a multivariate kernel function, $\Hbf$ is a matrix of bandwidth parameters, and $\y_1,\ldots,\y_{n_\x}$ are the $n_\x$ batted ball locations from home plate observed when the batter-pitcher matchup is encoded as $\x$. The estimated spray chart density function $\hat f_\Hbf(\y|\x)$ is a smoothed surface overlaying a spray chart. Our visualization of the spray chart distribution will be along $n_g$ common grid points $g_1,\ldots,g_{n_g}$ for all batters and all conditional characteristics $\x \in \X$ under study. Commonality of grid of points across the batters and $\x$ allows for straightforward comparisons of spray chart distributions.
+where $K$ is a multivariate kernel function, $\Hbf$ is a matrix of bandwidth parameters, and $\y_1,\ldots,\y_{n}$ are the $n$ batted ball locations from home plate observed from a batter-pitcher matchup under study. The estimated spray chart density function $\hat f_\Hbf(\y|\x)$ is a smoothed surface overlaying a spray chart. Our visualization of the spray chart distribution will be along $n_g$ common grid points $g_1,\ldots,g_{n_g}$ for all batters and all conditional characteristics $\x \in \X$ under study. Commonality of grid of points across the batters and $\x$ allows for straightforward comparisons of spray chart distributions in practice.
 
 Our implementation will estimate $f(\cdot|\x)$ using the \texttt{kde2d} and \texttt{kde2d.weighted} functions in R \citep{MASS, ggtern}. 
 %\texttt{ggtern} R package \citep{ggtern}.
@@ -138,10 +132,11 @@ These functions are chosen because of their presence
 in the \texttt{ggplot2} R package \citep{ggplot2} which will be employed for visualization. Therefore, we estimate $f(\cdot|\x)$ using a bivariate nonparametric Gaussian kernel density estimator
 \begin{equation} \label{spraydens}
   \hat f_\h(\y|\x) = 
-    \frac{1}{n h_{y_1}h_{y_2}}\sum_{i=1}^{n_\x} \phi\left(\frac{y_1 - y_{1i}}{h_{y_1}}\right)
+    \frac{1}{n h_{y_1}h_{y_2}}\sum_{i=1}^{n} \phi\left(\frac{y_1 - y_{1i}}{h_{y_1}}\right)
       \phi\left(\frac{y_2 - y_{2i}}{h_{y_2}}\right),
 \end{equation}
-where $\phi$ is a standard Gaussian density, $\h \in \R^2$ is a bandwidth parameter so that the matrix $\Hbf$ in \eqref{general} is $\Hbf = \text{diag}(\h)$, and $(y_{1i},y_{2i})$, $i = 1,\ldots,n$ are the observed batted ball locations. In our application, $\Hbf$ is chosen according to the default bandwidth selection procedures within the \texttt{kde2d} and \texttt{kde2d.weighted} functions.
+where $\phi$ is a standard Gaussian density, $\h \in \R^2$ is a bandwidth parameter so that the matrix $\Hbf$ in \eqref{general} is $\Hbf = \text{diag}(\h)$, and $(y_{1i},y_{2i})$, $i = 1,\ldots,n$ are the observed batted ball locations. In our application, $\Hbf$ is chosen according to the default bandwidth selection procedures within the \texttt{kde2d} and \texttt{kde2d.weighted} functions. 
+
 
 
 %We are not interested in estimating $f_\h(\y|\x)$ across $\x$, just interested in a chosen batter pitcher matchup. 
@@ -233,8 +228,30 @@ $
 $
 Our Shiny app also displays the floor of $100 \hat e_{\text{1B}}(\x)$, $100 \hat e_{\text{2B}}(\x)$, $100 \hat e_{\text{3B}}(\x)$, and $100 \hat e_{\text{HR}}(\x)$. The 100 multiplier is a normalization that is intended for ease of interpretation. Note that there is not enough data available to estimate $\widehat \Pbf(\y)$ for every $\y \in \Y$. Therefore, we calculate discretized versions of these performance metrics over 10 feet by 10 feet bins.
 
-One should note that our performance metrics do not measure the complete talent profile of baseball players. On average, players who hit the ball harder with a more optimized launch angle will receive better projected stats, since these balls tend to produce more home runs (and thus take fielders out of the equation). However, tools such as speed and eye at the plate will not be fully captured by our methodology.
+\section{Data considerations}
 
+Our methodology will consider the following variables comprising $\x_p$: velocity, spin rate, horizontal break, horizontal release angle, horizontal release point, vertical break, vertical release angle, vertical release point, and extension. Averages of these variables are taken across each pitcher-pitch type combination. Our methodology will consider the following variables comprising $\x_b$: exit velocity, launch angle, pull\%, middle\%, and oppo\%. Averages of these variables are taken across each batter-pitch type combination. One should note that these variables will not allow us to measure the complete talent profile of baseball players. %On average, players who hit the ball harder with a more optimized launch angle will receive better projected stats, since these balls tend to produce more home runs (and thus take fielders out of the equation). However, 
+Tools such as speed and eye at the plate will not be fully captured by our methodology.
+
+Data for our app was acquired via the \texttt{baseballr} R package \citep{baseballr}. This dataset contains every pitch thrown since 2015 that has been captured by Statcast. A few preprocessing steps are involved:
+\begin{itemize}
+    \item Pitches classified as Eephus, Knuckleball, and Screwball are removed since these pitch types are rare.
+    \item Pitches classified as Knuckle-Curve are renamed to Curveball.
+    \item Pitches classified as Forkball are renamed to Splitter.
+    \item Pitch launch angles are calculated using rudimentary kinematics:
+        \begin{itemize}
+            \item $launch_h = \arctan(\frac{vx_r}{vy_r})$
+            \item $launch_v = \arctan\left(\frac{vz_r}{\sqrt{vx_r^2 + vy_r^2}}\right)$
+        \end{itemize}
+        where $vx_r$, $vy_r$, $vz_r$ are, respectively, the $x$, $y$, $z$ components of release velocity.
+    \item Batted ball locations are adjusted to reflect accurate baseball field coordinates \citep{petti2017research}.
+    \item Spray angle is calculated from the x and y coordinates of the batted ball, and adjusted where a negative angle implies the ball was pulled.
+    \item Player characteristic data are standardized to have mean zero and standard deviation 1. The player characteristic data are physically dimensionless after standardization. 
+\end{itemize}
+
+Pitchers are aggregated on a season and pitch type basis and batters are aggregated on a season, handedness, and pitch type basis. To be eligible for comparison, a pitcher must share at least  $\lceil \frac{n_{\text{pitch\_types}}}{2} \rceil$ pitches with the pitcher under study. 
+
+ 
 
 
 \section{Shiny app}
@@ -315,25 +332,7 @@ As previously mentioned, these visualizations can help coaches position their fi
 
 This matchup presents a good example of how to interpret the resulting spray charts. Trout seems to be a pull-heavy hitter in general according to his traditional chart. When facing pitchers similar to Verlander, he seems to push the ball the opposite way. This may be explained by Verlander's high velocity fastball. In general, batters have a hard time ``getting around'' (pulling) an upper-90's fastball, so they end up hitting the ball to the opposite field. Given this spray chart distribution, a coach may position the shortstop more towards third base, the second baseman more up the middle, and the first baseman more towards second base. This will protect against Trout's usual habit of pulling the ball, and also put the first baseman in a position to cover the opposite field soft ground ball. If this decision were made just by Trout's traditional chart, the first baseman might not have been moved to cover ground balls through the right side.
 
-\section{Data considerations}
 
-The data for our app was acquired via the \texttt{baseballr} R package \citep{baseballr}. This dataset contains every pitch thrown since 2015 that has been captured by Statcast. A few preprocessing steps are involved:
-\begin{itemize}
-    \item Pitches classified as Eephus, Knuckleball, and Screwball are removed since these pitch types are rare.
-    \item Pitches classified as Knuckle-Curve are renamed to Curveball.
-    \item Pitches classified as Forkball are renamed to Splitter.
-    \item Pitch launch angles are calculated using rudimentary kinematics:
-        \begin{itemize}
-            \item $launch_h = \arctan(\frac{vx_r}{vy_r})$
-            \item $launch_v = \arctan\left(\frac{vz_r}{\sqrt{vx_r^2 + vy_r^2}}\right)$
-        \end{itemize}
-        where $vx_r$, $vy_r$, $vz_r$ are, respectively, the $x$, $y$, $z$ components of release velocity.
-    \item Batted ball locations are adjusted to reflect accurate baseball field coordinates \citep{petti2017research}.
-    \item Spray angle is calculated from the x and y coordinates of the batted ball, and adjusted where a negative angle implies the ball was pulled.
-    \item Player characteristic data are standardized to have mean zero and standard deviation 1. The player characteristic data are physically dimensionless after standardization. 
-\end{itemize}
-
-Pitchers are aggregated on a season and pitch type basis and batters are aggregated on a season, handedness, and pitch type basis. To be eligible for comparison, a pitcher must share at least  $\lceil \frac{n_{\text{pitch\_types}}}{2} \rceil$ pitches with the pitcher under study.
 
 
 
