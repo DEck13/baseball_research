@@ -146,67 +146,67 @@ where the sample of batted-ball locations $(y_{1i},y_{2i}) \in \Y$, $i = 1, \ldo
 
 \subsection{Synthetic player construction}
 
-We develop a method for synthetically recreating baseball players in order to alleviate the small sample size concerns inherent in the estimation of $f$ for any batter-pitcher matchup. Matchup data involving these synthetic players will then be included in our analysis to estimate $f$. We first develop the similarity scores used in this methodology. We will suppose that there are $J$ pitchers and $K$ batters available in our donor pool. We will suppose that the pitcher in the matchup under study throws $n_{\text{pitch types}}$ different types of pitches. We will let $\x_p^t$ be the pitcher covariates for pitch type $t = 1,\ldots,n_{\text{pitch types}}$. We will denote $d_p$ and $d_b$ as the dimensions of $\x_p^t$ and $\x_b$ respectively. For a pitch type $t$, the similarity score of pitcher $j_1$ to pitcher $j_2$ is defined as $s(\x_{p,j_1}^t, \x_{p,j_2}^t) = \exp(-\|\x_{p,j_1}^t-\x_{p,j_2}^t\|_{\V_p})$ where $\x_{p,j_1}^t$ and $\x_{p,j_2}^t$ are, respectively, the underlying pitch characteristics for pitcher $j_1$ and $j_2$,
+We develop a method for synthetically recreating baseball players in order to alleviate the small sample size concerns inherent in the estimation of $f$ for any batter-pitcher matchup. Matchup data involving these synthetic players will then be included in our analysis to estimate $f$. We first develop the similarity scores used in this methodology. We will suppose that there are $J$ pitchers and $K$ batters available in our donor pool. We will suppose that the pitcher in the matchup under study throws $n_{\text{pitch types}}$ different types of pitches. We will let $\x_p^t$ be the pitcher covariates for pitch type $t = 1,\ldots,n_{\text{pitch types}}$. We will denote $d_p$ and $d_b$ as the dimensions of $\x_{p,t}$ and $\x_b$ respectively. For a pitch type $t$, the similarity score of pitcher $j_1$ to pitcher $j_2$ is defined as $s(\x_{p,j_1,t}, \x_{p,j_2,t}) = \exp(-\|\x_{p,j_1,t}-\x_{p,j_2,t}\|_{\V_{p,t}})$ where $\x_{p,j_1,t}$ and $\x_{p,j_2,t}$ are, respectively, the underlying pitch characteristics for pitcher $j_1$ and $j_2$,
 $$
-   \|\x_{p,j_1}^t-\x_{p,j_2}^t\|_{\V_p} 
-     = \left((\x_{p,j_1}^t-\x_{p,j_2}^t)'\V_p^t(\x_{p,j_1}^t-\x_{p,j_2}^t)\right)^{1/d_p},
+   \|\x_{p,j_1,t}-\x_{p,j_2,t}\|_{\V_{p,t}} 
+     = \left((\x_{p,j_1,t}-\x_{p,j_2,t})'\V_{p,t}(\x_{p,j_1,t}-\x_{p,j_2,t})\right)^{1/d_p},
 $$ 
-and $\V_p^t$ is a diagonal weight matrix that is chosen to scale the pitch characteristics and give preference to pitch characteristics that are chosen to have higher influence on the spray chart distribution under study. Similarity scores of the form $s(\x_{p,j_1}^t, \x_{p,j_2}^t)$ have desirable theoretical properties that are explained in the appendix and, in practice, they guard against downplaying the effect of the players under study. The user of our Shiny app has some control of the entries of $\V_p^t$ by adjusting the pitcher slider. Similarity scores for batters $s(\x_{b,k_1}, \x_{b,k_2})$, $1 \leq k_1,k_2 \leq K$ are defined in a similar manner. Implicit in this construction is the assumption that the underlying pitcher and batter characteristics that we collect are an exhaustive set of inputs to properly estimate the spray chart distribution.
+and $\V_{p,t}$ is a diagonal weight matrix that is chosen to scale the pitch characteristics and give preference to pitch characteristics that are chosen to have higher influence on the spray chart distribution under study. Similarity scores of the form $s(\x_{p,j_1,t}, \x_{p,j_2,t})$ have desirable theoretical properties that are explained in the appendix and, in practice, they guard against downplaying the effect of the players under study. The user of our Shiny app has some control of the entries of $\V_{p,t}$ by adjusting the pitcher slider. Similarity scores for batters $s(\x_{b,k_1}, \x_{b,k_2})$, $1 \leq k_1,k_2 \leq K$ are defined in a similar manner. Implicit in this construction is the assumption that the underlying pitcher and batter characteristics that we collect are an exhaustive set of inputs to properly estimate the spray chart distribution.
 
-We describe the synthetic spray chart density for the batter under study facing the synthetic version of the pitcher under study. Without loss of generality, let $\x_p^t$ be the characteristics for pitch type $t$ thrown by the pitcher under study, let $\x_b$ be the characteristics for the batter under study, and let $\x^t$ denote the vector of $x_p^t$ and $\x_b$. We then line up the pitcher characteristics for all of the pitchers in the donor pool, $\x_{p,j}^t$, $j = 1,...,J$. Now obtain the similarity scores $s_{p,j}^t = s(\x_p^t,\x_{p,j}^t)$ and then construct the weights $w_{p,j}^t = s_{p,j}^t / \sum_{l=1}^{J}s_{p,l}^t$, for $j = 1,...,J$. For pitch type $t$, the spray chart density for a batter facing the synthetic pitcher is 
+We describe the synthetic spray chart density for the batter under study facing the synthetic version of the pitcher under study. Without loss of generality, let $\x_{p,t}$ be the characteristics for pitch type $t$ thrown by the pitcher under study, let $\x_b$ be the characteristics for the batter under study, and let $\x_t$ denote the vector of $x_{p,t}$ and $\x_b$. We then line up the pitcher characteristics for all of the pitchers in the donor pool, $\x_{p,j,t}$, $j = 1,...,J$. Now obtain the similarity scores $s_{p,j,t} = s(\x_{p,t},\x_{p,j,t})$ and then construct the weights $w_{p,j,t} = s_{p,j,t} / \sum_{l=1}^{J}s_{p,l,t}$, for $j = 1,...,J$. For pitch type $t$, the spray chart density for a batter facing the synthetic pitcher is 
 \begin{equation} \label{synth-pitch-t}
-  f_{\text{sp}}^t(\y|\x_b) = \sum_{j=1}^J w_{p,j}^tf(\y|\x_{p,j}^t,\x_b).
+  f_{\text{sp}, t}(\y|\x_b) = \sum_{j=1}^J w_{p,j,t}f(\y|\x_{p,j,t},\x_b).
 \end{equation}
 Let $\rho_t$ be the proportion of time that the pitcher in the matchup under study throws pitch $t$, so that $\sum_t \rho_t = 1$. The spray chart density for a batter facing the synthetic pitcher is then
 \begin{equation} \label{synth-pitch}
-  f_{\text{sp}}(\y|\x_b) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t f_{\text{sp}}^t(\y|\x_b).
+  f_{\text{sp}}(\y|\x_b) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t f_{\text{sp},t}(\y|\x_b).
 \end{equation}
 
 
-We describe the synthetic spray chart density for the synthetic batter facing the pitcher under study. For pitch type $t$, we line up the batter characteristics for all of the available batters that faced pitch type $t$ thrown by the pitcher under study, $\x_{b,k}$, $k = 1,...,K^t$.  We obtain the similarity scores $s_{b,k}^t = s(\x_b,\x_{b,k})$ and then construct the weights $w_{b,k}^t = s_{b,k}^t / \sum_{l=1}^{K}s_{b,l}^t$, for $k = 1,...,K^t$. For pitch type $t$, the spray chart density for a pitcher facing the synthetic batter is 
+We describe the synthetic spray chart density for the synthetic batter facing the pitcher under study. For pitch type $t$, we line up the batter characteristics for all of the available batters that faced pitch type $t$ thrown by the pitcher under study, $\x_{b,k}$, $k = 1,...,K^t$.  We obtain the similarity scores $s_{b,k,t} = s(\x_b,\x_{b,k})$ and then construct the weights $w_{b,k,t} = s_{b,k,t} / \sum_{l=1}^{K}s_{b,l,t}$, for $k = 1,...,K^t$. For pitch type $t$, the spray chart density for a pitcher facing the synthetic batter is 
 \begin{equation} \label{synth-bat-t}
-  f_{\text{sb}}^t(\y|\x_p^t) = \sum_{k=1}^K w_{b,k}^tf(\y|\x_p^t,\x_{b,k}).
+  f_{\text{sb},t}(\y|\x_{p,t}) = \sum_{k=1}^K w_{b,k,t}f(\y|\x_{p,t},\x_{b,k}).
 \end{equation}
 The spray chart density for the synthetic batter facing the pitcher under study is then
 \begin{equation} \label{synth-bat}
-  f_{\text{sb}}(\y) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t f_{\text{sb}}^t(\y|\x_p^t).
+  f_{\text{sb}}(\y) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t f_{\text{sb},t}(\y|\x_{p,t)}.
 \end{equation}
 
 
 We then estimate \eqref{synth-pitch-t} and \eqref{synth-bat-t} with
 \begin{equation} \label{synth-est-t}
-  \hat f_{\text{sp}}^t(\y|\x_b) = \sum_{j=1}^J w_{p,j}^t\hat f_{\h_{p,j}}(\y|\x_{p,j}^t,\x_b), 
+  \hat f_{\text{sp},t}(\y|\x_b) = \sum_{j=1}^J w_{p,j,t}\hat f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_b), 
   \qquad
-  \hat f_{\text{sb}}^t(\y|\x_p^t) = \sum_{k=1}^K w_{b,k}^t\hat f_{\h_{b,k}}(\y|\x_p^t,\x_{b,k}),
+  \hat f_{\text{sb}, t}(\y|\x_{p,t}) = \sum_{k=1}^K w_{b,k,t}\hat f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k}),
 \end{equation}
-where, for pitch type $t$, we let $n_{p,j}^t$ denote the matchup sample size of pitcher $j$ versus the batter under study, $n_{b,k}^t$ denote the matchup sample size of the pitcher under study versus batter $k$, and $\h_{p,j}^t$ and $\h_{b,k}^t$ are bandwidth parameters. We estimate the densities in \eqref{synth-est-t} with,
+where, for pitch type $t$, we let $n_{p,j,t}$ denote the matchup sample size of pitcher $j$ versus the batter under study, $n_{b,k,t}$ denote the matchup sample size of the pitcher under study versus batter $k$, and $\h_{p,j,t}$ and $\h_{b,k,t}$ are bandwidth parameters. We estimate the densities in \eqref{synth-est-t} with,
 \begin{equation} \label{synth-est}
-  \hat f_{\text{sp}}(\y|\x_b) =  \sum_{t=1}^{n_{\text{pitch types}}} \rho_t \hat f_{\text{sp}}^t(\y|\x_b),
+  \hat f_{\text{sp}}(\y|\x_b) =  \sum_{t=1}^{n_{\text{pitch types}}} \rho_t \hat f_{\text{sp}, t}(\y|\x_b),
   \qquad
   \hat f_{\text{sb}}(\y) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t 
-    \hat f_{\text{sb}}^t(\y|\x_p^t).
+    \hat f_{\text{sb}, t}(\y|\x_{p,t}).
 \end{equation}
 
 Our implementation estimates the densities in \eqref{synth-est} with the \texttt{kde2d.weighted} function. The estimators \eqref{synth-est} are obviously biased estimators for $f$. However, they have the potential to reduce MSE. One obvious case is when, for all 
 $t = 1,\ldots,n_{\text{pitch types}}$, there exists weights 
-$w_{p,j}^t \approx 1$, $w_{b,k} \approx 1$ and 
-$n_{p,j}^t > n$, $n_{b,k}^t > n$. 
-In such settings, $f_{\text{sp}}(\y|\x_b)$ and $f_{\text{sp}}(\y|\x_b)$ have minimal bias when estimating $f$ and can be more efficient than $\hat f_h$. Another obvious case is when the batter has never faced the pitcher so that no data is available to estimate $f$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f$. Our implementation will estimate $f$ with
+$w_{p,j,t} \approx 1$, $w_{b,k} \approx 1$ and 
+$n_{p,j,t} > n$, $n_{b,k,t} > n$. 
+In such settings, $f_{\text{sp}}(\y|\x_b)$ and $f_{\text{sb}}(\y)$ have minimal bias when estimating $f$ and can be more efficient than $\hat f_h$. Another obvious case is when the batter has never faced the pitcher so that no data is available to estimate $f$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f$. Our implementation will estimate $f$ with
 \begin{equation} \label{sd-implem}
-  \hat{g}_{\lambdabf}(\y|\x) = \lambda \hat f_\h(\y|\x) 
+  \hat{g}_{\lambdabf}(\y|\x) = \lambda \hat f_\h(\y) 
     + \lambda_p \hat f_{\text{sp}}(\y|\x_p) 
     + \lambda_b \hat f_{\text{sb}}(\y|\x_b)
 \end{equation}
 where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. %The choices of the elements of $\lambdabf$ will be discussed in the next Section where we calculate and compare the MSE of \eqref{spraydens} and \eqref{sd-implem}. 
-Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $w_{p,j}^t$ and $w_{b,k}^t$, $t = 1,\ldots,n_{\text{pitch types}}$, since the weights are a deterministic function of the pitch characteristics. Our implementation will estimate the elements of $\lambdabf$ as 
+Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $w_{p,j,t}$ and $w_{b,k,t}$, $t = 1,\ldots,n_{\text{pitch types}}$, since the weights are a deterministic function of the pitch characteristics. Our implementation will estimate the elements of $\lambdabf$ as 
 $$
   \lambda = \frac{\sqrt{n}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
   \lambda_p = \frac{\sqrt{n_p}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
   \lambda_b = \frac{\sqrt{n_b}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}},
 $$
-where $n_p = \sum_t\rho_t\sum_{j=1}^J (s_{p,j}^t)^2n_{p,j}^t$ and 
-$n_b = \sum_t\rho_t\sum_{k=1}^K (s_{b,k}^t)^2n_{b,k}^t$.  These choices arise as a balance between the natural bias that exists in our synthetic player construction and the inherent estimation variation. %Denote $n^t$ as the number of times the batter under study put a ball in play when the pitcher under study threw pitch $t$. 
-It is reasonable to assume that $n_{p,j}^t = O(n)$ and $n_{b,k}^t = O(n)$ for all $j = 1,\ldots,J$, all $k = 1,\ldots,K$, and all $t = 1,\ldots,n_{\text{pitch types}}$. It is also reasonable to assume that $n$ will be too small to be of much use, hence the reason why $n_p$ and $n_b$ are aggregated with respect to similarity scores instead of weights that form a convex combination. However, in the event that $n$ is large enough to provide reliable estimation of $f(\y|\x)$ with $\hat f_h(\y|\x)$, then $n$ dominates $n_p$ and $n_b$. Formal technical justification for selecting $\lambdabf$ is given in the Appendix. In the Appendix we argue that our choices of $\lambdabf$ lead to the estimator \eqref{sd-implem} having a lower MSE than the estimator \eqref{spraydens}.
+where $n_p = \sum_t\rho_t\sum_{j=1}^J s_{p,j,t}^2n_{p,j,t}$ and 
+$n_b = \sum_t\rho_t\sum_{k=1}^K s_{b,k,t}^2n_{b,k,t}$.  These choices arise as a balance between the natural bias that exists in our synthetic player construction and the inherent estimation variation. %Denote $n^t$ as the number of times the batter under study put a ball in play when the pitcher under study threw pitch $t$. 
+It is reasonable to assume that $n_{p,j,t} = O(n)$ and $n_{b,k,t} = O(n)$ for all $j = 1,\ldots,J$, all $k = 1,\ldots,K$, and all $t = 1,\ldots,n_{\text{pitch types}}$. It is also reasonable to assume that $n$ will be too small to be of much use, hence the reason why $n_p$ and $n_b$ are aggregated with respect to similarity scores instead of weights that form a convex combination. However, in the event that $n$ is large enough to provide reliable estimation of $f(\y|\x)$ with $\hat f_h(\y|\x)$, then $n$ dominates $n_p$ and $n_b$. Formal technical justification for selecting $\lambdabf$ is given in the Appendix. In the Appendix we argue that our choices of $\lambdabf$ lead to the estimator \eqref{sd-implem} having a lower MSE than the estimator \eqref{spraydens}.
 
 
 \subsection{Performance metrics}
