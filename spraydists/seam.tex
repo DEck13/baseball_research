@@ -146,42 +146,46 @@ where the sample of batted-ball locations $(y_{1i},y_{2i}) \in \Y$, $i = 1, \ldo
 
 \subsection{Synthetic player construction}
 
-We develop a method for synthetically recreating baseball players in order to alleviate the small sample size concerns inherent in the estimation of $f$ for any batter-pitcher matchup. Matchup data involving these synthetic players will then be included in our analysis to estimate $f$. We first develop the similarity scores used in this methodology. We will suppose that there are $J$ pitchers and $K$ batters available in our donor pool. We will suppose that the pitcher in the matchup under study throws $n_{\text{pitch types}}$ different types of pitches. We will let $\x_p^t$ be the pitcher covariates for pitch type $t = 1,\ldots,n_{\text{pitch types}}$. We will denote $d_p$ and $d_b$ as the dimensions of $\x_{p,t}$ and $\x_b$ respectively. For a pitch type $t$, the similarity score of pitcher $j_1$ to pitcher $j_2$ is defined as $s(\x_{p,j_1,t}, \x_{p,j_2,t}) = \exp(-\|\x_{p,j_1,t}-\x_{p,j_2,t}\|_{\V_{p,t}})$ where $\x_{p,j_1,t}$ and $\x_{p,j_2,t}$ are, respectively, the underlying pitch characteristics for pitcher $j_1$ and $j_2$,
+We develop a method for synthetically recreating baseball players in order to alleviate the small sample size concerns inherent in the estimation of $f$ for any batter-pitcher matchup. Matchup data involving these synthetic players will then be included in our analysis to estimate $f$. We first develop the similarity scores used in this methodology. We will suppose that there are $J$ pitchers and $K$ batters available in our donor pool. We will suppose that the pitcher in the matchup under study throws $n_{\text{pitch types}}$ different types of pitches. We will let $\x_{p,t}$ be the pitcher covariates for pitch type $t = 1,\ldots,n_{\text{pitch types}}$. We will let $\x_{b,t}$ be the batter covariates when facing pitch type $t = 1,\ldots,n_{\text{pitch types}}$. The covariates in $\x_{p,t}$ and $\x_{b,t}$ are averages across the pitch-by-pitch realizations. We will denote $d_p$ and $d_b$ as the dimensions of $\x_{p,t}$ and $\x_{b_t}$ respectively. For a pitch type $t$, the similarity score of pitcher $j_1$ to pitcher $j_2$ is defined as $s(\x_{p,j_1,t}, \x_{p,j_2,t}) = \exp(-\|\x_{p,j_1,t}-\x_{p,j_2,t}\|_{\V_{p,t}})$ where $\x_{p,j_1,t}$ and $\x_{p,j_2,t}$ are, respectively, the underlying pitch characteristics for pitcher $j_1$ and $j_2$,
 $$
    \|\x_{p,j_1,t}-\x_{p,j_2,t}\|_{\V_{p,t}} 
      = \left((\x_{p,j_1,t}-\x_{p,j_2,t})'\V_{p,t}(\x_{p,j_1,t}-\x_{p,j_2,t})\right)^{1/d_p},
 $$ 
-and $\V_{p,t}$ is a diagonal weight matrix that is chosen to scale the pitch characteristics and give preference to pitch characteristics that are chosen to have higher influence on the spray chart distribution under study. Similarity scores of the form $s(\x_{p,j_1,t}, \x_{p,j_2,t})$ have desirable theoretical properties that are explained in the appendix and, in practice, they guard against downplaying the effect of the players under study. The user of our Shiny app has some control of the entries of $\V_{p,t}$ by adjusting the pitcher slider. Similarity scores for batters $s(\x_{b,k_1}, \x_{b,k_2})$, $1 \leq k_1,k_2 \leq K$ are defined in a similar manner. Implicit in this construction is the assumption that the underlying pitcher and batter characteristics that we collect are an exhaustive set of inputs to properly estimate the spray chart distribution.
+and $\V_{p,t}$ is a diagonal weight matrix that is chosen to scale the pitch characteristics and give preference to pitch characteristics that are chosen to have higher influence on the spray chart distribution under study. Similarity scores of the form $s(\x_{p,j_1,t}, \x_{p,j_2,t})$ have desirable theoretical properties that are explained in the appendix and, in practice, they guard against downplaying the effect of the players under study. The user of our Shiny app has some control of the entries of $\V_{p,t}$ by adjusting the pitcher slider. Similarity scores for batters $s(\x_{b,k_1,t}, \x_{b,k_2,t})$, $1 \leq k_1,k_2 \leq K$ are defined in a similar manner. 
 
-We describe the synthetic spray chart density for the batter under study facing the synthetic version of the pitcher under study. Without loss of generality, let $\x_{p,t}$ be the characteristics for pitch type $t$ thrown by the pitcher under study, let $\x_b$ be the characteristics for the batter under study, and let $\x_t$ denote the vector of $x_{p,t}$ and $\x_b$. We then line up the pitcher characteristics for all of the pitchers in the donor pool, $\x_{p,j,t}$, $j = 1,...,J$. Now obtain the similarity scores $s_{p,j,t} = s(\x_{p,t},\x_{p,j,t})$ and then construct the weights $w_{p,j,t} = s_{p,j,t} / \sum_{l=1}^{J}s_{p,l,t}$, for $j = 1,...,J$. For pitch type $t$, the spray chart density for a batter facing the synthetic pitcher is 
+Implicit in this construction is the assumption that the underlying pitcher and batter characteristics that we collect are an exhaustive set of inputs to properly estimate the spray chart distribution. Therefore, we are assuming that $f$ is conditional on $\x_{b,t}, \x_{p,t}, \rho_t$, for $t = 1,\ldots,n_{\text{pitch types}}$, where $\rho_t$ be the proportion of time that the pitcher in the matchup under study throws pitch type $t$. We therefore represent $f(y)$ as $\sum_t \rho_t f(y|\x_t)$, where $\x_t = (\x_{p,t}', \x_{b,t}')'$. 
+
+
+We describe the synthetic spray chart density for the batter under study facing the synthetic version of the pitcher under study. Without loss of generality, let $\x_{p,t}$ be the characteristics for pitch type $t$ thrown by the pitcher under study, let $\x_{b,t}$ be the characteristics for the batter under study. We then line up the pitcher characteristics for all of the pitchers in the donor pool, $\x_{p,j,t}$, $j = 1,...,J$. Now obtain the similarity scores $s_{p,j,t} = s(\x_{p,t},\x_{p,j,t})$ and then construct the weights $w_{p,j,t} = s_{p,j,t} / \sum_{l=1}^{J}s_{p,l,t}$, for $j = 1,...,J$. For pitch type $t$, the spray chart density for a batter facing the synthetic pitcher is 
 \begin{equation} \label{synth-pitch-t}
-  f_{\text{sp}, t}(\y|\x_b) = \sum_{j=1}^J w_{p,j,t}f(\y|\x_{p,j,t},\x_b).
+  f_{\text{sp}, t}(\y|\x_{b,t}) = \sum_{j=1}^J w_{p,j,t}f(\y|\x_{p,j,t},\x_{b,t}).
 \end{equation}
-Let $\rho_t$ be the proportion of time that the pitcher in the matchup under study throws pitch $t$, so that $\sum_t \rho_t = 1$. The spray chart density for a batter facing the synthetic pitcher is then
+The spray chart density for a batter facing the synthetic pitcher is then
 \begin{equation} \label{synth-pitch}
-  f_{\text{sp}}(\y|\x_b) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t f_{\text{sp},t}(\y|\x_b).
+  f_{\text{sp}}(\y) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t f_{\text{sp},t}(\y|\x_{b,t}).
 \end{equation}
-
-
-We describe the synthetic spray chart density for the synthetic batter facing the pitcher under study. For pitch type $t$, we line up the batter characteristics for all of the available batters that faced pitch type $t$ thrown by the pitcher under study, $\x_{b,k}$, $k = 1,...,K^t$.  We obtain the similarity scores $s_{b,k,t} = s(\x_b,\x_{b,k})$ and then construct the weights $w_{b,k,t} = s_{b,k,t} / \sum_{l=1}^{K}s_{b,l,t}$, for $k = 1,...,K^t$. For pitch type $t$, the spray chart density for a pitcher facing the synthetic batter is 
+The conditioning on $\x_{b,t}, \x_{p,j,t}, \rho_t$, for $t = 1,\ldots,n_{\text{pitch types}}$ and $j = 1,\ldots,J$ is suppressed in the density $f_{\text{sp}}(\y)$.
+ 
+We describe the synthetic spray chart density for the synthetic batter facing the pitcher under study. For pitch type $t$, we line up the batter characteristics for all of the available batters that faced pitch type $t$ thrown by the pitcher under study, $\x_{b,k,t}$, $k = 1,...,K$.  We obtain the similarity scores $s_{b,k,t} = s(\x_{b,t},\x_{b,k,t})$ and then construct the weights $w_{b,k,t} = s_{b,k,t} / \sum_{l=1}^{K}s_{b,l,t}$, for $k = 1,...,K^t$. For pitch type $t$, the spray chart density for a pitcher facing the synthetic batter is 
 \begin{equation} \label{synth-bat-t}
-  f_{\text{sb},t}(\y|\x_{p,t}) = \sum_{k=1}^K w_{b,k,t}f(\y|\x_{p,t},\x_{b,k}).
+  f_{\text{sb},t}(\y|\x_{p,t}) = \sum_{k=1}^K w_{b,k,t}f(\y|\x_{p,t},\x_{b,k,t}).
 \end{equation}
 The spray chart density for the synthetic batter facing the pitcher under study is then
 \begin{equation} \label{synth-bat}
   f_{\text{sb}}(\y) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t f_{\text{sb},t}(\y|\x_{p,t)}.
 \end{equation}
+The conditioning on $\x_{p,t}, \x_{b,k,t}, \rho_t$, for $t = 1,\ldots,n_{\text{pitch types}}$ and $k = 1,\ldots,K$ is suppressed in the density $f_{\text{sb}}(\y)$.
 
 
 We then estimate \eqref{synth-pitch-t} and \eqref{synth-bat-t} with
 \begin{equation} \label{synth-est-t}
-  \hat f_{\text{sp},t}(\y|\x_b) = \sum_{j=1}^J w_{p,j,t}\hat f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_b), 
+  \hat f_{\text{sp},t}(\y|\x_{b,t}) = \sum_{j=1}^J w_{p,j,t}\hat f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_{b,t}), 
   \qquad
-  \hat f_{\text{sb}, t}(\y|\x_{p,t}) = \sum_{k=1}^K w_{b,k,t}\hat f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k}),
+  \hat f_{\text{sb}, t}(\y|\x_{p,t}) = \sum_{k=1}^K w_{b,k,t}\hat f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k,t}),
 \end{equation}
 where, for pitch type $t$, we let $n_{p,j,t}$ denote the matchup sample size of pitcher $j$ versus the batter under study, $n_{b,k,t}$ denote the matchup sample size of the pitcher under study versus batter $k$, and $\h_{p,j,t}$ and $\h_{b,k,t}$ are bandwidth parameters. We estimate the densities in \eqref{synth-est-t} with,
 \begin{equation} \label{synth-est}
-  \hat f_{\text{sp}}(\y|\x_b) =  \sum_{t=1}^{n_{\text{pitch types}}} \rho_t \hat f_{\text{sp}, t}(\y|\x_b),
+  \hat f_{\text{sp}}(\y) =  \sum_{t=1}^{n_{\text{pitch types}}} \rho_t \hat f_{\text{sp}, t}(\y|\x_{b,t}),
   \qquad
   \hat f_{\text{sb}}(\y) = \sum_{t=1}^{n_{\text{pitch types}}} \rho_t 
     \hat f_{\text{sb}, t}(\y|\x_{p,t}).
@@ -189,16 +193,17 @@ where, for pitch type $t$, we let $n_{p,j,t}$ denote the matchup sample size of 
 
 Our implementation estimates the densities in \eqref{synth-est} with the \texttt{kde2d.weighted} function. The estimators \eqref{synth-est} are obviously biased estimators for $f$. However, they have the potential to reduce MSE. One obvious case is when, for all 
 $t = 1,\ldots,n_{\text{pitch types}}$, there exists weights 
-$w_{p,j,t} \approx 1$, $w_{b,k} \approx 1$ and 
-$n_{p,j,t} > n$, $n_{b,k,t} > n$. 
-In such settings, $f_{\text{sp}}(\y|\x_b)$ and $f_{\text{sb}}(\y)$ have minimal bias when estimating $f$ and can be more efficient than $\hat f_h$. Another obvious case is when the batter has never faced the pitcher so that no data is available to estimate $f$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f$. Our implementation will estimate $f$ with
+$w_{p,j,t}, w_{b,k} \approx 1$ and 
+$n_{p,j,t}, n_{b,k,t} > n$. 
+In such settings, $f_{\text{sp}}(\y)$ and $f_{\text{sb}}(\y)$ have minimal bias when estimating $f$ and can be more efficient than $\hat f_h$. Another obvious case is when the batter has never faced the pitcher so that no data is available to estimate $f$ directly, although that does not guarantee that the estimators \eqref{synth-est} are good estimators for $f$. Our implementation will estimate $f$ with
 \begin{equation} \label{sd-implem}
-  \hat{g}_{\lambdabf}(\y|\x) = \lambda \hat f_\h(\y) 
-    + \lambda_p \hat f_{\text{sp}}(\y|\x_p) 
-    + \lambda_b \hat f_{\text{sb}}(\y|\x_b)
+  \hat{g}_{\lambdabf}(\y) = \lambda \hat f_\h(\y) 
+    + \lambda_p \hat f_{\text{sp}}(\y) 
+    + \lambda_b \hat f_{\text{sb}}(\y)
 \end{equation}
-where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. %The choices of the elements of $\lambdabf$ will be discussed in the next Section where we calculate and compare the MSE of \eqref{spraydens} and \eqref{sd-implem}. 
-Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $w_{p,j,t}$ and $w_{b,k,t}$, $t = 1,\ldots,n_{\text{pitch types}}$, since the weights are a deterministic function of the pitch characteristics. Our implementation will estimate the elements of $\lambdabf$ as 
+where $\lambda,\lambda_p$, $\lambda_b$ form a convex combination. The conditioning on $\x_{p,j,t}, \x_{b,k,t}, \rho_t$, for $t = 1,\ldots,n_{\text{pitch types}}$ and $k = 1,\ldots,K$ is suppressed in the density $\hat{g}_{\lambdabf}(\y)$.
+%Note that these calculations are conditional on the pitch characteristics which implies that they are also conditional on $w_{p,j,t}$ and $w_{b,k,t}$, $t = 1,\ldots,n_{\text{pitch types}}$, since the weights are a deterministic function of the pitch characteristics. 
+Our implementation will estimate the elements of $\lambdabf$ as 
 $$
   \lambda = \frac{\sqrt{n}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
   \lambda_p = \frac{\sqrt{n_p}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
@@ -239,7 +244,7 @@ Our Shiny app also displays the floor of $100 \hat e_{\text{1B}}(\x)$, $100 \hat
 
 \section{Data considerations}
 
-Our methodology will consider the following variables comprising $\x_p$: velocity, spin rate, horizontal break, horizontal release angle, horizontal release point, vertical break, vertical release angle, vertical release point, and extension. Averages of these variables are taken across each pitcher-pitch type combination. Our methodology will consider the following variables comprising $\x_b$: exit velocity, launch angle, pull\%, middle\%, and oppo\%. Averages of these variables are taken across each batter-pitch type combination. One should note that these variables will not allow us to measure the complete talent profile of baseball players. %On average, players who hit the ball harder with a more optimized launch angle will receive better projected stats, since these balls tend to produce more home runs (and thus take fielders out of the equation). However, 
+Our methodology will consider the following variables comprising $\x_p$ and $\x_{p,t}$: velocity, spin rate, horizontal break, horizontal release angle, horizontal release point, vertical break, vertical release angle, vertical release point, and extension. Averages of these variables are taken across each pitcher-pitch type combination. Our methodology will consider the following variables comprising $\x_b$ and $\x_{b,t}$: exit velocity, launch angle, pull\%, middle\%, and oppo\%. Averages of these variables are taken across each batter-pitch type combination. One should note that these variables will not allow us to measure the complete talent profile of baseball players. %On average, players who hit the ball harder with a more optimized launch angle will receive better projected stats, since these balls tend to produce more home runs (and thus take fielders out of the equation). However, 
 Tools such as speed and eye at the plate will not be fully captured by our methodology.
 
 Data for our app was acquired via the \texttt{baseballr} R package \citep{baseballr}. This dataset contains every pitch thrown since 2015 that has been captured by Statcast. A few preprocessing steps are involved:
@@ -329,7 +334,9 @@ In this section we present a snapshot of what our Shiny app implementing SEAM me
 
 The pitcher slider allows users to determine the relative importance of ``stuff'', a colloquial term for pitch quality, versus release information. Stuff includes velocity, spin rate, and movement. Release includes release angles and release point. The batter slider allows users to determine the relative importance of launch conditions versus batted ball locations. Launch conditions includes exit velocity and launch angle. Location includes pull\%, middle\%, oppo\% (the percentage of batted balls place into the corresponding thirds of a baseball field). The default setting of the pitcher slider favors stuff over release information. The logic for this is quality of pitches being more representative of ability than release point. The default setting of the batter slider favors quality of contact over batted ball tendencies which appears to bias the synthetic batter's spray chart away from that of the batter under consideration. That being said, the batted ball tendencies are recorded as percentages of balls hit to six large grids on the baseball field, ignoring the quality, trajectory, and exact location of the batted ball. Thus, the quality of contact forms a more complete representation of a batter's skill than tendency.
 
-As previously mentioned, these visualizations can help coaches position their fielders effectively. While a traditional spray chart may be useful in aggregate, building a custom spray chart to reflect a specific batter-pitcher matchup will yield more accurate results on a plate appearance by plate appearance level. This synthetically created spray chart will give the user an expected distribution of batted balls for the batter-pitcher matchup based on a combination of the distribution of similar batters against the pitcher, the distribution of similar pitchers against the batter, and the distribution of any observations of the pitcher vs batter since 2015. The app also displays two additional synthetic charts and a leaderboard displaying the most similar pitchers/batters. These include their overall similarity score and a variety of performance metrics. See Figure~\ref{synthpitcher} for an example of the top 10 most similar pitchers to Justin Verlander.
+As previously mentioned, these visualizations can help coaches position their fielders effectively. While a traditional spray chart may be useful in aggregate, building a custom spray chart to reflect a specific batter-pitcher matchup will yield more accurate results on a plate appearance by plate appearance level. This synthetically created spray chart will give the user an expected distribution of batted balls for the batter-pitcher matchup based on a combination of the distribution of similar batters against the pitcher, the distribution of similar pitchers against the batter, and the distribution of any observations of the pitcher vs batter since 2015. The app also displays two additional synthetic charts and a leaderboard displaying the most similar pitchers/batters. These include their overall similarity score and performance metrics. The overall similarity score for batter $k$ and pitcher $j$ are given, respectively, by $\sum_t\rho_t s(\x_{b,t},\x_{b,k,t})$ and $\sum_t\rho_t s(\x_{p,t},\x_{p,j,t})$.
+
+See Figure~\ref{synthpitcher} for an example of the top 10 most similar pitchers to Justin Verlander.
 
 \begin{figure}
 \centering
@@ -347,9 +354,9 @@ This matchup presents a good example of how to interpret the resulting spray cha
 
 \section{Discussion}
 
-The primary contribution of this work is the development of SEAM methodology in which a synthetic spray chart density function $\hat{g}_{\lambdabf}(\y|\x)$ is estimated. In our context of batter-pitcher matchups, this estimated density function is a weighted average of $f_\h(\y|\x)$, $\hat f_{\text{sp}}(\y|\x_p)$, and $\hat f_{\text{sb}}(\y|\x_b)$. The weights are chosen to minimize MSE under an assumed smooth function space. The synthetic players are constructed to best mimic the players under study. Our method of synthetic player construction is generalizable to other settings in baseball as well as other sports.
+The primary contribution of this work is the development of SEAM methodology in which a synthetic spray chart density function $\hat{g}_{\lambdabf}(\y)$ is estimated. In our context of batter-pitcher matchups, this estimated density function is a weighted average of $f_\h(\y|\x)$, $\hat f_{\text{sp}}(\y)$, and $\hat f_{\text{sb}}(\y)$. The weights are chosen to minimize MSE under an assumed smooth function space. The synthetic players are constructed to best mimic the players under study. Our method of synthetic player construction is generalizable to other settings in baseball as well as other sports.
 
-We also provide a Shiny app which implements SEAM methodology. This app provides users with visual and numeric summary measures of batter-pitcher matchups and it will be of interest to baseball fans, analysts, players, and team executives alike. Our application shows users batter tendencies versus pitchers while providing summaries of their overall success or lack thereof. Our application greatly improves upon the inferential power of spray charts \citep{pettispray, marchi2019analyzing} as a visualization of a batter's talent and hitting tendencies. Spray charts may be uninformative for individual matchups due to a lack of data. Our synthetic player construction alleviates this problem.
+We also developed a Shiny app which implements SEAM methodology. This app provides users with visual and numeric summary measures of batter-pitcher matchups and it will be of interest to baseball fans, analysts, players, and team executives alike. Our application shows users batter tendencies versus pitchers while providing summaries of their overall success or lack thereof. Our application greatly improves upon the inferential power of spray charts \citep{pettispray, marchi2019analyzing} as a visualization of a batter's talent and hitting tendencies. Spray charts may be uninformative for individual matchups due to a lack of data. Our synthetic player construction alleviates this problem.
 
 We are not the first to incorporate additional players into an analysis via similarity scores with the understanding that doing so improves estimation performance. The PECOTA prediction methodology \citep{PECOTA} tries to forecast the ability of players using aggregate estimates obtained from other similar players. To the best of our knowledge, we are the first to base similarity scores exclusively on Statcast data which we believe provides a truer notion of talent similarity.  
 
@@ -380,9 +387,15 @@ We will assume the following regularity conditions for our spray chart distribut
 \item[A3.] $\Hbf = \Hbf_n$ is a deterministic sequence of positive definite symmetric matrices such that, $n\det(\Hbf) \to \infty$ when $n \to \infty$ and $\Hbf \to 0$ elementwise. 
 \end{itemize}
 
-Condition A2 holds for the multivariate Gaussian kernel function that we use in our implementation.
-We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{p,j} = O(n)$, $n_{b,k} = O(n)$ and $\h_{p,j} = O(\h)$, $\h_{b,k} = O(\h)$ for all $j = 1, \ldots, J$, $k = 1, \ldots, K$. 
-
+Condition A2 holds for the multivariate Gaussian kernel function that we use in our implementation. We will let $\Hbf$ be a matrix of bandwidth parameters that has diagonal elements $\h$, in our implementation $\Hbf = \text{diag}(\h)$. We will assume that $\h = \h_t$, the bandwidth parameters for the batter-pitcher matchup are the same across pitch types. We will use the following notation: $R_{\x}(f) = \int f(\y|\x)^2 d\y$, $\mu_2(K) = \int u^2K(u)du$, and $\Hcal_f(\y|\x)$ is the Hessian matrix respect to $f(\y|\x)$ where derivatives are taken with respect to $\y$. Assume that pitch outcomes are independent across at bats and that $n_{p,j,t} = O(n)$, $n_{b,k,t} = O(n)$ and $\h_{p,j,t} = O(\h)$, $\h_{b,k,t} = O(\h)$ for all $j = 1, \ldots, J$, $k = 1, \ldots, K$, $t = 1,\ldots,n_{\text{pitch types}}$. Standard results from nonparametric estimation theory give
+$$
+  \E(\hat f_\h(\y|\x)) - f(\y|\x) = \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+    + o(\|\h\|^2),
+$$
+and
+$$
+ \Var(\hat f_\h(\y|\x)) = \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
+$$
 With the specification that $\beta = 2$ in Condition A1 we have that 
 $
    f(\y|\x) - L\|\x-\x'\|^2 \leq f(\y|\x') \leq f(\y|\x) + L\|\x-\x'\|^2.
@@ -399,133 +412,133 @@ $
    R_\x(f) - 2L\|\x-\x'\|^2 \leq R_{\x'}(f) \leq R_\x(f) + 2L\|\x-\x'\|^2.
 $ 
 
-We will define $\tilde \x_{b,k} = (\x_p',\x_{b,k}')'$ and $\tilde \x_{p,j} = (\x_{p,j}',\x_b')'$ for notational convenience, and will additionally assume the following regularity approximations:
-\begin{itemize}
-\item[A4.] The quantities $\sum_{j=1}^Jw_{p,j}^2\|\x - \tilde \x_{p,j}\|^m$ and $\sum_{k=1}^Kw_{b,k}^2\|\x - \tilde \x_{b,k}\|^m$ are negligible, where $m = 2,4$.
-\item[A5.] The quantities $\sum_{j=1}^Jw_{p,j}\left(\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b))\h_{p,j} - \h'\text{diag}(\Hcal_f(\y|\x))\h\right)$ and \\$\sum_{k=1}^Kw_{b,k}\left(\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k}))\h_{b,k} - \h'\text{diag}(\Hcal_f(\y|\x))\h\right)$ are negligible.
-\end{itemize}
-Approximation A4 is reasonable in our baseball application where there are many players similar enough to the players under study so that $\sum_{j=1}^Js_{p,j} > 1$ and $\sum_{k=1}^Ks_{b,k} > 1$ and $s_{p,j}\|\x-\tilde\x_{p,j}\|^m, s_{b,k}\|\x-\tilde\x_{b,k}\|^m \to 0$ as $\|\x-\tilde\x_{p,j}\|,\|\x-\tilde\x_{b,k}\| \to \infty$ for all integers $m$. Approximation A5 is reasonable by similar logic. Specification of $\beta = 2$ implies that  
-$\|\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k})) - \text{diag}(\Hcal_f(\y|\x))\| \leq \sqrt{d_p}L$ and 
-$\|\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b)) - \text{diag}(\Hcal_f(\y|\x))\| \leq \sqrt{d_b}L$
-where $d_p$ and $d_b$ are, respectively, the dimension of $\x_p$ and $\x_b$. 
 
-%Properties to verify
-%$$
-%  \E(\hat f_\h(\y|\x)) - f(\y|\x) \approx \frac{\mu_2(K)\h'\Hcal_f(\y|\x)\h}{2}
-%$$
-%and
-%$$
-% \Var(\hat f_\h(\y|\x)) \approx \frac{R_{\x}(f)f(\y|\x)}{\det(\Hbf)}
-%$$
-
-% https://www.ssc.wisc.edu/~bhansen/718/NonParametrics1.pdf
-%From Hansen's notes: 
-
-We now have enough structure to estimate the MSE of \eqref{spraydens} and \eqref{sd-implem}. Standard results from nonparametric estimation theory give
-$$
-  \E(\hat f_\h(\y|\x)) - f(\y|\x) = \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
-    + o(\|\h\|^2),
-$$
-and
-$$
- \Var(\hat f_\h(\y|\x)) = \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
-$$
-
+We now have enough structure to estimate the MSE of \eqref{spraydens} and \eqref{sd-implem}.
 Our multivariate H{\"o}lder class specifications yield,
 \begin{align*}
-  &\E(\hat g_{\lambdabf}(y|x)) = \lambda \E \hat f_\h(\y|\x)
-    + \lambda_p \E \hat f_{\text{sp}}(\y|\x_b) 
-    + \lambda_b \E \hat f_{\text{sb}}(\y|\x_p) \\
-  &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
-    + \lambda_p \sum_{j=1}^J w_{p,j} \E \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_b) \\
-    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} \E \hat f_{\h_{b,k}}(\y|\x_p,\x_{b,k}) 
+  &\E(\hat g_{\lambdabf}(\y)) = \lambda \E \hat f_\h(\y)
+    + \lambda_p \E \hat f_{\text{sp}}(\y) 
+    + \lambda_b \E \hat f_{\text{sb}}(\y) \\
+  &\qquad= \lambda f(\y) 
+    + \lambda \sum_t\rho_t\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} 
+    + \lambda_p\sum_t\rho_t \sum_{j=1}^J w_{p,j,t} \E \hat f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_{b,t}) \\
+    &\qquad\qquad+ \lambda_b \sum_t \rho_t\sum_{k=1}^K w_{b,k,t} \E \hat f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k,t}) 
     + o(\|\h\|^2) \\
-  &\qquad= \lambda f(\y|\x) +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
-  + o(\|\h\|^2) \\
-    &\qquad\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f_{\h_{p,j}}(\y|\x_{p,j},\x_b) 
-      + \lambda_p\sum_{j=1}^Jw_{p,j}
-      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b))\h_{p,j}}{2} \\
-    &\qquad\qquad+ \lambda_b \sum_{k=1}^K w_{b,k} f_{\h_{b,k}}(\y|\x_p,\x_{b,k}) 
-      + \lambda_b\sum_{k=1}^K w_{b,k}
-      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k}))\h_{b,k}}{2},
+  &\qquad= \lambda f(\y) 
+    + \lambda \sum_t\rho_t\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} 
+    + o(\|\h\|^2) \\
+    &\qquad\qquad+ \lambda_p \sum_t\rho_t\sum_{j=1}^J w_{p,j,t} f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_{b,t}) 
+      + \lambda_p\sum_t\rho_t\sum_{j=1}^Jw_{p,j,t}
+      \frac{\mu_2(K)\h_{p,j,t}'\text{diag}(\Hcal_f(\y|\x_{p,j,t},\x_{b,t}))\h_{p,j,t}}{2} \\
+    &\qquad\qquad+ \lambda_b \sum_t\rho_t\sum_{k=1}^K w_{b,k,t} f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k,t}) 
+      + \lambda_b\sum_t\rho_t\sum_{k=1}^K w_{b,k,t}
+      \frac{\mu_2(K)\h_{b,k,t}'\text{diag}(\Hcal_f(\y|\x_{p,t},\x_{b,k,t}))\h_{b,k,t}}{2},
 \end{align*}
 and 
 \begin{align*}
-  &\Var(\hat g_{\lambdabf}(y|x)) = \Var\left(\lambda \hat f_\h(\y|\x) 
-    + \lambda_p \hat f_{\text{sp}}(\y|\x_b) 
-    + \lambda_b \hat f_{\text{sb}}(\y|\x_p)\right) \\
-  &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
-    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2 \Var \hat f_{\h_{p,j}}(\y|\x_{p,j},\x_b) 
-    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2 \Var \hat f_{\h_{b,k}}(\y|\x_p,\x_{b,k}) \\
-  &= \lambda^2 \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
-    + \lambda_p^2 \sum_{j=1}^J w_{p,j}^2
-      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_b)}{n_{p,j}\det(\Hbf_{p,j})} 
-    + \lambda_b^2 \sum_{k=1}^K w_{b,k}^2
-      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_p,\x_{b,k})}{n_{b,k}\det(\Hbf_{b,k})},
+  \Var(\hat g_{\lambdabf}(\y)) &= \Var\left(\lambda \hat f_\h(\y) 
+    + \lambda_p \hat f_{\text{sp}}(\y) 
+    + \lambda_b \hat f_{\text{sb}}(\y)\right) \\
+  &= \lambda^2 \sum_t\rho_t\frac{R_{\x_t}(f)f(\y|\x_t)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
+    + \lambda_p^2\sum_t\rho_t \sum_{j=1}^J w_{p,j,t}^2 \Var \hat f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_{b,t}) \\
+    &\qquad+ \lambda_b^2\sum_t\rho_t \sum_{k=1}^K w_{b,k,t}^2 \Var \hat f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k,t}) \\
+  &= \lambda^2 \sum_t\rho_t \frac{R_{\x_t}(f)f(\y|\x_t)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right)
+    + \lambda_p^2 \sum_t\rho_t \sum_{j=1}^J w_{p,j,t}^2
+      \frac{R_{\tilde \x_{p,j,t}}(f)f(\y|\x_{p,j,t},\x_{b,t})}{n_{p,j,t}\det(\Hbf_{p,j,t})} \\
+    &\qquad+ \lambda_b^2 \sum_t\rho_t \sum_{k=1}^K w_{b,k,t}^2
+      \frac{R_{\tilde\x_{b,k,t}}(f)f(\y|\x_{p,t},\x_{b,k,t})}{n_{b,k,t}\det(\Hbf_{b,k,t})},
 \end{align*}
-Let $\theta_{p,j} = n\det(\Hbf)/n_{p,j}\det(\Hbf_{p,j})$ and $\theta_{b,k} = n\det(\Hbf)/n_{b,k}\det(\Hbf_{b,k})$. With these specifications, we have that
+
+
+We will define $\tilde \x_{b,k,t} = (\x_{p,t}',\x_{b,k,t}')'$ and $\tilde \x_{p,j,t} = (\x_{p,j,t}',\x_{b,t}')'$ for notational convenience, and will additionally assume the following regularity approximations:
+\begin{itemize}
+\item[A4.] The quantities $\sum_{j=1}^Jw_{p,j,t}^2\|\x_t - \tilde \x_{p,j,t}\|^m$ and $\sum_{k=1}^Kw_{b,k,t}^2\|\x_t - \tilde \x_{b,k,t}\|^m$ are negligible, where $m = 2,4$.
+\item[A5.] The quantities $\sum_{j=1}^Jw_{p,j,t}\left(\h_{p,j,t}'\text{diag}(\Hcal_f(\y|\x_{p,j,t},\x_{b,t}))\h_{p,j,t} - \h'\text{diag}(\Hcal_f(\y|\x_t))\h\right)$ and \\
+$\sum_{k=1}^Kw_{b,k,t}\left(\h_{b,k,t}'\text{diag}(\Hcal_f(\y|\x_{p,t},\x_{b,k,t}))\h_{b,k,t} - \h'\text{diag}(\Hcal_f(\y|\x_t))\h\right)$ are negligible.
+\end{itemize}
+Approximation A4 is reasonable in our baseball application where there are many players similar enough to the players under study so that $\sum_{j=1}^Js_{p,j,t} > 1$ and $\sum_{k=1}^Ks_{b,k,t} > 1$ and $s_{p,j,t}\|\x_t-\tilde\x_{p,j,t}\|^m, s_{b,k,t}\|\x_t-\tilde\x_{b,k,t}\|^m \to 0$ as $\|\x_t-\tilde\x_{p,j,t}\|,\|\x_t-\tilde\x_{b,k,t}\| \to \infty$ for all integers $m$. Approximation A5 is reasonable by similar logic. Specification of $\beta = 2$ implies that  
+$\|\text{diag}(\Hcal_f(\y|\x_{p,t},\x_{b,k,t})) - \text{diag}(\Hcal_f(\y|\x_t))\| \leq \sqrt{d_p}L$ and 
+$\|\text{diag}(\Hcal_f(\y|\x_{p,j,t},\x_{b,t})) - \text{diag}(\Hcal_f(\y|\x_t))\| \leq \sqrt{d_b}L$
+where $d_p$ and $d_b$ are, respectively, the dimension of $\x_{p,t}$ and $\x_{b,t}$. % https://www.ssc.wisc.edu/~bhansen/718/NonParametrics1.pdf
+%From Hansen's notes: 
+Let $\theta_{p,j,t} = n\det(\Hbf)/n_{p,j,t}\det(\Hbf_{p,j,t})$ and $\theta_{b,k,t} = n\det(\Hbf)/n_{b,k,t}\det(\Hbf_{b,k,t})$. With these specifications, we have that
 \begin{align*}
-  &\Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) + O\left(\frac{1}{n}\right) \\
-  &=(\lambda^2 - 1)\frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} 
-    + \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
-      \frac{R_{\tilde \x_{p,j}}(f)f(\y|\x_{p,j},\x_b)}{n\det(\Hbf)} 
-    + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 
-      \frac{R_{\tilde\x_{b,k}}(f)f(\y|\x_p,\x_{b,k})}{n\det(\Hbf)} \\
-  &\leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
-    + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right)
-      \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
-    &\qquad\qquad+ \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
-      \left(\frac{R_{\x}(f)\|\x-\tilde \x_{p,j}\|^2 
-      + 2Lf(\y|\x)\|\x-\tilde \x_{p,j}\|^2 + 2L^2\|\x-\tilde \x_{p,j}\|^4}{n\det(\Hbf)}\right) \\
-    &\qquad\qquad+ \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2
-      \left(\frac{R_{\x}(f)\|\x-\tilde \x_{b,k}\|^2 
-      + 2Lf(\y|\x)\|\x-\tilde \x_{b,k}\|^2 + 2L^2\|\x-\tilde \x_{b,k}\|^4}{n\det(\Hbf)}\right).
+  &\Var(\hat g_{\lambdabf}(\y)) - \Var(\hat f_\h(\y)) + O\left(\frac{1}{n}\right) \\
+  &=(\lambda^2 - 1)\sum_t\rho_t\frac{R_{\x_t}(f)f(\y|\x_t)}{n\det(\Hbf)} 
+    + \lambda_p^2\sum_t\rho_t \sum_{j=1}^J \theta_{p,j,t}w_{p,j,t}^2
+      \frac{R_{\tilde \x_{p,j,t}}(f)f(\y|\x_{p,j,t},\x_{b,t})}{n\det(\Hbf)} \\
+    &\qquad+ \lambda_b^2 \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2 
+      \frac{R_{\tilde\x_{b,k,t}}(f)f(\y|\x_{p,t},\x_{b,k,t})}{n\det(\Hbf)} \\
+  &\leq \sum_t\rho_t\left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J \theta_{p,j,t}w_{p,j,t}^2
+    + \lambda_b^2 \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2 - 1\right)
+      \frac{R_{\x_t}(f)f(\y|\x_t)}{n\det(\Hbf)} \\
+    &\qquad\qquad+ \lambda_p^2 \sum_t\rho_t\sum_{j=1}^J \theta_{p,j,t}w_{p,j,t}^2
+      \left(\frac{R_{\x_t}(f)\|\x_t-\tilde \x_{p,j,t}\|^2 
+      + 2Lf(\y|\x_t)\|\x_t-\tilde \x_{p,j,t}\|^2 + 2L^2\|\x_t-\tilde \x_{p,j,t}\|^4}{n\det(\Hbf)}\right) \\
+    &\qquad\qquad+ \lambda_b^2\sum_t\rho_t \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2
+      \left(\frac{R_{\x_t}(f)\|\x_t-\tilde \x_{b,k,t}\|^2 
+      + 2Lf(\y|\x_t)\|\x_t-\tilde \x_{b,k,t}\|^2 + 2L^2\|\x_t-\tilde \x_{b,k,t}\|^4}{n\det(\Hbf)}\right).
 \end{align*}
-Our assumption on the $w_{b,k}^2\|\x-\tilde \x_{,k}\|^m$ and $w_{p,j}^2\|\x-\tilde \x_{p,j}\|^m$, for $m = 2,4$, and an identical lower bound argument implies that 
+Assumption A4 and an identical lower bound argument implies that 
+$
+  \Var(\hat g_{\lambdabf}(\y)) - \Var(\hat f_\h(\y)) 
+$
+is approximately bounded above by
 $$
-  \Var(\hat g_{\lambdabf}(y|x)) - \Var(\hat f_\h(\y|\x)) 
-    \approx \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J\theta_{p,j}w_{p,j}^2 
-      + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right)
-      \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
+   \sum_t\rho_t\left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J\theta_{p,j,t}w_{p,j,t}^2 
+      + \lambda_b^2 \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2 - 1\right)
+      \frac{R_{\x_t}(f)f(\y|\x_t)}{n\det(\Hbf)} + O\left(\frac{1}{n}\right).
 $$
+
+
 We also have
 \begin{align*}
-  \text{Bias}(\hat f_\h(\y|\x),f(\y|\x))^2 
-    &= \left(\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} 
+  \text{Bias}(\hat f_\h(\y),f(\y))^2 
+    &= \left(\sum_t\rho_t\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} 
     + o(\|\h\|^2)\right)^2,
 \end{align*}
 and regularity approximations A4 and A5 yield
 \begin{align*}
-  &\text{Bias}(\hat g_{\lambdabf}(\y|\x),f(\y|\x))^2 = \left(\lambda f(\y|\x) - f(\y|\x) 
-    +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} + o(\|\h\|^2)\right. \\
-    &\qquad+ \lambda_p \sum_{j=1}^J w_{p,j} f(\y|\x_{p,j},\x_b) 
-      + \lambda_p\sum_{j=1}^Jw_{p,j}
-      \frac{\mu_2(K)\h_{p,j}'\text{diag}(\Hcal_f(\y|\x_{p,j},\x_b))\h_{p,j}}{2} \\
-    &\qquad+ \left.\lambda_b \sum_{k=1}^K w_{b,k} f(\y|\x_p,\x_{b,k}) 
-      + \lambda_b\sum_{k=1}^K w_{b,k}
-      \frac{\mu_2(K)\h_{b,k}'\text{diag}(\Hcal_f(\y|\x_p,\x_{b,k}))\h_{b,k}}{2}\right)^2 \\
- &\leq \left(\lambda f(\y|\x) - f(\y|\x) 
-    +  \lambda \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} + o(\|\h\|^2)\right. \\
-    &\qquad+ \lambda_p \sum_{j=1}^J w_{p,j}(f(\y|\x) + L(-1)^t\|\x - \tilde\x_{p,j}\|^2)
-      + \lambda_p\sum_{j=1}^Jw_{p,j}\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} \\  
-    &\qquad+ \left.\lambda_b \sum_{k=1}^K w_{b,k}(f(\y|\x) 
-      + L(-1)^t\|\x - \tilde\x_{b,k}\|^2)
-      + \lambda_b\sum_{k=1}^K w_{b,k}\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2 \\
- &\approx \left(\lambda_p \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
-   + \lambda_b \sum_{k=1}^K (-1)^tLw_{b,k}\|\x - \tilde\x_{b,k}\|^2\right. \\
-   &\qquad+ \left.\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2} + o(\|\h\|^2)\right)^2,
+  &\text{Bias}(\hat g_{\lambdabf}(\y),f(\y))^2 = \left((\lambda - 1)\sum_t\rho_tf(\y|\x_t) 
+    + \lambda \sum_t\rho_t\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} 
+      + o(\|\h\|^2)\right. \\
+    &\qquad+ \lambda_p \sum_t\rho_t \sum_{j=1}^J w_{p,j,t} f(\y|\x_{p,j,t},\x_{b,t}) 
+      + \lambda_p\sum_t\rho_t\sum_{j=1}^Jw_{p,j,t}
+      \frac{\mu_2(K)\h_{p,j,t}'\text{diag}(\Hcal_f(\y|\x_{p,j,t},\x_{b,t}))\h_{p,j,t}}{2} \\
+    &\qquad+ \left.\lambda_b\sum_t\rho_t \sum_{k=1}^K w_{b,k,t} f(\y|\x_{p,t},\x_{b,k,t}) 
+      + \lambda_b\sum_t\rho_t\sum_{k=1}^K w_{b,k,t}
+      \frac{\mu_2(K)\h_{b,k,t}'\text{diag}(\Hcal_f(\y|\x_{p,t},\x_{b,k,t}))\h_{b,k,t}}{2}\right)^2 \\
+ &\leq \left((\lambda-1)\sum_t\rho_t f(\y|\x_t) 
+    +  \lambda \sum_t\rho_t \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} + o(\|\h\|^2)\right. \\
+    &\qquad+ \lambda_p \sum_t\rho_t\sum_{j=1}^J w_{p,j,t}(f(\y|\x_t) + L(-1)^z\|\x_t - \tilde\x_{p,j,t}\|^2)
+      + \lambda_p \sum_t\rho_t \sum_{j=1}^Jw_{p,j,t}\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} \\  
+    &\qquad+ \left.\lambda_b \sum_t\rho_t \sum_{k=1}^K w_{b,k,t}(f(\y|\x_t) 
+      + L(-1)^z\|\x_t - \tilde\x_{b,k,t}\|^2)
+      + \lambda_b\sum_t\rho_t\sum_{k=1}^K w_{b,k,t}\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2}\right)^2 \\
+ &\approx \left(\lambda_p \sum_t\rho_t\sum_{j=1}^J (-1)^z Lw_{p,j,t}\|\x_t - \tilde\x_{p,j,t}\|^2 
+   + \lambda_b \sum_t\rho_t\sum_{k=1}^K (-1)^z Lw_{b,k,t}\|\x_t - \tilde\x_{b,k,t}\|^2\right. \\
+   &\qquad+ \left.\sum_t\rho_t\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} + o(\|\h\|^2)\right)^2,
 \end{align*}
-where $t \in \{0,1\}$ is chosen to satisfy the above inequality. Putting these variance and bias results together without the lower order terms yields
+where $z \in \{0,1\}$ is chosen to satisfy the above inequality. Putting these variance and bias results together without the lower order terms yields
 \begin{align*}
-  &MSE(\hat g_{\lambdabf}(\y|\x),f(\y|\x)) - MSE(\hat f_{\h}(\y|\x),f(\y|\x)) \\
-    &\qquad\leq \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J\theta_{p,j}w_{p,j}^2 
-      + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right)
-      \frac{R_{\x}(f)f(\y|\x)}{n\det(\Hbf)} \\
-    &\qquad+ \left(\lambda_p \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
-     + \lambda_b \sum_{k=1}^K (-1)^tLw_{b,k}\|\x - \tilde\x_{b,k}\|^2 + 
-     \frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2 \\
-    &\qquad- \left(\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x))\h}{2}\right)^2.
+  &MSE(\hat g_{\lambdabf}(\y),f(\y)) - MSE(\hat f_{\h}(\y),f(\y)) \\
+    &\qquad\leq    \sum_t\rho_t\left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J\theta_{p,j,t}w_{p,j,t}^2 
+      + \lambda_b^2 \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2 - 1\right)
+      \frac{R_{\x_t}(f)f(\y|\x_t)}{n\det(\Hbf)} \\
+   &\qquad+ \left(\lambda_p \sum_t\rho_t\sum_{j=1}^J (-1)^z Lw_{p,j,t}\|\x_t - \tilde\x_{p,j,t}\|^2 
+   + \lambda_b \sum_t\rho_t\sum_{k=1}^K (-1)^z Lw_{b,k,t}\|\x_t - \tilde\x_{b,k,t}\|^2\right. \\
+   &\qquad+ \left.\sum_t\rho_t\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2}\right)^2  
 \end{align*}
+
+
+
+\vspace{2cm}
+
+
+
+
+
+
 This motivates the following choice of $\lambdabf$,
 $$
   \lambda = \frac{\sqrt{n}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
