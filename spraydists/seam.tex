@@ -427,11 +427,11 @@ Our multivariate H{\"o}lder class specifications yield,
   &\qquad= \lambda f(\y) 
     + \lambda \sum_t\rho_t\frac{\mu_2(K)\h'\text{diag}(\Hcal_f(\y|\x_t))\h}{2} 
     + o(\|\h\|^2) \\
-    &\qquad\qquad+ \lambda_p \sum_t\rho_t\sum_{j=1}^J w_{p,j,t} f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_{b,t}) 
-      + \lambda_p\sum_t\rho_t\sum_{j=1}^Jw_{p,j,t}
+    &\qquad\qquad+ \lambda_p \sum_t\rho_t\sum_{j=1}^J w_{p,j,t} f_{\h_{p,j,t}}(\y|\x_{p,j,t},\x_{b,t}) \\
+    &\qquad\qquad+ \lambda_p\sum_t\rho_t\sum_{j=1}^Jw_{p,j,t}
       \frac{\mu_2(K)\h_{p,j,t}'\text{diag}(\Hcal_f(\y|\x_{p,j,t},\x_{b,t}))\h_{p,j,t}}{2} \\
-    &\qquad\qquad+ \lambda_b \sum_t\rho_t\sum_{k=1}^K w_{b,k,t} f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k,t}) 
-      + \lambda_b\sum_t\rho_t\sum_{k=1}^K w_{b,k,t}
+    &\qquad\qquad+ \lambda_b \sum_t\rho_t\sum_{k=1}^K w_{b,k,t} f_{\h_{b,k,t}}(\y|\x_{p,t},\x_{b,k,t}) \\
+     &\qquad\qquad+ \lambda_b\sum_t\rho_t\sum_{k=1}^K w_{b,k,t}
       \frac{\mu_2(K)\h_{b,k,t}'\text{diag}(\Hcal_f(\y|\x_{p,t},\x_{b,k,t}))\h_{b,k,t}}{2},
 \end{align*}
 and 
@@ -472,10 +472,10 @@ Let $\theta_{p,j,t} = n\det(\Hbf)/n_{p,j,t}\det(\Hbf_{p,j,t})$ and $\theta_{b,k,
   &\leq \sum_t\rho_t\left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J \theta_{p,j,t}w_{p,j,t}^2
     + \lambda_b^2 \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2 - 1\right)
       \frac{R_{\x_t}(f)f(\y|\x_t)}{n\det(\Hbf)} \\
-    &\qquad\qquad+ \lambda_p^2 \sum_t\rho_t\sum_{j=1}^J \theta_{p,j,t}w_{p,j,t}^2
+    &\qquad+ \lambda_p^2 \sum_t\rho_t\sum_{j=1}^J \theta_{p,j,t}w_{p,j,t}^2
       \left(\frac{R_{\x_t}(f)\|\x_t-\tilde \x_{p,j,t}\|^2 
       + 2Lf(\y|\x_t)\|\x_t-\tilde \x_{p,j,t}\|^2 + 2L^2\|\x_t-\tilde \x_{p,j,t}\|^4}{n\det(\Hbf)}\right) \\
-    &\qquad\qquad+ \lambda_b^2\sum_t\rho_t \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2
+    &\qquad+ \lambda_b^2\sum_t\rho_t \sum_{k=1}^K \theta_{b,k,t}w_{b,k,t}^2
       \left(\frac{R_{\x_t}(f)\|\x_t-\tilde \x_{b,k,t}\|^2 
       + 2Lf(\y|\x_t)\|\x_t-\tilde \x_{b,k,t}\|^2 + 2L^2\|\x_t-\tilde \x_{b,k,t}\|^4}{n\det(\Hbf)}\right).
 \end{align*}
@@ -531,49 +531,43 @@ where $z \in \{0,1\}$ is chosen to satisfy the above inequality. Putting these v
 \end{align*}
 
 
-
-\vspace{2cm}
-
-
-
-
-
-
 This motivates the following choice of $\lambdabf$,
 $$
   \lambda = \frac{\sqrt{n}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
   \lambda_p = \frac{\sqrt{n_p}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}}, \qquad
   \lambda_b = \frac{\sqrt{n_b}}{\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}},
 $$
-where $n_p = \sum_{j=1}^J s_{p,j}^2n_{p,j}$ and $n_b = \sum_{k=1}^K s_{b,k}^2n_{b,k}$. We will now develop intuition for these choices. First, notice that $\lambda_p,\lambda_b \to 0$ as 
-$\min_j(\|\x - \tilde\x_{p,j}\|), \min_k(\|\x - \tilde\x_{b,k}\|) \to \infty$. These cases correspond, to there being no similar pitchers or batters to the players under study. We turn attention to the bias terms, notice that 
-$$
-  \lambda_p\sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2 
-    = \frac{\sqrt{\sum_{j=1}^J s_{p,j}^2n_{p,j}}
-      \sum_{j=1}^J (-1)^t Lw_{p,j}\|\x - \tilde\x_{p,j}\|^2}
+where $n_p = \sum_t\rho_t\sum_{j=1}^J s_{p,j,t}^2n_{p,j,t}$ and $n_b = \sum_t\rho_t\sum_{k=1}^K s_{b,k,t}^2n_{b,k,t}$. We will now develop intuition for these choices. First, notice that $\lambda_p,\lambda_b \to 0$ as 
+$\min_j(\|\x_t - \tilde\x_{p,j,t}\|), \min_k(\|\x_t - \tilde\x_{b,k,f}\|) \to \infty$ for all $t = 1,\ldots,n_{\text{pitch types}}$. These cases correspond, to there being no similar pitchers or batters to the players under study. We turn attention to the bias terms, notice that 
+\begin{align*}
+  &\lambda_p\sum_t\rho_t \sum_{j=1}^J (-1)^z Lw_{p,j,t}\|\x_t - \tilde\x_{p,j,t}\|^2 \\
+    &\qquad= \frac{\sqrt{\sum_t\rho_t\sum_{j=1}^J s_{p,j,t}^2n_{p,j,t}}\left(\sum_t\rho_t
+      \sum_{j=1}^J (-1)^z Lw_{p,j,t}\|\x_t - \tilde\x_{p,j,t}\|^2\right)}
       {\sqrt{n} + \sqrt{n_p} + \sqrt{n_b}} \longrightarrow 0,
-$$
-when there exists some $j'$ such that $\|\x - \tilde\x_{p,j}\| \to 0$ or $\min_j(\|\x - \tilde\x_{p,j}\|) \to \infty$. These cases correspond, respectively, to there being a few highly similar pitchers or there being no similar pitchers to the pitcher under study. Thus, the discrepancy in bias vanishes in the extreme cases. The same argument holds for batters. Now notice that
-$$
-  \lambda_p^2 \sum_{j=1}^J\theta_{p,j}w_{p,j}^2 
-    = \frac{\sum_{j=1}^J s_{p,j}^2n_{p,j}\sum_{j=1}^J\theta_{p,j}w_{p,j}^2}
-      {(\sqrt{n} + \sqrt{n_p} + \sqrt{n_b})^2} \longrightarrow 
+\end{align*}
+when there exists some $j'$ such that $\|\x_t - \tilde\x_{p,j',t}\| \to 0$ or $\min_j(\|\x_t - \tilde\x_{p,j,t}\|) \to \infty$ for each pitch type $t = 1,\ldots, n_{\text{pitch types}}$. These cases correspond, respectively, to there being a few highly similar pitchers or there being no similar pitchers for each pitch thrown by the pitcher under study. Thus, the discrepancy in bias vanishes in the extreme cases. The same argument holds for batters. Now notice that
+\begin{align*}
+  \lambda_p^2 \sum_t\rho_t\sum_{j=1}^J\theta_{p,j,t}w_{p,j,t}^2 
+    &= \frac{\left(\sum_t\rho_t\sum_{j=1}^J s_{p,j,t}^2n_{p,j,t}\right)\left(\sum_t\rho_t\sum_{j=1}^J\theta_{p,j,t}w_{p,j,t}^2\right)}
+      {(\sqrt{n} + \sqrt{n_p} + \sqrt{n_b})^2} \\
+  & \longrightarrow 
       \left\{\begin{array}{cl}
-       0, & \min_j(\|\x - \tilde\x_{p,j}\|) \to \infty; \\
-         & \\
-       \frac{n}
-         {(\sqrt{n} + \sqrt{n_{p,j'}} + \sqrt{n_b})^2}, & w_{p,j'} \to 1.
+       0, & \min_{j,t}(\|\x_t - \tilde\x_{p,j,t}\|) \to \infty; \\
+         %& \\
+       \frac{\sum_t\rho_t n_{p,j_t,t}}
+         {(\sqrt{n} + \sqrt{\sum_t\rho_tn_{p,j_t,t}} + \sqrt{n_b})^2}, & w_{p,j_t,t} \to 1, \; \text{for all} \; t = 1,\ldots,n_{\text{pitch types}},
       \end{array}\right.
+\end{align*}
+under the specifications that $\theta_{p,j_t,t} = 1$. The same argument holds for batters under the specifications that $\theta_{b,k_t,t} = 1$. Therefore, when there is a pitcher $j_t$ and batter $k_t$ so that  $w_{p,j_t,t},w_{b,k_t,t} \to 1$ for each pitch type $t = 1,\ldots,n_{\text{pitch types}}$, we have that 
 $$
-The same argument holds for batters. Therefore, when there is a pitcher $j'$ and batter $k'$ so that  $w_{p,j'},w_{b,k'} \to 1$, we have that 
-$$
-  \left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
+  \sum_t\rho_t\left(\lambda^2 + \lambda_p^2 \sum_{j=1}^J \theta_{p,j}w_{p,j}^2
     + \lambda_b^2 \sum_{k=1}^K \theta_{b,k}w_{b,k}^2 - 1\right) \longrightarrow 
-    \frac{3n}
-      {(\sqrt{n} + \sqrt{n_{p,j'}} + \sqrt{n_{b,k'}})^2} - 1.
+    \frac{n + \sum_t\rho_tn_{p,j_t,t} + \sum_t\rho_tn_{b,k_t,t}}
+      {(\sqrt{n} 
+        + \sqrt{\sum_t\rho_tn_{p,j_t,t}} + \sqrt{\sum_t\rho_tn_{b,k_t,t}})^2} - 1.
 $$
-The above is not always less than 0 for all configurations. However, it will be less than 0 when $n$ is comparable to $n_{p,j'}$ and $n_{b,k'}$, a setting that we will guard against in our implementation by specifying a minimal sample size to enter into available player pool.
-
+%The above is not always less than 0 for all configurations. However, it will be less than 0 when $n$ is comparable to $n_{p,j'}$ and $n_{b,k'}$, a setting that we will guard against in our implementation by specifying a minimal sample size to enter into available player pool.
+Our choices of the elements of $\lambdabf$ will work well in the presence or absence of pitchers and batters that recover the traits of the players under study. Less is known about middle ground cases, especially when sample sizes are are small.
 
 \bibliographystyle{chicago}
 \bibliography{spray}
