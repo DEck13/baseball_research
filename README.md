@@ -38,7 +38,7 @@ This directory is a work in progress.
 [with Charlie Young and David Dalpiaz] The spraydists directory contains a  
 manuscript on spray chart distributions. Spray chart distributions are 2-dimensional 
 distributions of the final batted ball locations corresponding to a batter vs. pitcher matchup of 
-interest. A shiny app that allows users to study batter vs. pitcher matchups visually and numerically can be viewed [here](https://seam.stat.illinois.edu). 
+interest. Our website which contains a shiny app that allows users to study batter vs. pitcher matchups visually and numerically can be viewed [here](https://seam.stat.illinois.edu). 
 
 ### Paradoxical relationship of fWAR and wins
 

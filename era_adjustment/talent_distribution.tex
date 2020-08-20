@@ -1,0 +1,314 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+%\usepackage{amscd}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{mathtools}
+\usepackage{natbib}
+\usepackage{url}
+
+\usepackage{geometry}
+\usepackage[usenames]{color}
+\geometry{margin=1in}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Y}{\mathcal{Y}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Hcal}{\mathcal{H}}
+
+\newcommand{\Ybf}{\textbf{Y}}
+\newcommand{\Xbf}{\textbf{X}}
+\newcommand{\Hbf}{\textbf{H}}
+\newcommand{\V}{\textbf{V}}
+\newcommand{\W}{\textbf{W}}
+\newcommand{\y}{\textbf{y}}
+\newcommand{\x}{\textbf{x}}
+\newcommand{\h}{\textbf{h}}
+\newcommand{\w}{\textbf{w}}
+\newcommand{\s}{\textbf{s}}
+\newcommand{\tbf}{\textbf{t}}
+\newcommand{\Wstar}{\W^{\textstyle{*}}}
+\newcommand{\wstar}{w^{\textstyle{*}}}
+\newcommand{\wstarsq}{w^{\textstyle{*}^2}}
+\newcommand{\wstarpwr}{w^{\textstyle{*}^{5/4}}}
+\newcommand{\lamstar}{\lambda^{\textstyle{*}}}
+
+\newcommand{\npop}{n_{\text{pop}}}
+%\newcommand{\nsys}{n_{\text{sys}}}
+\newcommand{\nsys}{n}
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\indep}{\perp\!\!\!\perp}
+
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\MSE}{MSE}
+
+
+\newtheorem{cor}{Corollary}
+\newtheorem{lem}{Lemma}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}{Definition}
+\newtheorem{prop}{Proposition}
+
+\newcommand\red[1]{{\color{red}#1}}
+
+\allowdisplaybreaks
+
+%\title{Full House Methodology for estimating hidden components of describable systems}
+\title{Full House Methodology for estimating components of describable systems by accounting for context}
+\author{Daniel J. Eck}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We motivate a new viewpoint on statistical inference on components of systems when placed in the broader context of the population that these components arise from. Particular emphasis is placed on a class of techniques for inferring the values of hidden inputs in systems with estimable components. Each estimable component in the system is thought to be a function of hidden traits which are themselves realizations from a parametric probability distribution. With this structure we can estimate the values of the hidden traits after estimating the distribution of the system components. Estimation of the distribution of system components can be done with no parametric assumptions when necessary. This framework allows for one to infer how individuals will perform in different states of a describable system that remains stable but has a changing hidden inputs  distribution. Our methodology is named in homage to Stephen J. Gould's book Full House: The Spread of Excellence from Plato to Darwin \citep{gould1996full}.  We demonstrate our method on historical batting averages in baseball, a compelling example of how seemingly paradoxical conclusions arise when the full house of system variability is taken into account.
+\end{abstract}
+
+
+
+
+
+
+
+\section{Setting}
+
+We will suppose that we have a sample of $\nsys$ observable components $Y_{i_1},\ldots,Y_{i_{\nsys}}$ arising from a population with $\npop \geq \nsys$ members. We will additionally suppose that each $Y_j = f_j(X_j)$, $j = 1,\ldots,\npop$, where $X_j$ is some underlying hidden trait arising from a distribution $F_X$, $f_j$ is an indvidual specific function connecting the hidden trait and the outcome, and $g_j(X_j)$ is the system inclusion mechanism, $g_j(X_j) = 1$ indicates that subject $j$ is included in the system and $g_j(X_j) = 0$ indicates that subject $j$ is not included in the system. The inclusion mechanism can be probabilistic or deterministic. This framework encapsulates simple random sampling where $X_j = Y_j$, $f_j$ is the identity function, and $g_j(X_j) = 1$ with probability $\nsys/\npop$.
+%Special considerations of the larger population may not be of primary importance when the distribution of $X$ is well-behaved and $\nsys$ is large enough. 
+
+
+
+\section{The spread of excellence model}
+
+Let $\npop$ be the size of the population and let $\nsys \leq \npop$ be the number of components in the system. Suppose that we have a sample of outputs $Y_1,\ldots,Y_{\nsys} \overset{iid}{\sim} F_Y$ measured on the components in the system. Suppose that all individuals in the population have an underlying aptitude to participate in the system. Denote this aptitude by $X_1,\ldots,X_{\npop} \overset{iid}{\sim} F_X$. Suppose that the system selects the highest aptitudes, so that $g(X_j) = 1(X_j \geq X_{\npop - \nsys + 1})$, where we observe $Y_{(j)} = f_j(X_{(\npop - \nsys + j)})$. We motivate this methodological approach through the goal of inferring the values of $X_{(\npop - \nsys + j)}$, $j = 1,\ldots,\nsys$ from the observed values of $Y_1,\ldots,Y_{\nsys}$. 
+
+In this setup, we will assume that $F_X$ is completely known up to $p_X$ unknown parameters $\theta \in \R^{p_X}$ and that $F_Y$ is known, known up to $p_Y$ unknown parameters $\psi \in \R^{p_Y}$, or unknown and is estimated empirically. 
+
+\subsection{Parametric case}
+
+Let $F_Y(\cdot|\theta)$ be a parametric CDF with parameters $\theta \in \R^{p_Y}$. We can estimate $\theta$ with $\hat{\theta}$ and plug the estimator into the CDF $F_Y(\cdot|\hat{\theta})$. The distribution function $F_{Y_{(j)}}(y|\hat{\theta})$ is
+$$
+  F_{Y_{(j)}}(y|\hat{\theta}) = \sum_{k=j}^{\nsys}
+    {\nsys \choose k}\left(F_Y(y|\hat{\theta})\right)^k
+      \left(1 - F_Y(y|\hat{\theta})\right)^{\nsys - k}.
+$$
+We will make use of the following classical order statistics properties,
+\begin{align*}
+  F_Y(Y_{(j)}|\theta) &\sim U_{(j)},  &&F_Y(Y_{(j)}|\hat{\theta}) \approx U_{(j)}, \\
+  %F_Y^{-1}(U_{(j)}|\theta) &\sim Y_{(j)},  &&F_Y^{-1}(U_{(j)}|\hat{\theta}) \approx Y_{(j)}, \\
+  F_{Y_{(j)}}(Y_{(j)}|\theta) &\sim U_j,  &&  F_{Y_{(j)}}(Y_{(j)}|\hat{\theta}) \approx U_j, 
+  %F_{Y(j)}^{-1}(U_j|\theta) &\sim Y(j),  &&  F_{Y(j)}^{-1}(U_j|\hat{\theta}) \approx Y(j), 
+\end{align*}
+where $U_j \sim U(0,1)$ and $U_{(j)} \sim \text{Beta}(j, \nsys + 1 - j)$ and the approximation in the right hand side depends upon the estimator $\hat{\theta}$ and the sample size. We now connect the order statistics to the underlying distribution that comes from a population with $\npop \geq \nsys$ observations when $F_X$ is known. This connection is established with the relation
+$$
+  F^{-1}_{X_{(\npop - \nsys + j)}}\left(F_{Y_{(j)}}(Y_{(j)}|\theta)\right) 
+    \sim F^{-1}_{X_{(\npop - \nsys + j)}}\left(U_j\right) 
+    \sim X_{(\npop - \nsys + j)}.
+$$
+We estimate the above with 
+$$
+  F^{-1}_{X_{(\npop - \nsys + j)}}\left(F_{Y_{(j)}}(Y_{(j)}|\hat{\theta})\right) 
+    \approx F^{-1}_{X_{(\npop - \nsys + j)}}\left(U_j\right) 
+    \sim X_{(\npop - \nsys + j)}.
+$$
+
+
+
+\subsection{Nonarametric case}
+
+[This section needs work; the interpolated CDF motivated here does not have desirable empirical properties. The interpolated CDF does well when the goal is to extract $X$ scores, but it does not do well when mapping people from different time periods into a common time period.] \vspace{0.5cm}
+
+In the nonparametric setting we motivate an interpolated empirical CDF as an estimator of the system components distribution $F_Y$. The classical empirical CDF estimator $\widehat F_Y$ fails because it places cumulative probability 1 at the observation $Y_{(\nsys)}$. We therefore consider an interpolated version of the empirical CDF $\widetilde F_Y$ to alleviate this problem. We construct $\widetilde F_Y$ in the following manner: We first construct surrogate sample points $\widetilde Y_{(1)}, \ldots, \widetilde Y_{(\nsys+1)}$ as, 
+\begin{align*}
+  \widetilde Y_{(1)} &= Y_{(1)} - 1/(Y_{(2)} - Y_{(1)}), \\
+  \widetilde Y_{(j)} &= (Y_{(j)} + Y_{(j-1)})/2, \qquad j = 2,\ldots, \nsys, \\
+  \widetilde Y_{(\nsys + 1)} &= Y_{(\nsys)} + 1/(Y_{(\nsys)} - Y_{(\nsys-1)}).
+\end{align*}
+With this construction, we build $\widetilde F_Y$ as
+\begin{equation} \label{ieCDF}
+  \widetilde F_Y(t) = \sum_{j=1}^{\nsys} \left(\frac{j-1}{\nsys} 
+    + \frac{t - \widetilde Y_{(j)}}
+      {\nsys(\widetilde Y_{(j+1)} - \widetilde Y_{(j)})}\right)
+    1\left(\widetilde Y_{(j)} \leq t < \widetilde Y_{(j+1)}\right) 
+    + 1(t \geq \widetilde Y_{(\nsys + 1)}).
+\end{equation}
+
+The estimator $\widetilde F_Y$ is desirable for two reasons. First, it does not assume that the observed minimum and observed maximum constitute the actual boundaries of the support of $Y$. Furthermore, $\widetilde F_Y(Y_{(1)})$ and $\widetilde F_Y(Y_{(\nsys)})$ provide reasonable estimates for the cumulative probability at $Y_{(1)}$ and $Y_{(\nsys)}$ by considering their respective discrepancy from $Y_{(2)}$ and $Y_{(\nsys-1)}$. %Notice that $1/(n+1) > \widetilde F_Y(Y_{(1)}) \to 0$ as $(Y_{(2)} - Y_{(1)}) \to \infty$, and that $\frac{n}{n+1} \leq \widetilde F_Y(Y_{(\nsys)}) \to 1$ as $Y_{(\nsys)} - Y_{(\nsys-1)} \to \infty$. 
+Notice that $\widetilde F_Y(t)$ is close to $\widehat F_Y(t)$. We formalize this statement below.
+
+\begin{prop} \label{prop-ieCDF}
+Let $\widetilde F_Y(t)$ be defined as in \eqref{ieCDF} and let $\widehat F_Y(t)$ be the empirical distribution function. Then,
+$$
+  \sup_{t \in \R}|\widetilde F_Y(t) - \widehat F_Y(t)| \leq \frac{1}{\nsys}.
+$$
+\end{prop}
+
+\begin{proof}
+We will prove this result in cases. First, when $t \leq \widetilde Y_{(1)}$ or $t \geq \widetilde Y_{(\nsys + 1)}$ we have that $|\widetilde F_Y(t) - \widehat F_Y(t)| = 0$. 
+%When $\widetilde Y_{(1)} < t < Y_{(1)}$ we have 
+%$|\widehat F_Y(t) - \widetilde F_Y(t)| = 1/(\nsys + 1)$. 
+For any $j = 1,\ldots,\nsys$ and $\widetilde Y_{(j)} \leq t < Y_{(j)}$, we have
+\begin{align*}
+  |\widehat F_Y(t) - \widetilde F_Y(t)| 
+    &= \left\lvert\frac{j-1}{\nsys} 
+      - \frac{j - 1 + (t-\widetilde Y_{(j)})/(\widetilde Y_{(j+1)}-\widetilde Y_{(j)})}
+        {\nsys}\right\rvert \leq \frac{1}{\nsys}.  
+\end{align*}
+For any $j = 1,\ldots,\nsys$ and $Y_{(j)} < t < \widetilde Y_{(j+1)}$, we have
+\begin{align*}
+  |\widehat F_Y(t) - \widetilde F_Y(t)| 
+    &= \left\lvert\frac{j}{\nsys} 
+      - \frac{j - 1 + (t-\widetilde Y_{(j)})/(\widetilde Y_{(j+1)}-\widetilde Y_{(j)})}
+        {\nsys}\right\rvert \leq \frac{1}{\nsys}. 
+\end{align*}
+Our conclusion follows.
+\end{proof}
+
+
+This leads to a Glivenko-Cantelli result for $\widetilde F_Y$.
+
+\begin{cor} \label{cor-ieCDF}
+Let $\widetilde F_Y(t)$ be defined as in \eqref{ieCDF} and let $\widehat F_Y(t)$ be the empirical distribution function. Then,
+$$
+  \sup_{t \in \R}|\widetilde F_Y(t) - F_Y(t)| \overset{a.s.}{\longrightarrow} 0.
+$$
+\end{cor}
+
+\begin{proof}
+We have,
+$
+  \sup_{t \in \R}|\widetilde F_Y(t) - F_Y(t)| 
+    \leq \sup_{t \in \R}|\widetilde F_Y(t) -  \widehat F_Y(t)|
+      + \sup_{t \in \R}|\widehat F_Y(t) - F_Y(t)|. 
+$
+The conclusion follows from the Glivenko-Cantelli Theorem and Proposition~\ref{prop-ieCDF}.
+\end{proof}
+
+More properties of $\widehat F_Y$ are provided in the Appendix. Corollary~\ref{cor-ieCDF} shows that the interpolated empirical distribution function is a serviceable estimator for $F_Y$. We will make use of the following approximations to facilitate our methodology,
+\begin{align*}
+  \widetilde F_Y(Y_{(j)}) \approx U_{(j)}, &&  \widetilde F_{Y_{(j)}}(Y_{(j)}) \approx U_j, 
+\end{align*}
+where $U_j \sim U(0,1)$ and $U_{(j)} \sim \text{Beta}(j, \nsys + 1 - j)$ and the quality of the approximation in the right hand side depends upon the sample size and the shape of $F_Y$. We now connect the order statistics to the underlying distribution that comes from a population with $\npop \geq \nsys$ observations when $F_X$ is known. We estimate the hidden trait value by with 
+$$
+  F^{-1}_{X_{(\npop - \nsys + j)}}\left(\widetilde F_{Y_{(j)}}(Y_{(j)})\right) 
+    \approx F^{-1}_{X_{(\npop - \nsys + j)}}\left(U_j\right) 
+    \sim X_{(\npop - \nsys + j)}.
+$$
+
+
+
+
+
+\section{Connection to the aster models}
+
+% For studies that do evaluate lifetime fitness of individuals or genotypes, the distribution of fitness is generally not normal: it is typically highly skewed and often multimodal, with a large mode at zero, corresponding to individuals that die without reproducing. Thus, the assumption of normally distributed residuals required for the standard statistical analyses does not hold, making inference and hypothesis testing about selection problematic.
+Aster models were originally developed as a statistically valid model for Darwinian fitness by accounting for the fitness components (life cycle) of the system under study and by employing appropriate probability models for each fitness component \citep{geyer2007aster, shaw2008unifying}. In the absence of aster models the individual fitness components are estimated separately, and therefore the interplay of fitness components in their contributions to lifetime fitness and how selection operates over the entire life cycle cannot be quantified. Aster models belong to the full house methodology framework. In an aster analysis we can specify lifetime fitness as $Y_j = f(X_j, \beta)$ for all $j = 1,\ldots,\npop$, where $\nsys = \npop$, $X_j$ is a vector of observable traits and fitness components, and $\beta$ is a vector of regression parameters linking the observable traits to fitness and modeling parameters associated with the probability models for each fitness component. Expected Darwinian fitness is estimated for every individual through invariance of maximum likelihood estimation for $\beta$.
+
+
+\cite{eck2015integrated} provided an aster analysis of total egg counts (fitness) for a field population of \emph{Manduca sexta}. One conclusion from this analysis was that estimated fitness surfaces revealed strong and significant directional selection favoring both larger adult size (via effects on egg counts) and more rapid rates of early larval development (via effects on larval survival). The incorporation of timing of reproduction and its influence on population growth rate  resulted in larger values for size in early larval development at which fitness is maximized. The original analysis of this field population comes from \cite{kingsolver2012direct} who estimated selection via survival, reproduction, and other components separately. %used common garden field studies with $\npop$ Manduca sexta (Lepidoptera: Sphingidae) to estimate phenotypic selection on body size and age at different developmental stages. However, that study estimated selection via survival, reproduction, and generation time separately, and therefore could not quantify how selection operates over the entire life cycle, nor identify the interplay of fitness components in their contributions to lifetime fitness.
+In the original analysis, total egg counts is estimated with multiple regression after conditioning on survival. In this setting there are $\nsys < \npop$ females with $Y_{i_j}' = f'(X_{i_j}', \beta')$ total eggs. Females had to survive to their reproduction stage for inclusion in this regression, therefore $g_j(X_j) = 1$ if female $j$ survived to reproduction and $g_j(X_j) = 0$ otherwise. This analysis cannot quantify how selection on survival effected reproduction. By accounting for the life cycles of the full population into the analysis, this aster analysis of \emph{M. sexta} could then illustrate how the interplay of different components of fitness can influence selection on size and development time.
+
+
+\section{Connection to causal inference}
+
+Discuss selection bias, and read \cite{imbens2018causal}.
+
+
+\section{Examples}
+
+
+\subsection{Era adjustment for batting averages in baseball}
+
+[see R script] \vspace{0.5cm}
+
+Comparing the achievements of baseball players across eras has resulted in endless debates among family members, friends, participants in social media platforms, network personalities, and scientists \citep{gould1996full, berry1999bridging, schell2005baseball, petersen2011methods, eck2020challenging}. Of all the possible across-era comparisons to be made, the comparison of baseball players' batting averages has a lively discussion in the scientific literature \citep{gould1996full, berry1999bridging, schell2005baseball}. In this example, the spread of excellence model is used to construct an era-neutral environment which allows for comparisons of the batting averages of baseball players from fundamentally different eras. We compare the results and philosophies of approach to those of \cite{gould1996full}, \cite{berry1999bridging}, \cite{schell2005baseball} and \cite{petersen2011methods}.
+
+The spread of excellence model is philosophically rooted in Part 3 of \cite{gould1996full} and \cite{eck2020challenging}. Gould made the paradoxical observation that the diminishing rate of extraordinary individual batting averages signalled an overall increase in the hitting ability of the typical major league baseball player. The rationale for this finding is fourfold: 1) the distribution of annual batting averages among full time players forms a stable system that historically follows a normal distribution with mean roughly equal to .260; 2) the available talent pool of eligible major league players becomes deeper and richer as time continues; 3) baseball players have gotten bigger; 4) records in other sports with absolute standards have historically improved. \cite{schell2005baseball} makes a similar observation. For our comparisons we will assume that all players grow up in the same era-neutral environment. Under this hypothetical only the stability of the annual batting average distribution and the size and richness of the underlying talent pool are relevant. 
+% 2) complex systems improve when the best participants play under the same conditions for an extended period of time. As systems improve, the variation shrinks; 3) as participation improves, the variation in the right tail of underlying ability shrinks.
+
+
+%This article compares the performances of athletes from different eras in three sports: baseball, hockey, and golf. A goal is to construct a statistical time machine in which we estimate how an athlete from one era would perform in an- other era. For examples, we estimate how many home runs Babe Ruth would hit in modern baseball, how many points Wayne Gretzky would have scored in the tight-checking National Hockey League (NHL) of the 1950s, and how well Ben Hogan would do with the titanium drivers and extra- long golf balls of today's game.
+%Comparing players from different eras has long been pub fodder. The topic has been debated endlessly, generally to the conclusion that such comparisons are impossible. How- ever, the data available in sports are well suited for such comparisons. In every sport there is a great deal of over- lap in players' careers. Although a player that played in the early 1900s never played against contemporary players, they did play against players, who played against players, ... , who played against contemporary players. This process forms a bridge from the early years of sport to the present that allows comparisons across eras.
+
+
+
+
+Batting averages in baseball have historically followed a normal distribution. 
+We suppose that underlying talent follows a Pareto($\alpha$) distribution. 
+In this example, we can take $f_j = \Phi^{-1} \circ F_{X_{(\npop - \nsys + j)}}$ where $\Phi$ is the CDF of the normal distribution and $F_{X_{(\npop - \nsys + j)}}$ is the CDF of the order statistics of the latent distribution. 
+
+
+
+\section*{Appendix}
+
+\subsection*{Properties of $\widetilde F_Y$}
+
+In this section we study mathematical properties of the interpolated empirical distribution function $\widetilde F_Y$. First, we expand on some classical empirical results for $\widetilde F_Y$. In particular, $\widetilde F_Y$ possess a Koml{\'o}s-Major-Tusn{\'a}dy (KMT) embedding \citep{komlos1975approximation} and a Dvoretzky-Kiefer–Wolfowitz (DFW) inequality bound of the tail probability \citep{dvoretzky1956asymptotic, massart1990tight}. 
+
+\begin{prop}
+Let $F_Y$ be a distribution function, $\widetilde F_Y(t)$ be defined as in \eqref{ieCDF}, and $\widehat F_Y(t)$ be the empirical distribution function. Let $G_{F,n} = B_n(F_Y(t))$ be a Gaussian process where $\{B_n(t), 0 \leq t \leq 1\}$ is a sequence of Brownian bridges. Then,
+$$
+  \lim\sup_{n\to\infty} \frac{\sqrt{n}}{\log(n)}
+    \left\|\sqrt{n}(\widetilde F_Y - F_Y) - G_{F,n}\right\|_\infty
+    < \infty, \qquad a.s.
+$$
+\end{prop}
+
+\begin{proof}
+The result follows from a simple derivation,
+\begin{align*}
+  &\frac{\sqrt{n}}{\log(n)} \left\|\sqrt{n}(\widetilde F_Y - F_Y) - G_{F,n}\right\|_\infty
+    = \frac{\sqrt{n}}{\log(n)} 
+      \left\|
+        \sqrt{n}((\widetilde F_Y - \widehat F_Y) - ( \widehat F_Y - F_Y) - G_{F,n})
+      \right\|_\infty \\
+    &\qquad\leq \frac{\sqrt{n}}{\log(n)}
+      \left\| \sqrt{n}(\widehat F_Y - F_Y) - G_{F,n}\right\|_\infty 
+      + \frac{\sqrt{n}}{\log(n)} 
+        \left\| \sqrt{n}(\widetilde F_Y - \widehat F_Y)\right\|_\infty \\
+    &\qquad\leq \frac{\sqrt{n}}{\log(n)}
+      \left\| \sqrt{n}(\widehat F_Y - F_Y) - G_{F,n}\right\|_\infty 
+      + \frac{1}{\log(n)}         
+\end{align*}
+where the last line follows from Proposition~\ref{prop-ieCDF}. Our conclusion follows from \cite{komlos1975approximation}.
+\end{proof}
+
+
+\begin{prop}
+Let $F_Y$ be a distribution function, $\widetilde F_Y(t)$ be defined as in \eqref{ieCDF}, and $\widehat F_Y(t)$ be the empirical distribution function. Then, for any $C > 0$, 
+$$
+  \Prob\left(\sqrt{n}\|\widetilde F_Y - F_Y\|_\infty > \sqrt{C\log(n)/2}\right) = O\left(n^{-C}\right).
+$$
+\end{prop}
+
+\begin{proof}
+Proposition~\ref{ieCDF} gives
+$$
+  \Prob\left(\sqrt{n}\|\widetilde F_Y - F_Y\|_\infty > \sqrt{C\log(n)/2}\right) 
+    \leq \Prob\left(\sqrt{n}\|\widehat F_Y - F_Y\|_\infty > \sqrt{C\log(n)/2} - 1/\log(n)\right).
+$$
+\cite{massart1990tight} gives 
+\begin{align*}
+  &\Prob\left(\sqrt{n}\|\widehat F_Y - F_Y\|_\infty > \sqrt{C\log(n)/2} - 1/\log(n)\right)
+    \leq 2\exp\left( -2(\sqrt{C\log(n)/2} - 1/\log(n))^2\right) \\
+  &\qquad= 2\exp\left(-C\log(n) + \frac{4\sqrt{C/2}}{\sqrt{\log(n)}} - \frac{2}{\log(n)^2}\right) \\
+  &\qquad= 2n^{-C}
+    O\left(1 + + \frac{4\sqrt{C/2}}{\sqrt{\log(n)}} - \frac{2}{\log(n)^2}\right) \\
+  &\qquad = O\left(n^{-C}\right).
+\end{align*}
+Our conclusion follows.
+\end{proof}
+
+
+\bibliographystyle{plainnat}
+\bibliography{fullhouse}
+
+
+\end{document}
