@@ -4,7 +4,7 @@
 My research on baseball.  
 
 
-### Challenging_nostalgia
+### Challenging nostalgia
 
 The Challenging_nostalgia directory contains a raw copy of my paper 
 "Challenging nostalgia and performance metrics in baseball" which was recently 
@@ -15,7 +15,7 @@ performed in the paper transparent.  This technical report is fully reproducible
 To cite this paper:
 
   Eck, D.J. (2020). Challenging nostalgia and performance metrics in baseball.
-  CHANCE, 33 (1), 16-25.
+  CHANCE, 33 (1), 16--25.
 
 To cite the technical report:
 
@@ -26,13 +26,19 @@ A Shiny app that allows others to produce their own analyses within the framewor
 this paper can be viewed [here](https://deck13.shinyapps.io/challenging_baseball_nostalgia/).
 
 
+### Era adjustment
+
+[with Shen Yan] The era_adjustment directory contains tools which offer a way to properly adjust statistics of players from different eras under reasonable assumptions. The basic idea is to balance how well one did "vs their peers" against the size of their eligible MLB talent pool. The balancing of these two quantities provides more realistic "vs their peers" statistics, players who stood far above their peers get penalized if the era in which they did was sparsely populated. 
+
+This directory is a work in progress.
+
+
 ### Spray distributions
 
-[with Charlie Young and David Dalpiaz] This directory contains a preliminary draft of a 
+[with Charlie Young and David Dalpiaz] The spraydists directory contains a  
 manuscript on spray chart distributions. Spray chart distributions are 2-dimensional 
-distributions of the final batted ball locations corresponding to a batter/pitcher scenario of 
-interest. More to come.
-
+distributions of the final batted ball locations corresponding to a batter vs. pitcher matchup of 
+interest. A shiny app that allows users to study batter vs. pitcher matchups visually and numerically can be viewed [here](https://seam.stat.illinois.edu). 
 
 ### Paradoxical relationship of fWAR and wins
 
@@ -41,7 +47,7 @@ total fangraphs wins above replacement (fWAR) is a great single predictor for a 
 total wins. We also show that a significant number of franchises consistently 
 underperform or overperform their fWAR. These two facts are in direct constrast of each 
 other and it is surprising that they can hold simultaneously. Data credit goes to 
-Fangraphs.
+[Fangraphs](https://www.fangraphs.com).
 
 
 ### Direct calculation of WAR
