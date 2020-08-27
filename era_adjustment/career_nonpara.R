@@ -53,7 +53,6 @@ Ftilde_adj <- function(y, t){
 }
 
 
-
 ## order_pbino function
 # converts order stats to their percentiles
 order_pbino <- function(p = 0, k = 1, n = 1e4){
@@ -106,7 +105,7 @@ map_Y <- function(u, ytilde){
   return(out)
 }
 
-## map the quantile to the predicted sample values
+## map the quantile to the predicated sample values
 order_qempirical <- function(u, ytilde){
   n <- length(u)
   a <- qbeta(u, shape1 = 1:n, shape2 = n:1)
@@ -114,8 +113,9 @@ order_qempirical <- function(u, ytilde){
   out
 }
 
+
 # careers starting in 1996
-foo <- read_csv("WAR_nonpara_adj.csv")
+foo <- read_csv("WAR_nonpara.csv")
 foo$playerID <- droplevels(as.factor(foo$playerID))
 bar <- split(foo, f = foo$playerID)
 year_start = 1996; year_finish = 2019
@@ -141,28 +141,22 @@ career_talent <- function(snippet, year_start = 1996, year_finish = 2019){
   do.call(rbind, lapply(span, function(xx){
     index <- which(span == xx)
     batters_int <- foo %>% filter(yearID == span[index])
-   
-    ## Adjusted Ordinary Ftilde
-    y <- sort(batters_int$scale_WAR)
-    n <- length(y)
-    rank_d <- rank(diff(y))
-    ytilde_adj <- rep(0, n + 1)
-    ytilde_adj[1] <- y[1] - 1/(y[2] - y[1]+1)
-    ytilde_adj[n+1] <- y[n] + 1/(y[n] - y[n-1])
-    m <- round(n * 2 /3)
-    ytilde_adj[2:m] <- unlist(lapply(2:m, function(j){
-      (y[j]+y[j-1])/2 
-    }))
-    ytilde_adj[(m+1):n] <- unlist(lapply((m+1):n, function(j){
-      y[j] * (1 - rank_d[j-1]/ (n-1)) + y[j-1] * rank_d[j-1] / (n-1)
-    }))
     
+    ## Ordinary Ftilde
+    yy <- sort(batters_int$scale_WAR)
+    n <- length(yy)
+    ytilde <- rep(0, n + 1)
+    ytilde[1] <- yy[1] - 1/(yy[2] - yy[1])
+    ytilde[n+1] <- yy[n] + 1/(yy[n] - yy[n-1])
+    ytilde[2:n] <- unlist(lapply(2:n, function(j){
+      (yy[j]+yy[j-1])/2 
+    }))
     
     batters_int <- rbind(batters_int, snippet[index, ])
     batters_int$pops[nrow(batters_int)] <- batters_int$pops[1]
     batters_int <- batters_int %>% arrange(WAR_talent) %>% 
       mutate(adj_WAR = order_qempirical(map_Pareto_vals_vec(WAR_talent, npop = pops), 
-                                        ytilde = ytilde_adj)/k) %>% 
+                                        ytilde = ytilde)/k) %>% 
       filter(playerID == unique(snippet$playerID))
     
     batters_int
@@ -185,11 +179,7 @@ career_totals <- do.call(rbind, mclapply(
     data.frame(unique(xx$playerID), min(xx$yearID), 
                sum(xx$adj_WAR))
   }))
+
 colnames(career_totals) <- c("name", "rookie_year", "WAR_total")
-
-## check mike trout 
-
-m <- (career_totals %>% arrange(-WAR_total))[1:100,]
-
-write.csv((career_totals %>% arrange(-WAR_total)), "career_nonpara_adj.csv")
+write.csv((career_totals %>% arrange(-WAR_total)), "career_nonpara.csv")
 
