@@ -65,6 +65,7 @@
 \geometry{margin=1in}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
+%\SweaveOpts{concordance=TRUE}
 
 \begin{center}
 
@@ -320,7 +321,7 @@ below creates our MLB eligible population.
 \hlkwd{options}\hlstd{(}\hlkwc{warn}\hlstd{=}\hlopt{-}\hlnum{1}\hlstd{)}
 \hlstd{population_data} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(}\hlstr{"population.csv"}\hlstd{,} \hlkwc{header} \hlstd{=} \hlnum{TRUE}\hlstd{)[,} \hlopt{-}\hlnum{1}\hlstd{]} \hlopt{%>%}
   \hlkwd{mutate}\hlstd{(}\hlkwc{age20} \hlstd{= age20} \hlopt{/} \hlnum{1e3}\hlstd{,} \hlkwc{age25} \hlstd{= age25} \hlopt{/} \hlnum{1e3}\hlstd{)} \hlopt{%>%}
-  \hlkwd{filter}\hlstd{(year} \hlopt{>} \hlnum{1950}\hlstd{)}
+  \hlkwd{filter}\hlstd{(year} \hlopt{>} \hlnum{1950}\hlstd{)} \hlopt{%>%} \hlkwd{mutate}\hlstd{(}\hlkwc{region} \hlstd{=} \hlkwd{as.factor}\hlstd{(region))}
 
 \hlcom{# restrict attention to countries of interest}
 \hlstd{countries} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Aruba"}\hlstd{,} \hlstr{"Bahamas"}\hlstd{,} \hlstr{"Brazil"}\hlstd{,} \hlstr{"Colombia"}\hlstd{,} \hlstr{"Cuba"}\hlstd{,}
@@ -374,7 +375,7 @@ the Taiwan male population aged 20-29 for 2000 or 2010.
 \begin{alltt}
 \hlcom{#approximation from CIA World Factbook at }
 \hlcom{#https://www.cia.gov/library/publications/the-world-factbook/geos/print_tw.html}
-\hlstd{baz}\hlopt{$}\hlstr{'Taiwan'} \hlkwb{<-}\hlkwd{data.frame}\hlstd{(}\hlkwc{year} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2000}\hlstd{,} \hlnum{2010}\hlstd{),} \hlkwc{total} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1.5}\hlstd{,} \hlnum{1.5}\hlstd{))}
+\hlstd{baz}\hlopt{$}\hlstr{'Taiwan'} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{year} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{2000}\hlstd{,} \hlnum{2010}\hlstd{),} \hlkwc{total} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1.5}\hlstd{,} \hlnum{1.5}\hlstd{))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -490,8 +491,8 @@ population that existed at or before 1950 is 0.178.
     third column indicates the proportion of the MLB eligible  
     population in row x that was eligbile at or before row x."}\hlstd{))}
 \end{alltt}
-\end{kframe}% latex table generated in R 3.6.1 by xtable 1.8-4 package
-% Wed Jan 15 15:53:33 2020
+\end{kframe}% latex table generated in R 4.0.3 by xtable 1.8-4 package
+% Tue Mar 23 15:11:57 2021
 \begin{table}[ht]
 \centering
 \begin{tabular}{lccc}
@@ -666,14 +667,14 @@ software below.  The results are provided in Table~\ref{probvalues}.
   &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
   \hline
 probability of extreme event in top 10 list 
-  & 0.000408 
+  & \ensuremath{4.08\times 10^{-4}} 
   & 0.00345 
   & 0.00345 
   & 0.0203 \\
 probability of extreme event in top 25 list 
-  & 0.000003 
-  & 0.000003 
-  & 0.000518 
+  & \ensuremath{3.01\times 10^{-6}} 
+  & \ensuremath{3.01\times 10^{-6}} 
+  & \ensuremath{5.18\times 10^{-4}} 
   & 0.00214 \\
 chance of extreme event in top 10 list 
   & 1 in 2450 
@@ -681,8 +682,8 @@ chance of extreme event in top 10 list
   & 1 in 290 
   & 1 in 49 \\
 chance of extreme event in top 25 list 
-  & 1 in 332594 
-  & 1 in 332594 
+  & 1 in \ensuremath{3.32594\times 10^{5}} 
+  & 1 in \ensuremath{3.32594\times 10^{5}} 
   & 1 in 1932 
   & 1 in 467 \\
   \hline
@@ -905,8 +906,8 @@ constructed with the code below.
   \hlcom{#hline.after = c(-1,0,nrow(data)))}
   \hlkwc{hline.after} \hlstd{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,}\hlnum{0}\hlstd{,}\hlnum{4}\hlstd{))}
 \end{alltt}
-\end{kframe}% latex table generated in R 3.6.1 by xtable 1.8-4 package
-% Wed Jan 15 15:53:33 2020
+\end{kframe}% latex table generated in R 4.0.3 by xtable 1.8-4 package
+% Tue Mar 23 15:11:57 2021
 \begin{table}[ht]
 \centering
 \begingroup\footnotesize
@@ -1013,13 +1014,13 @@ list depicted in Table~\ref{top25}. %are conducted using R statistical
  weight & &  Ranker  &  bWAR  &  fWAR  &  ESPN \\
  \hline
 w1 & probability of extreme event in top 10 list 
-  & 0.000893 
+  & \ensuremath{8.93\times 10^{-4}} 
   & 0.00654 
   & 0.00654 
   & 0.0335 \\
 & probability of extreme event in top 25 list 
-  & 0.0000145 
-  & 0.0000145 
+  & \ensuremath{1.45\times 10^{-5}} 
+  & \ensuremath{1.45\times 10^{-5}} 
   & 0.00161 
   & 0.00579 \\
 & chance of extreme event in top 10 list 
@@ -1028,8 +1029,8 @@ w1 & probability of extreme event in top 10 list
   & 1 in 153 
   & 1 in 30 \\
 & chance of extreme event in top 25 list 
-  & 1 in 69039 
-  & 1 in 69039 
+  & 1 in \ensuremath{6.9039\times 10^{4}} 
+  & 1 in \ensuremath{6.9039\times 10^{4}} 
   & 1 in 619 
   & 1 in 173 \\
   & & & & & \\
@@ -1039,8 +1040,8 @@ w2 & probability of extreme event in top 10 list
   & 0.0111 
   & 0.0504 \\
 & probability of extreme event in top 25 list 
-  & 0.000053 
-  & 0.000053 
+  & \ensuremath{5.3\times 10^{-5}} 
+  & \ensuremath{5.3\times 10^{-5}} 
   & 0.00406 
   & 0.0129 \\
 & chance of extreme event in top 10 list 
@@ -1049,8 +1050,8 @@ w2 & probability of extreme event in top 10 list
   & 1 in 90 
   & 1 in 20 \\
 & chance of extreme event in top 25 list 
-  & 1 in 18883 
-  & 1 in 18883 
+  & 1 in \ensuremath{1.8883\times 10^{4}} 
+  & 1 in \ensuremath{1.8883\times 10^{4}} 
   & 1 in 247 
   & 1 in 78 \\
   & & & & & \\
@@ -1081,8 +1082,8 @@ w4 & probability of extreme event in top 10 list
   & 0.0251 
   & 0.0937 \\
 & probability of extreme event in top 25 list 
-  & 0.000384 
-  & 0.000384 
+  & \ensuremath{3.84\times 10^{-4}} 
+  & \ensuremath{3.84\times 10^{-4}} 
   & 0.016 
   & 0.0416 \\
 & chance of extreme event in top 10 list 
@@ -1378,9 +1379,35 @@ individuals in a top 25 list who started their careers before 1950 as
 1 in 9.99.  These chances are not as extreme 
 as those in Table~\ref{probvalues}, but they still correspond to events 
 that are unlikely.  However, it is clear that if we were to reweight the 
-MLB eligible population as we did Section 5, then the calculations in 
+MLB eligible population as we did in Section 5, then the calculations in 
 \citet{berry1999eras} would be in line with expectations.
 
+
+The above calculation that appears in the published Chance paper needs some revision. \cite{berry1999eras} ran their models on seasonal data collected over the years 1901-1996. We now rerun our analysis over that frame.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# population data over 1901-1996}
+\hlstd{dat2} \hlkwb{<-} \hlstd{dat[}\hlnum{3}\hlopt{:}\hlnum{13}\hlstd{, ]}
+\hlstd{dat2[}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlnum{0.9} \hlopt{*} \hlstd{dat2[}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{]}
+\hlstd{dat2[}\hlnum{11}\hlstd{,} \hlnum{2}\hlstd{]} \hlkwb{<-} \hlnum{0.6} \hlopt{*} \hlstd{dat2[}\hlnum{11}\hlstd{,} \hlnum{2}\hlstd{]}
+\hlstd{dat2[,} \hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{cumsum}\hlstd{(dat2[,} \hlnum{2}\hlstd{])} \hlopt{/} \hlkwd{sum}\hlstd{(dat2[,} \hlnum{2}\hlstd{])}
+
+\hlcom{# proportion of MLB eligible population who started their career }
+\hlcom{# before 1950}
+\hlstd{p2} \hlkwb{<-} \hlstd{dat2[}\hlnum{6}\hlstd{,} \hlnum{3}\hlstd{]}
+
+\hlcom{# Binomial probabilities for Berry's top 10 and top 25 lists}
+\hlstd{bridge10} \hlkwb{<-} \hlnum{6}\hlstd{; bridge25} \hlkwb{<-} \hlnum{10}
+\hlstd{pbridge10} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bridge10} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p2,} \hlkwc{size} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\hlstd{pbridge25} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(bridge25} \hlopt{-} \hlnum{1}\hlstd{,} \hlkwc{p} \hlstd{= p2,} \hlkwc{size} \hlstd{=} \hlnum{25}\hlstd{,} \hlkwc{lower} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+We now calculate the chance that one would expect to observe 6 or more individuals in a top 10 list who started their careers before 1950 as 1 in 46. We calculate the chance that one would expect to observe 10 or more individuals in a top 25 list who started their careers before 1950 as 1 in 12.52.  These chances are slightly more extreme than those originally calculated above.  However, it is clear that if we were to reweight the MLB eligible population as we did in Section 5, then the calculations in \citet{berry1999eras} would be in line with expectations.
 
 
 

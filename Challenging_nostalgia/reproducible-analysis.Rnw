@@ -17,6 +17,7 @@
 
 
 \begin{document}
+%\SweaveOpts{concordance=TRUE}
 
 \begin{center}
 
@@ -270,7 +271,7 @@ library(knitr)
 options(warn=-1)
 population_data <- read.csv("population.csv", header = TRUE)[, -1] %>% 
   mutate(age20 = age20 / 1e3, age25 = age25 / 1e3) %>% 
-  filter(year > 1950)
+  filter(year > 1950) %>% mutate(region = as.factor(region))
 
 # restrict attention to countries of interest
 countries <- c("Aruba", "Bahamas", "Brazil", "Colombia", "Cuba", 
@@ -320,7 +321,7 @@ the Taiwan male population aged 20-29 for 2000 or 2010.
 <<Taiwan, cache = TRUE, warnings = FALSE, errors = FALSE>>=
 #approximation from CIA World Factbook at 
 #https://www.cia.gov/library/publications/the-world-factbook/geos/print_tw.html
-baz$'Taiwan' <-data.frame(year = c(2000, 2010), total = c(1.5, 1.5))
+baz$'Taiwan' <- data.frame(year = c(2000, 2010), total = c(1.5, 1.5))
 @
 
 We now add in the US and Canadian population data for the Census years from 
@@ -1271,9 +1272,31 @@ individuals in a top 25 list who started their careers before 1950 as
 1 in \Sexpr{round(1 / pbridge25, 2)}.  These chances are not as extreme 
 as those in Table~\ref{probvalues}, but they still correspond to events 
 that are unlikely.  However, it is clear that if we were to reweight the 
-MLB eligible population as we did Section 5, then the calculations in 
+MLB eligible population as we did in Section 5, then the calculations in 
 \citet{berry1999eras} would be in line with expectations.
 
+
+The above calculation that appears in the published Chance paper needs some revision. \cite{berry1999eras} ran their models on seasonal data collected over the years 1901-1996. We now rerun our analysis over that frame.
+
+<<bridging2, cache = TRUE>>=
+# population data over 1901-1996
+dat2 <- dat[3:13, ]
+dat2[1, 2] <- 0.9 * dat2[1, 2]
+dat2[11, 2] <- 0.6 * dat2[11, 2]
+dat2[, 3] <- cumsum(dat2[, 2]) / sum(dat2[, 2])
+
+# proportion of MLB eligible population who started their career 
+# before 1950
+p2 <- dat2[6, 3]
+
+# Binomial probabilities for Berry's top 10 and top 25 lists
+bridge10 <- 6; bridge25 <- 10
+pbridge10 <- pbinom(bridge10 - 1, p = p2, size = 10, lower = FALSE)
+pbridge25 <- pbinom(bridge25 - 1, p = p2, size = 25, lower = FALSE)
+@
+
+
+We now calculate the chance that one would expect to observe 6 or more individuals in a top 10 list who started their careers before 1950 as 1 in \Sexpr{round(1 / pbridge10)}. We calculate the chance that one would expect to observe 10 or more individuals in a top 25 list who started their careers before 1950 as 1 in \Sexpr{round(1 / pbridge25, 2)}.  These chances are slightly more extreme than those originally calculated above.  However, it is clear that if we were to reweight the MLB eligible population as we did in Section 5, then the calculations in \citet{berry1999eras} would be in line with expectations.
 
 
 
